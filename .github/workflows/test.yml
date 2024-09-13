@@ -3,6 +3,13 @@ name: Test
 on: [push]
 
 jobs:
+  environment:
+    POSTGRES_SERVER=localhost
+    POSTGRES_PORT=5432
+    POSTGRES_DB=app
+    POSTGRES_USER=postgres
+    POSTGRES_PASSWORD=changethis    
+    SENTRY_DSN=1234
 
   test:
     runs-on: ubuntu-latest
