@@ -4,7 +4,7 @@ from typing import Any
 from sqlmodel import Session, select
 
 from app.core.security import get_password_hash, verify_password
-from app.models import Item, ItemCreate, User, UserCreate, UserUpdate
+from app.models import Inquiry, InquiryCreate, Item, ItemCreate, User, UserCreate, UserUpdate
 
 
 def create_user(*, session: Session, user_create: UserCreate) -> User:
@@ -52,3 +52,11 @@ def create_item(*, session: Session, item_in: ItemCreate, owner_id: uuid.UUID) -
     session.commit()
     session.refresh(db_item)
     return db_item
+
+
+def create_inquiry(*, session: Session, inquiry_in: InquiryCreate, owner_id: uuid.UUID) -> Inquiry:
+    db_inquiry = Inquiry.model_validate(inquiry_in, update={"owner_id": owner_id})
+    session.add(db_inquiry)
+    session.commit()
+    session.refresh(db_inquiry)
+    return db_inquiry
