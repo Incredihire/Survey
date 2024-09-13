@@ -6,20 +6,12 @@ import { FiBriefcase, FiHome, FiHelpCircle, FiSettings, FiUsers } from "react-ic
 import type { UserPublic } from "../../client"
 import {IconType} from "react-icons";
 
-interface SidebarItem {
-  icon: IconType;
-  title: string;
-  path: string;
-}
-const items: SidebarItem[] = [
-  { icon: FiHome, title: "Dashboard", path: "/" },
-  // These are coming from our dependencies untyped, so we'll disable the linting for these lines
-  /* eslint-disable */
+const items = [
+  { icon: FiHome, title: "Survey", path: "/" },
   { icon: FiBriefcase, title: "Items", path: "/items" },
   { icon: FiHelpCircle, title: "Inquiries", path: "/inquiries" },
   { icon: FiSettings, title: "User Settings", path: "/settings" },
-  /* eslint-enable */
-]
+];
 
 interface SidebarItemsProps {
   onClose?: () => void
