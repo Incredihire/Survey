@@ -1,31 +1,46 @@
-name: Deploy to Staging
+name: Test
 
 on: [push]
 
 jobs:
-  deploy:
-    # Do not deploy in the main repository, only in user projects
-    if: github.repository_owner != 'fastapi'
-    runs-on:
-      - self-hosted
-      - staging
-    env:
-      ENVIRONMENT: staging
-      DOMAIN: ${{ secrets.DOMAIN_STAGING }}
-      STACK_NAME: ${{ secrets.STACK_NAME_STAGING }}
-      SECRET_KEY: ${{ secrets.SECRET_KEY }}
-      FIRST_SUPERUSER: ${{ secrets.FIRST_SUPERUSER }}
-      FIRST_SUPERUSER_PASSWORD: ${{ secrets.FIRST_SUPERUSER_PASSWORD }}
-      SMTP_HOST: ${{ secrets.SMTP_HOST }}
-      SMTP_USER: ${{ secrets.SMTP_USER }}
-      SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
-      EMAILS_FROM_EMAIL: ${{ secrets.EMAILS_FROM_EMAIL }}
-      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-      SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+
+  test:
+    runs-on: ubuntu-latest
     steps:
-      - name: Copy .env
-        run: cp .example.env .env
       - name: Checkout
         uses: actions/checkout@v4
-      - run: docker compose -f docker-compose.yml --project-name ${{ secrets.STACK_NAME_STAGING }} build
-      - run: docker compose -f docker-compose.yml --project-name ${{ secrets.STACK_NAME_STAGING }} up -d
+
+      - name: Copy .env
+        run: cp .env.example .env
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - run: docker compose build
+      - run: docker compose down -v --remove-orphans
+      - run: docker compose up -d
+      - name: Lint
+        run: docker compose exec -T backend bash /app/scripts/lint.sh
+      - name: Run tests
+        run: docker compose exec -T backend bash /app/tests-start.sh "Coverage for ${{ github.sha }}"
+      - run: docker compose down -v --remove-orphans
+      - name: Store coverage files
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html
+          path: backend/htmlcov
+          include-hidden-files: true
+
+  # https://github.com/marketplace/actions/alls-green#why
+  alls-green:  # This job does nothing and is only used for the branch protection
+    if: always()
+    needs:
+      - test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Decide whether the needed jobs succeeded or failed
+        uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}
