@@ -4,11 +4,11 @@ import { createFileRoute } from "@tanstack/react-router"
 import useAuth from "../../hooks/useAuth"
 
 export const Route = createFileRoute("/_layout/")({
-  component: Dashboard,
-})
+  component: Survey,
+});
 
-function Dashboard() {
-  const { user: currentUser } = useAuth()
+function Survey() {
+  const { user: currentUser } = useAuth();
 
   return (
     <>
@@ -21,5 +21,5 @@ function Dashboard() {
         </Box>
       </Container>
     </>
-  )
+  );
 }
