@@ -63,7 +63,7 @@ jobs:
       - run: docker compose up -d
 
       - name: Lint
-        run: docker compose exec backend bash /app/scripts/lint.sh
+        run: docker compose exec -T backend bash /app/scripts/lint.sh
 
       - name: Run tests
         run: docker compose exec backend bash /app/tests-start.sh "Coverage for ${{ github.sha }}"
