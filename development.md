@@ -138,6 +138,87 @@ eslint...................................................................Passed
 prettier.................................................................Passed
 ```
 
+## VS Code Debugging
+
+### How to Run the Frontend Debugger
+
+First, navigate to the `frontend` directory and install dependencies by running
+```
+npm install
+```
+After the dependencies are installed, you need to launch the frontend application by
+```
+npm run dev
+``` 
+With the application running, open the **Run and Debug** panel in Visual Studio Code and select **Debug Frontend** then green start button.
+
+
+![image](img/vscode-debug-frontend.png)
+
+This will launch a Chrome browser pointing to `https://localhost:5173`
+
+
+## How to Run the Backend Debugger
+
+First, navigate to the `backend` directory. Begin by configuring Poetry to create virtual environment within the project folder.
+
+Check installed poetry environment by running
+```
+poetry env info
+```
+This will list path to the virtual environment created by Poetry:
+```
+➜  backend git:(vscode-debug) ✗ poetry env info
+
+Virtualenv
+Python:         3.12.5
+Implementation: CPython
+Path:           /home/ilhanbae/.cache/pypoetry/virtualenvs/app-6zZbMuyK-py3.12
+Executable:     /home/ilhanbae/.cache/pypoetry/virtualenvs/app-6zZbMuyK-py3.12/bin/python
+Valid:          True
+
+Base
+Platform:   linux
+OS:         posix
+Python:     3.12.5
+Path:       /home/linuxbrew/.linuxbrew/Cellar/python@3.12/3.12.5
+Executable: /home/linuxbrew/.linuxbrew/Cellar/python@3.12/3.12.5/bin/python3.12
+```
+
+Now this virtual environment needs to be removed, because the path to this folder vary from machine and we need debugger to access these virtual environment in more consistent way. If you don't see any path listed under Virtualenv, you can skip this step.
+
+So for my machine, I would do:
+```
+poetry env remove app-6zZbMuyK-py3.12
+``` 
+
+To create virtual environment within the project folder run the following in `backend` directory:
+
+```
+poetry config virtualenvs.in-project true
+```
+
+Then install all dependencies using:
+```
+poetry install
+```
+
+This will create `.venv` folder inside backend directory. You can also verify the virtual environment setup with 
+```
+poetry env info
+```
+
+One this setup is complete, open the **Run and Debug** panel in Visual Studio Code and select **Debug Backend** then green start button.
+
+![image](img/vscode-debug-backend.png)
+
+### How to Run Both Debuggers Simultaneously
+
+To run both the frontend and backend debuggers at the same time, follow these steps:
+1. Navigate to the `frontend` directory run `npm run dev` to start the frontend application.
+2. Navigate to the `backend` directory and ensure the virtual environment is configured within the project folder
+3. Open **Run and Debug** panel, and select **Run Backend and  Frontend**
+
 ## URLs
 
 The production or staging URLs would use these same paths, but with your own domain.
