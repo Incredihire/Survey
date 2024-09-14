@@ -406,6 +406,30 @@ export type TDataDeleteItem = {
   id: string
 }
 
+export class InquiriesService {
+  /**
+   * Create Inquiry
+   * Create new inquiry.
+   * @returns InquiryPublic Successful Response
+   * @throws ApiError
+   */
+  public static createInquiry(
+    data: TDataCreateInquiry,
+  ): CancelablePromise<InquiryPublic> {
+    const { requestBody } = data
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/api/v1/inquirys/",
+      body: requestBody,
+      mediaType: "application/json",
+      errors: {
+        422: "Validation Error",
+      },
+    })
+  }
+
+}
+
 export class ItemsService {
   /**
    * Read Items
