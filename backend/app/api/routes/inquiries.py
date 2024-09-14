@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException
 
 from app import crud
 from app.api.deps import SessionDep
-from app.models import Inquiry, InquiryCreate, InquiryPublic, Message
+from app.models import Inquiry, InquiryCreate, InquiryPublic
 
 router = APIRouter()
 
