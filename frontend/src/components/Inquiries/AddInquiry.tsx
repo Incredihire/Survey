@@ -15,16 +15,16 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import { type ApiError, type ItemCreate, ItemsService } from "../../client"
+import { type ApiError, type InquiryCreate, InquiriesService } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
 import { handleError } from "../../utils"
 
-interface AddItemProps {
+interface AddInquiryProps {
   isOpen: boolean
   onClose: () => void
 }
 
-const AddInquiry = ({ isOpen, onClose }: AddItemProps) => {
+const AddInquiry = ({ isOpen, onClose }: AddInquiryProps) => {
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
   const {
@@ -32,7 +32,7 @@ const AddInquiry = ({ isOpen, onClose }: AddItemProps) => {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<ItemCreate>({
+  } = useForm<InquiryCreate>({
     mode: "onBlur",
     criteriaMode: "all",
     defaultValues: {
@@ -42,10 +42,10 @@ const AddInquiry = ({ isOpen, onClose }: AddItemProps) => {
   })
 
   const mutation = useMutation({
-    mutationFn: (data: ItemCreate) =>
-      ItemsService.createItem({ requestBody: data }),
+    mutationFn: (data: InquiryCreate) =>
+      InquirysService.createInquiry({ requestBody: data }),
     onSuccess: () => {
-      showToast("Success!", "Item created successfully.", "success")
+      showToast("Success!", "Inquiry created successfully.", "success")
       reset()
       onClose()
     },
@@ -53,11 +53,11 @@ const AddInquiry = ({ isOpen, onClose }: AddItemProps) => {
       handleError(err, showToast)
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["items"] })
+      queryClient.invalidateQueries({ queryKey: ["Inquirys"] })
     },
   })
 
-  const onSubmit: SubmitHandler<ItemCreate> = (data) => {
+  const onSubmit: SubmitHandler<InquiryCreate> = (data) => {
     mutation.mutate(data)
   }
 
@@ -71,7 +71,7 @@ const AddInquiry = ({ isOpen, onClose }: AddItemProps) => {
       >
         <ModalOverlay />
         <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
-          <ModalHeader>Add Item</ModalHeader>
+          <ModalHeader>Add Inquiry</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl isRequired isInvalid={!!errors.title}>
