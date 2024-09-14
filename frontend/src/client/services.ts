@@ -407,8 +407,8 @@ export type TDataUpdateItem = {
 export type TDataDeleteItem = {
   id: string
 }
-export type TDataCreateInquiry = {
-  requestBody: InquiryCreate
+export interface TDataCreateInquiry {
+  requestBody: InquiryCreate;
 }
 
 export class InquiriesService {

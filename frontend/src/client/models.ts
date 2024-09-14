@@ -33,13 +33,13 @@ export type ItemsPublic = {
   count: number
 }
 
-export type InquiryCreate = {
-  text: string
+export interface InquiryCreate {
+  text: string;
 }
 
-export type InquiryPublic = {
-  text: string
-  id: string
+export interface InquiryPublic {
+  text: string;
+  id: string;
 }
 
 export type Message = {

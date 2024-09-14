@@ -3,7 +3,7 @@ import random
 import string
 
 from app import crud
-from app.models import Inquiry, InquiryCreate
+from app.models import InquiryCreate
 
 def test_create_inquiry(db: Session) -> None:
     text = ''.join(random.choice(string.printable) for _ in range(255))
