@@ -1,24 +1,10 @@
 import {
-  Button,
   Container,
-  Flex,
   Heading,
-  SkeletonText,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
 } from "@chakra-ui/react"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { createFileRoute, useNavigate } from "@tanstack/react-router"
-import { useEffect } from "react"
+import { createFileRoute} from "@tanstack/react-router"
 import { z } from "zod"
 
-import { InquiriesService } from "../../client"
-import ActionsMenu from "../../components/Common/ActionsMenu"
 import Navbar from "../../components/Common/Navbar"
 import AddInquiry from "../../components/Inquiries/AddInquiry"
 
