@@ -1,4 +1,3 @@
-import uuid
 from typing import Any
 
 from fastapi import APIRouter, HTTPException
@@ -17,6 +16,13 @@ def create_inquiry(
     """
     Create new inquiry.
     """
+    inquiry = crud.get_inquiry_by_text(session=session, text=inquiry_in.text)
+    if inquiry:
+        raise HTTPException(
+            status_code=400,
+            detail="The user with this email already exists in the system.",
+        )
+
     inquiry = Inquiry.model_validate(inquiry_in, update={"owner_id": current_user.id})
     session.add(inquiry)
     session.commit()

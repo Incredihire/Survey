@@ -125,7 +125,7 @@ class InquiryCreate(InquiryBase):
 # Database model, database table inferred from class name
 class Inquiry(InquiryBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    text: str = Field(min_length=10, max_length=255)
+    text: str = Field(min_length=10, max_length=255, unique=True)
 
 
 # Properties to return via API, id is always required

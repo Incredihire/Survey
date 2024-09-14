@@ -3,7 +3,6 @@ import {
     FormControl,
     FormErrorMessage,
     FormLabel,
-    Input,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -39,8 +38,7 @@ const AddInquiry = ({isOpen, onClose}: AddInquiryProps) => {
         mode: "onBlur",
         criteriaMode: "all",
         defaultValues: {
-            title: "",
-            description: "",
+            text: "",
         },
     })
 
