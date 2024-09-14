@@ -4,8 +4,14 @@ import { Link } from "@tanstack/react-router"
 import { FiBriefcase, FiHome, FiHelpCircle, FiSettings, FiUsers } from "react-icons/fi"
 
 import type { UserPublic } from "../../client"
+import {IconType} from "react-icons";
 
-const items = [
+type SidebarItem = {
+  icon: IconType
+  title: string
+  path: string
+}
+const items: SidebarItem[] = [
   { icon: FiHome, title: "Dashboard", path: "/" },
   { icon: FiBriefcase, title: "Items", path: "/items" },
   { icon: FiHelpCircle, title: "Inquiries", path: "/inquiries" },
