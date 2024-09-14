@@ -54,8 +54,8 @@ def create_item(*, session: Session, item_in: ItemCreate, owner_id: uuid.UUID) -
     return db_item
 
 
-def create_inquiry(*, session: Session, inquiry_in: InquiryCreate, owner_id: uuid.UUID) -> Inquiry:
-    db_inquiry = Inquiry.model_validate(inquiry_in, update={"owner_id": owner_id})
+def create_inquiry(*, session: Session, inquiry_in: InquiryCreate) -> Inquiry:
+    db_inquiry = Inquiry.model_validate(inquiry_in)
     session.add(db_inquiry)
     session.commit()
     session.refresh(db_inquiry)
