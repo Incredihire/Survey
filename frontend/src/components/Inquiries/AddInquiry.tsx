@@ -53,8 +53,8 @@ const AddInquiry = ({isOpen, onClose}: AddInquiryProps) => {
         onError: (err: ApiError) => {
             handleError(err, showToast)
         },
-        onSettled: () => {
-            queryClient.invalidateQueries({queryKey: ["Inquiry"]})
+        onSettled: async () => {
+            await queryClient.invalidateQueries({queryKey: ["Inquiry"]})
         },
     })
 
