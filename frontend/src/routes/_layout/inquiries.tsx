@@ -31,106 +31,6 @@ export const Route = createFileRoute("/_layout/inquiries")({
   validateSearch: (search) => inquiriesSearchSchema.parse(search),
 })
 
-const PER_PAGE = 5
-
-function getInquiriesQueryOptions({ page }: { page: number }) {
-  return {
-    queryFn: () =>
-      InquiriesService.readInquiries({ skip: (page - 1) * PER_PAGE, limit: PER_PAGE }),
-    queryKey: ["inquiries", { page }],
-  }
-}
-
-function InquiriesTable() {
-  const queryClient = useQueryClient()
-  const { page } = Route.useSearch()
-  const navigate = useNavigate({ from: Route.fullPath })
-  const setPage = (page: number) =>
-    navigate({ search: (prev) => ({ ...prev, page }) })
-
-  const {
-    data: inquiries,
-    isPending,
-    isPlaceholderData,
-  } = useQuery({
-    ...getInquiriesQueryOptions({ page }),
-    placeholderData: (prevData) => prevData,
-  })
-
-  const hasNextPage = !isPlaceholderData && inquiries?.data.length === PER_PAGE
-  const hasPreviousPage = page > 1
-
-  useEffect(() => {
-    if (hasNextPage) {
-      queryClient.prefetchQuery(getInquiriesQueryOptions({ page: page + 1 }))
-    }
-  }, [page, queryClient, hasNextPage])
-
-  return (
-    <>
-      <TableContainer>
-        <Table size={{ base: "sm", md: "md" }}>
-          <Thead>
-            <Tr>
-              <Th>ID</Th>
-              <Th>Title</Th>
-              <Th>Description</Th>
-              <Th>Actions</Th>
-            </Tr>
-          </Thead>
-          {isPending ? (
-            <Tbody>
-              <Tr>
-                {new Array(4).fill(null).map((_, index) => (
-                  <Td key={index}>
-                    <SkeletonText noOfLines={1} paddingBlock="16px" />
-                  </Td>
-                ))}
-              </Tr>
-            </Tbody>
-          ) : (
-            <Tbody>
-              {inquiries?.data.map((inquiry) => (
-                <Tr key={inquiry.id} opacity={isPlaceholderData ? 0.5 : 1}>
-                  <Td>{inquiry.id}</Td>
-                  <Td isTruncated maxWidth="150px">
-                    {inquiry.title}
-                  </Td>
-                  <Td
-                    color={!inquiry.description ? "ui.dim" : "inherit"}
-                    isTruncated
-                    maxWidth="150px"
-                  >
-                    {inquiry.description || "N/A"}
-                  </Td>
-                  <Td>
-                    <ActionsMenu type={"Inquiry"} value={inquiry} />
-                  </Td>
-                </Tr>
-              ))}
-            </Tbody>
-          )}
-        </Table>
-      </TableContainer>
-      <Flex
-        gap={4}
-        alignInquiries="center"
-        mt={4}
-        direction="row"
-        justifyContent="flex-end"
-      >
-        <Button onClick={() => setPage(page - 1)} isDisabled={!hasPreviousPage}>
-          Previous
-        </Button>
-        <span>Page {page}</span>
-        <Button isDisabled={!hasNextPage} onClick={() => setPage(page + 1)}>
-          Next
-        </Button>
-      </Flex>
-    </>
-  )
-}
-
 function Inquiries() {
   return (
     <Container maxW="full">
@@ -139,7 +39,6 @@ function Inquiries() {
       </Heading>
 
       <Navbar type={"Inquiry"} addModalAs={AddInquiry} />
-      <InquiriesTable />
     </Container>
   )
 }

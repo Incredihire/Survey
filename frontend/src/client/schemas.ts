@@ -442,3 +442,14 @@ export const $ValidationError = {
     },
   },
 } as const
+
+export const $InquiryCreate = {
+  properties: {
+    text: {
+      type: "string",
+      isRequired: true,
+      maxLength: 255,
+      minLength: 10,
+    },
+  },
+} as const

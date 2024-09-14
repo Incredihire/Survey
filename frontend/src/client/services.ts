@@ -8,6 +8,8 @@ import type {
   ItemPublic,
   ItemUpdate,
   ItemsPublic,
+  InquiryCreate,
+  InquiryPublic,
   Message,
   NewPassword,
   Token,
@@ -405,6 +407,9 @@ export type TDataUpdateItem = {
 export type TDataDeleteItem = {
   id: string
 }
+export type TDataCreateInquiry = {
+  requestBody: InquiryCreate
+}
 
 export class InquiriesService {
   /**
@@ -419,7 +424,7 @@ export class InquiriesService {
     const { requestBody } = data
     return __request(OpenAPI, {
       method: "POST",
-      url: "/api/v1/inquirys/",
+      url: "/api/v1/inquiries/",
       body: requestBody,
       mediaType: "application/json",
       errors: {
