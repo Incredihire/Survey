@@ -19,8 +19,8 @@ import {
   type ApiError,
   type ItemPublic,
   type ItemUpdate,
-  ItemsService,
 } from "../../client"
+import * as ItemsService from "../../client/services/itemsService"
 import useCustomToast from "../../hooks/useCustomToast"
 import { handleError } from "../../utils"
 

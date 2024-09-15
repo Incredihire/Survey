@@ -6,11 +6,11 @@ import { AxiosError } from "axios"
 import {
   type Body_login_login_access_token as AccessToken,
   type ApiError,
-  LoginService,
   type UserPublic,
   type UserRegister,
-  UsersService,
 } from "../client"
+import * as LoginService from "../client/services/loginService"
+import * as UsersService from "../client/services/usersService"
 import useCustomToast from "./useCustomToast"
 
 const isLoggedIn = () => {
