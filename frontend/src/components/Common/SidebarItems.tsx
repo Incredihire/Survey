@@ -12,10 +12,10 @@ type SidebarItem = {
   path: string
 }
 const items: SidebarItem[] = [
-  { icon: FiHome, title: "Dashboard", path: "/" },
-  { icon: FiBriefcase, title: "Items", path: "/items" },
-  { icon: FiHelpCircle, title: "Inquiries", path: "/inquiries" },
-  { icon: FiSettings, title: "User Settings", path: "/settings" },
+  { icon: FiHome, title: "Dashboard", path: "/" } as SidebarItem,
+  { icon: FiBriefcase, title: "Items", path: "/items" } as SidebarItem,
+  { icon: FiHelpCircle, title: "Inquiries", path: "/inquiries" } as SidebarItem,
+  { icon: FiSettings, title: "User Settings", path: "/settings" } as SidebarItem,
 ]
 
 interface SidebarItemsProps {
