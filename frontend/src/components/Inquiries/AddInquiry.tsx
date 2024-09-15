@@ -72,10 +72,10 @@ const AddInquiry = ({isOpen, onClose}: AddInquiryProps) => {
             >
                 <ModalOverlay/>
                 <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
-                    <ModalHeader>Add Inquiry</ModalHeader>
+                    <ModalHeader id="add-inquiry-show-modal">Add Inquiry</ModalHeader>
                     <ModalCloseButton/>
                     <ModalBody pb={6}>
-                        <FormControl isRequired isInvalid={!!errors.text}>
+                        <FormControl isInvalid={!!errors.text}>
                             <FormLabel htmlFor="text">Inquiry Text</FormLabel>
                             <Textarea
                                 id="text"
