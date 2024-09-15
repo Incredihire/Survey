@@ -12,19 +12,10 @@ interface SidebarItem {
   path: string;
 }
 const items: SidebarItem[] = [
-import {IconType} from "react-icons";
-
-interface SidebarItem {
-  icon: IconType;
-  title: string;
-  path: string;
-}
-const items: SidebarItem[] = [
   { icon: FiHome, title: "Dashboard", path: "/" },
   // These are coming from our dependencies untyped, so we'll disable the linting for these lines
   /* eslint-disable */
   { icon: FiBriefcase, title: "Items", path: "/items" },
-  { icon: FiHelpCircle, title: "Inquiries", path: "/inquiries" },
   { icon: FiHelpCircle, title: "Inquiries", path: "/inquiries" },
   { icon: FiSettings, title: "User Settings", path: "/settings" },
   /* eslint-enable */
