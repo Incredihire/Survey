@@ -19,7 +19,7 @@ const items: SidebarItem[] = [
   { icon: FiHelpCircle, title: "Inquiries", path: "/inquiries" },
   { icon: FiSettings, title: "User Settings", path: "/settings" },
   /* eslint-enable */
-];
+]
 
 interface SidebarItemsProps {
   onClose?: () => void
