@@ -26,7 +26,6 @@ interface AddInquiryProps {
 const MIN_LENGTH = 10;
 const MAX_LENGTH = 255;
 
-const formStateProps = form
 const AddInquiry = ({isOpen, onClose}: AddInquiryProps) => {
     const queryClient = useQueryClient()
     const showToast = useCustomToast()
