@@ -43,7 +43,7 @@ const AddInquiry = ({isOpen, onClose}: AddInquiryProps) => {
     })
 
     // Explicitly type errors
-    const typedErrors = errors as FieldErrors<InquiryCreate>
+    const typedErrors: FieldErrors<InquiryCreate> = errors
 
     const mutation = useMutation({
         mutationFn: (data: InquiryCreate) =>
@@ -78,7 +78,7 @@ const AddInquiry = ({isOpen, onClose}: AddInquiryProps) => {
                     <ModalHeader id="add-inquiry-show-modal">Add Inquiry</ModalHeader>
                     <ModalCloseButton/>
                     <ModalBody pb={6}>
-                        <FormControl isInvalid={!!typedErrors.text}>
+                        <FormControl isInvalid={!!typedErrors?.text}>
                             <FormLabel htmlFor="text">Inquiry Text</FormLabel>
                             <Textarea
                                 id="text"
@@ -100,8 +100,8 @@ const AddInquiry = ({isOpen, onClose}: AddInquiryProps) => {
                                 placeholder="Enter the text of your inquiry."
                             />
 
-                            {typedErrors.text && (
-                                <FormErrorMessage>{typedErrors.text.message}</FormErrorMessage>
+                            {typedErrors?.text && (
+                                <FormErrorMessage>{typedErrors?.text?.message}</FormErrorMessage>
                             )}
                         </FormControl>
                     </ModalBody>
