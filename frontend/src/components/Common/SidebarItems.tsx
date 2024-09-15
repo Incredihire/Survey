@@ -14,7 +14,7 @@ interface SidebarItem {
 const items: SidebarItem[] = [
   { icon: FiHome, title: "Dashboard", path: "/" },
   { icon: FiBriefcase, title: "Items", path: "/items" },
-  { icon: FiHelpCircle, title: "Inquiries", path: "/inquiries" },
+  { icon: FiHelpCircle, title: "Inquiries", path: "/inquiries" } as SidebarItem,
   { icon: FiSettings, title: "User Settings", path: "/settings" },
 ]
 

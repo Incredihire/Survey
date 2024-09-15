@@ -26,6 +26,7 @@ interface AddInquiryProps {
 const MIN_LENGTH = 10;
 const MAX_LENGTH = 255;
 
+const formStateProps = form
 const AddInquiry = ({isOpen, onClose}: AddInquiryProps) => {
     const queryClient = useQueryClient()
     const showToast = useCustomToast()
@@ -34,7 +35,7 @@ const AddInquiry = ({isOpen, onClose}: AddInquiryProps) => {
         handleSubmit,
         reset,
         formState: {errors    , isSubmitting},
-    } = useForm<InquiryCreate>({
+    }  = useForm<InquiryCreate>({
         mode: "onBlur",
         criteriaMode: "all",
         defaultValues: {
