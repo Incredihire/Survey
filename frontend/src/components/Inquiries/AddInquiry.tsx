@@ -12,7 +12,7 @@ import {
     ModalOverlay, Textarea,
 } from "@chakra-ui/react"
 import {useMutation, useQueryClient} from "@tanstack/react-query"
-import {type SubmitHandler, useForm} from "react-hook-form"
+import {type SubmitHandler, useForm, type FieldErrors} from "react-hook-form"
 
 import {type ApiError, type InquiryCreate, InquiriesService} from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
@@ -33,7 +33,7 @@ const AddInquiry = ({isOpen, onClose}: AddInquiryProps) => {
         register,
         handleSubmit,
         reset,
-        formState: {errors    , isSubmitting},
+        formState: {errors, isSubmitting},
     }  = useForm<InquiryCreate>({
         mode: "onBlur",
         criteriaMode: "all",
@@ -41,6 +41,9 @@ const AddInquiry = ({isOpen, onClose}: AddInquiryProps) => {
             text: "",
         },
     })
+
+    // Explicitly type errors
+    const typedErrors = errors as FieldErrors<InquiryCreate>
 
     const mutation = useMutation({
         mutationFn: (data: InquiryCreate) =>
@@ -50,8 +53,8 @@ const AddInquiry = ({isOpen, onClose}: AddInquiryProps) => {
             reset()
             onClose()
         },
-        onError: (err: ApiError) => {
-            handleError(err, showToast)
+        onError: (err: unknown) => {
+            handleError(err as ApiError, showToast)
         },
         onSettled: async () => {
             await queryClient.invalidateQueries({queryKey: ["Inquiry"]})
@@ -75,7 +78,7 @@ const AddInquiry = ({isOpen, onClose}: AddInquiryProps) => {
                     <ModalHeader id="add-inquiry-show-modal">Add Inquiry</ModalHeader>
                     <ModalCloseButton/>
                     <ModalBody pb={6}>
-                        <FormControl isInvalid={!!errors.text}>
+                        <FormControl isInvalid={!!typedErrors.text}>
                             <FormLabel htmlFor="text">Inquiry Text</FormLabel>
                             <Textarea
                                 id="text"
@@ -97,8 +100,8 @@ const AddInquiry = ({isOpen, onClose}: AddInquiryProps) => {
                                 placeholder="Enter the text of your inquiry."
                             />
 
-                            {errors.text && (
-                                <FormErrorMessage>{errors.text.message}</FormErrorMessage>
+                            {typedErrors.text && (
+                                <FormErrorMessage>{typedErrors.text.message}</FormErrorMessage>
                             )}
                         </FormControl>
                     </ModalBody>
