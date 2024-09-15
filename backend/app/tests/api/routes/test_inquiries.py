@@ -18,4 +18,3 @@ def test_create_item(
     assert response.status_code == 200
     content = response.json()
     assert content["text"] == data["text"]
-
