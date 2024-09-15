@@ -33,6 +33,15 @@ export type ItemsPublic = {
   count: number
 }
 
+export interface InquiryCreate {
+  text: string;
+}
+
+export interface InquiryPublic {
+  text: string;
+  id: string;
+}
+
 export type Message = {
   message: string
 }

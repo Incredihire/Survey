@@ -19,8 +19,8 @@ import {
   type ApiError,
   type UserPublic,
   type UserUpdateMe,
-  UsersService,
 } from "../../client"
+import * as UsersService from "../../client/services/usersService"
 import useAuth from "../../hooks/useAuth"
 import useCustomToast from "../../hooks/useCustomToast"
 import { emailPattern, handleError } from "../../utils"

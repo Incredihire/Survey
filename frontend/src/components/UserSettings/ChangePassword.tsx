@@ -12,7 +12,8 @@ import {
 import { useMutation } from "@tanstack/react-query"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import { type ApiError, type UpdatePassword, UsersService } from "../../client"
+import { type ApiError, type UpdatePassword } from "../../client"
+import * as UsersService from "../../client/services/usersService"
 import useCustomToast from "../../hooks/useCustomToast"
 import { confirmPasswordRules, handleError, passwordRules } from "../../utils"
 

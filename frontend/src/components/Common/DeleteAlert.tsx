@@ -11,7 +11,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import React from "react"
 import { useForm } from "react-hook-form"
 
-import { ItemsService, UsersService } from "../../client"
+import * as ItemsService from "../../client/services/itemsService"
+import * as UsersService from "../../client/services/usersService"
 import useCustomToast from "../../hooks/useCustomToast"
 
 interface DeleteProps {
