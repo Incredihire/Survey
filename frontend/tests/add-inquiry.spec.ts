@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test';
-import {beforeEach} from "node:test";
 
 test.describe('AddInquiry Component', () => {
   test('should submit a new inquiry', async ({ page }) => {
