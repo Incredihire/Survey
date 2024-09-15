@@ -1,9 +1,11 @@
-from sqlmodel import Session
 import random
 import string
 
+from sqlmodel import Session
+
 from app import crud
 from app.models import InquiryCreate
+
 
 def test_create_inquiry(db: Session) -> None:
     text: str = ''.join(random.choice(string.printable) for _ in range(255))
