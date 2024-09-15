@@ -69,6 +69,7 @@ def create_inquiry(*, session: Session, inquiry_in: InquiryCreate) -> Inquiry:
     session.refresh(db_inquiry)
     return db_inquiry
 
+
 def get_inquiry_by_text(*, session: Session, text: str) -> Inquiry | None:
     statement = select(Inquiry).where(Inquiry.text == text)
     session_text = session.exec(statement).first()

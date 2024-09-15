@@ -10,9 +10,7 @@ router = APIRouter()
 
 
 @router.post("/", response_model=InquiryPublic)
-def create_inquiry(
-    *, session: SessionDep, inquiry_in: InquiryCreate
-) -> Any:
+def create_inquiry(*, session: SessionDep, inquiry_in: InquiryCreate) -> Any:
     """
     Create new inquiry.
     """

@@ -113,9 +113,11 @@ class NewPassword(SQLModel):
     token: str
     new_password: str = Field(min_length=8, max_length=40)
 
+
 # Shared properties
 class InquiryBase(SQLModel):
     text: str = Field(min_length=10, max_length=255)
+
 
 # Properties to receive on inquiry creation
 class InquiryCreate(InquiryBase):
@@ -131,4 +133,3 @@ class Inquiry(InquiryBase, table=True):
 # Properties to return via API, id is always required
 class InquiryPublic(InquiryBase):
     id: uuid.UUID
-
