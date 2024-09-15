@@ -33,7 +33,7 @@ const AddInquiry = ({isOpen, onClose}: AddInquiryProps) => {
         register,
         handleSubmit,
         reset,
-        formState: {errors, isSubmitting},
+        formState: {errors    , isSubmitting},
     } = useForm<InquiryCreate>({
         mode: "onBlur",
         criteriaMode: "all",

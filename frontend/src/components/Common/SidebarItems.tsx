@@ -6,16 +6,16 @@ import { FiBriefcase, FiHome, FiHelpCircle, FiSettings, FiUsers } from "react-ic
 import type { UserPublic } from "../../client"
 import {IconType} from "react-icons";
 
-type SidebarItem = {
-  icon: IconType
-  title: string
-  path: string
+interface SidebarItem {
+  icon: IconType;
+  title: string;
+  path: string;
 }
 const items: SidebarItem[] = [
-  { icon: FiHome, title: "Dashboard", path: "/" } as SidebarItem,
-  { icon: FiBriefcase, title: "Items", path: "/items" } as SidebarItem,
-  { icon: FiHelpCircle as IconType, title: "Inquiries" as string, path: "/inquiries" as string} as SidebarItem,
-  { icon: FiSettings, title: "User Settings", path: "/settings" } as SidebarItem,
+  { icon: FiHome, title: "Dashboard", path: "/" },
+  { icon: FiBriefcase, title: "Items", path: "/items" },
+  { icon: FiHelpCircle, title: "Inquiries", path: "/inquiries" },
+  { icon: FiSettings, title: "User Settings", path: "/settings" },
 ]
 
 interface SidebarItemsProps {
