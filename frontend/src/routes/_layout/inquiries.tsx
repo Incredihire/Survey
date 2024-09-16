@@ -33,6 +33,13 @@ export const Route = createFileRoute("/_layout/inquiries")({
   validateSearch: (search) => inquiriesSearchSchema.parse(search),
 });
 
+function getInquiriesQueryOptions() {
+  return {
+    queryKey: ["inquiries"],
+    queryFn: () => InquiriesService.readInquiries(),
+  };
+}
+
 function Inquiries() {
   return (
     <Container maxW="full">
@@ -48,11 +55,9 @@ function Inquiries() {
 
 function InquiriesTable() {
   const { data: inquiries, isPending } = useQuery({
-    queryKey: ["inquiries"],
-    queryFn: () => InquiriesService.readInquiries(),
+    ...getInquiriesQueryOptions(),
   });
 
-  console.log(inquiries);
   return (
     <>
       <TableContainer>
