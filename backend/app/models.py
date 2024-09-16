@@ -2,7 +2,7 @@ import uuid
 
 from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
-
+from datetime import datetime, timezone
 
 # Shared properties
 class UserBase(SQLModel):
@@ -128,6 +128,7 @@ class InquiryCreate(InquiryBase):
 class Inquiry(InquiryBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     text: str = Field(min_length=10, max_length=255, unique=True)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 # Properties to return via API, id is always required

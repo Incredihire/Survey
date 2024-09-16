@@ -28,4 +28,4 @@ openapi.json
 /blob-report/
 /playwright/.cache/
 
-.env
+**/.env
