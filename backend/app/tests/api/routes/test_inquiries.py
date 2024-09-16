@@ -1,5 +1,6 @@
 import random
 import string
+import uuid
 
 from fastapi.encoders import jsonable_encoder
 from fastapi.testclient import TestClient
@@ -60,3 +61,28 @@ def test_read_inquries(
     # Ensure the new inquiries have the correct text
     assert any(inquiry["text"] == inquiry_1["text"] for inquiry in new_inquiries)
     assert any(inquiry["text"] == inquiry_2["text"] for inquiry in new_inquiries)
+
+
+def test_read_inquiry(
+    client: TestClient, superuser_token_headers: dict[str, str], db: Session
+) -> None:
+    inquiry = create_random_inquiry(db)
+    response = client.get(
+        f"{settings.API_V1_STR}/inquiries/{inquiry.id}",
+        headers=superuser_token_headers,
+    )
+    assert response.status_code == 200
+    content = response.json()
+    assert content == jsonable_encoder(inquiry)
+
+
+def test_read_inquiry_not_found(
+    client: TestClient, superuser_token_headers: dict[str, str], db: Session
+) -> None:
+    response = client.get(
+        f"{settings.API_V1_STR}/inquiries/{uuid.uuid4()}",
+        headers=superuser_token_headers,
+    )
+    assert response.status_code == 404
+    content = response.json()
+    assert content["detail"] == "Inquiry not found"
