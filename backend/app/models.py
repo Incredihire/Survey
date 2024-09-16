@@ -135,6 +135,7 @@ class Inquiry(InquiryBase, table=True):
 # Properties to return via API, id is always required
 class InquiryPublic(InquiryBase):
     id: uuid.UUID
+    text: str
     created_at: datetime
 
 
