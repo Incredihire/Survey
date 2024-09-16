@@ -1,6 +1,7 @@
-from sqlmodel import Session
 import random
 import string
+
+from sqlmodel import Session
 
 from app import crud
 from app.models import Inquiry, InquiryCreate

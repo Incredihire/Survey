@@ -77,7 +77,7 @@ def test_read_inquiry(
 
 
 def test_read_inquiry_not_found(
-    client: TestClient, superuser_token_headers: dict[str, str], db: Session
+    client: TestClient, superuser_token_headers: dict[str, str]
 ) -> None:
     response = client.get(
         f"{settings.API_V1_STR}/inquiries/{uuid.uuid4()}",

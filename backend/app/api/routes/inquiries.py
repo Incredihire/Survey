@@ -1,11 +1,11 @@
 import uuid
+
 from fastapi import APIRouter, HTTPException
+from sqlmodel import func, select
 
 from app import crud
 from app.api.deps import SessionDep
 from app.models import Inquiry, InquiryCreate, InquiryPublic, InquriesPublic
-
-from sqlmodel import select, func
 
 router = APIRouter()
 

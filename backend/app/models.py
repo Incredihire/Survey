@@ -1,8 +1,9 @@
 import uuid
+from datetime import datetime, timezone
 
 from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
-from datetime import datetime, timezone
+
 
 # Shared properties
 class UserBase(SQLModel):
