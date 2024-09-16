@@ -1,7 +1,7 @@
-from fastapi.encoders import jsonable_encoder
 import random
 import string
 
+from fastapi.encoders import jsonable_encoder
 from sqlmodel import Session
 
 from app import crud
