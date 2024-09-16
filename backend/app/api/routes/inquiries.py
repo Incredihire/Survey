@@ -53,4 +53,4 @@ def read_inquiry(session: SessionDep, id: uuid.UUID) -> InquiryPublic:
     inquiry = session.get(Inquiry, id)
     if not inquiry:
         raise HTTPException(status_code=404, detail="Inquiry not found")
-    return inquiry
+    return InquiryPublic(data=inquiry)
