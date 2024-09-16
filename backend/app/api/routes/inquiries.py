@@ -2,7 +2,9 @@ from fastapi import APIRouter, HTTPException
 
 from app import crud
 from app.api.deps import SessionDep
-from app.models import Inquiry, InquiryCreate, InquiryPublic
+from app.models import Inquiry, InquiryCreate, InquiryPublic, InquriesPublic
+
+from sqlmodel import select, func
 
 router = APIRouter()
 
@@ -24,3 +26,19 @@ def create_inquiry(*, session: SessionDep, inquiry_in: InquiryCreate) -> Inquiry
     session.commit()
     session.refresh(inquiry)
     return inquiry
+
+
+@router.get("/", response_model=InquriesPublic)
+def read_inquries(
+    session: SessionDep, skip: int = 0, limit: int = 100
+) -> InquriesPublic:
+    """
+    Retrieve inquries.
+    """
+    count_statement = select(func.count()).select_from(Inquiry)
+    count = session.exec(count_statement).one()
+
+    statement = select(Inquiry).offset(skip).limit(limit)
+    inquries = session.exec(statement).all()
+
+    return InquriesPublic(data=inquries, count=count)
