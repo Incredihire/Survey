@@ -61,7 +61,7 @@ const AddInquiry = ({isOpen, onClose}: AddInquiryProps) => {
             handleError(err, showToast)
         },
         onSettled: async () => {
-            await queryClient.invalidateQueries({queryKey: ["Inquiry"]})
+            await queryClient.invalidateQueries({ queryKey: ["inquiries"] });
         },
     })
 
