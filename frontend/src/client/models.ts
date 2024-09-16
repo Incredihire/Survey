@@ -40,6 +40,12 @@ export interface InquiryCreate {
 export interface InquiryPublic {
   text: string;
   id: string;
+  created_at: Date;
+}
+
+export interface InquiriesPublic {
+  data: Array<InquiryPublic>;
+  count: number;
 }
 
 export type Message = {
