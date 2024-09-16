@@ -134,3 +134,9 @@ class Inquiry(InquiryBase, table=True):
 # Properties to return via API, id is always required
 class InquiryPublic(InquiryBase):
     id: uuid.UUID
+    created_at: datetime
+
+
+class InquriesPublic(SQLModel):
+    data: list[InquiryPublic]
+    count: int
