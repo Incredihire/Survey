@@ -58,6 +58,13 @@ function InquiriesTable() {
     ...getInquiriesQueryOptions(),
   });
 
+
+  const sortedInquiries = inquiries?.data.sort((a, b) => {
+    const dateA = new Date(a.created_at).getTime();
+    const dateB = new Date(b.created_at).getTime();
+    return dateB - dateA; // Newest to oldest
+  });
+
   return (
     <>
       <TableContainer>
@@ -81,7 +88,7 @@ function InquiriesTable() {
             </Tbody>
           ) : (
             <Tbody>
-              {inquiries?.data.map((inquiry) => (
+              {sortedInquiries?.map((inquiry) => (
                 <Tr key={inquiry.id} onClick={() => console.log(inquiry)}>
                   <Td>{inquiry.id}</Td>
                   <Td>{inquiry.text}</Td>
