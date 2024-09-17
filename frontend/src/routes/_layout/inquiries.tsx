@@ -22,7 +22,9 @@ import Navbar from "../../components/Common/Navbar";
 import AddInquiry from "../../components/Inquiries/AddInquiry";
 
 // Dayjs Configurations
+// eslint-disable-next-line
 dayjs.extend(utc);
+// eslint-disable-next-line
 dayjs.extend(timezone);
 const userTimezone = dayjs.tz.guess();
 
@@ -52,6 +54,7 @@ function getInquiriesQueryOptions() {
 // ex. Sep 17, 2024 14:13 PM
 function formatDate(date: Date): string {
   try {
+    // eslint-disable-next-line
     return dayjs.utc(date).tz(userTimezone).format("MMM DD, YYYY HH:mm A");
   } catch (error) {
     console.error("Error formatting date:", error);
