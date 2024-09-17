@@ -89,7 +89,12 @@ function InquiriesTable() {
           ) : (
             <Tbody>
               {sortedInquiries?.map((inquiry) => (
-                <Tr key={inquiry.id} onClick={() => console.log(inquiry)}>
+                <Tr
+                  key={inquiry.id}
+                  onClick={() => {
+                    console.log(inquiry);
+                  }}
+                >
                   <Td>{inquiry.id}</Td>
                   <Td>{inquiry.text}</Td>
                   <Td>{new Date(inquiry.created_at).toISOString()}</Td>

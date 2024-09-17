@@ -29,9 +29,9 @@ export type ItemUpdate = {
 }
 
 export type ItemsPublic = {
-  data: Array<ItemPublic>
-  count: number
-}
+  data: InquiriesPublic[];
+  count: number;
+};
 
 export interface InquiryCreate {
   text: string;
