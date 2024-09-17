@@ -17,7 +17,6 @@ import { z } from "zod";
 import * as InquiriesService from "../../client/services/inquiriesService";
 import Navbar from "../../components/Common/Navbar";
 import AddInquiry from "../../components/Inquiries/AddInquiry";
-import { InquiriesPublic } from "../../client";
 
 // Already typed by zod library https://zod.dev/
 // eslint-disable-next-line
