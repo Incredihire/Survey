@@ -44,7 +44,7 @@ export interface InquiryPublic {
 }
 
 export interface InquiriesPublic {
-  data: Array<InquiryPublic>;
+  data: InquiriesPublic[];
   count: number;
 }
 
