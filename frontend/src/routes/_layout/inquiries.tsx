@@ -57,7 +57,6 @@ function InquiriesTable() {
         <Table>
           <Thead>
             <Tr>
-              <Th>ID</Th>
               <Th>Text</Th>
               <Th>Created At</Th>
             </Tr>
@@ -81,7 +80,6 @@ function InquiriesTable() {
                     console.log(inquiry);
                   }}
                 >
-                  <Td>{inquiry.id}</Td>
                   <Td>{inquiry.text}</Td>
                   <Td>{new Date(inquiry.created_at).toISOString()}</Td>
                 </Tr>
