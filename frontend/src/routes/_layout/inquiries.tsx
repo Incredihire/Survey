@@ -22,11 +22,12 @@ import Navbar from "../../components/Common/Navbar";
 import AddInquiry from "../../components/Inquiries/AddInquiry";
 
 // Dayjs Configurations
-// eslint-disable
+// eslint-disable-next-line
 dayjs.extend(utc);
+// eslint-disable-next-line
 dayjs.extend(timezone);
+// eslint-disable-next-line
 const userTimezone = dayjs.tz.guess();
-// eslint-enable
 
 // Already typed by zod library https://zod.dev/
 // eslint-disable-next-line
