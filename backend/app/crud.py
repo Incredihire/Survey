@@ -86,7 +86,8 @@ def get_inquiries(
     *, session: Session, skip: int = 0, limit: int = 100
 ) -> list[Inquiry]:
     statement = select(Inquiry).offset(skip).limit(limit)
-    return session.exec(statement).all()
+    result = session.exec(statement).all()
+    return list(result)
 
 
 def count_inquiries(*, session: Session) -> int:
