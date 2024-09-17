@@ -13,10 +13,18 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 
 import * as InquiriesService from "../../client/services/inquiriesService";
 import Navbar from "../../components/Common/Navbar";
 import AddInquiry from "../../components/Inquiries/AddInquiry";
+
+// Dayjs Configurations
+dayjs.extend(utc);
+dayjs.extend(timezone);
+const userTimezone = dayjs.tz.guess();
 
 // Already typed by zod library https://zod.dev/
 // eslint-disable-next-line
@@ -38,6 +46,12 @@ function getInquiriesQueryOptions() {
     queryKey: ["inquiries"],
     queryFn: () => InquiriesService.readInquiries(),
   };
+}
+
+// Format date to user's timezone
+// ex. Sep 17, 2024 14:13 PM
+function formatDate(date: Date) {
+  return dayjs.utc(date).tz(userTimezone).format("MMM DD, YYYY HH:mm A");
 }
 
 function InquiriesTable() {
@@ -81,7 +95,7 @@ function InquiriesTable() {
                   }}
                 >
                   <Td>{inquiry.text}</Td>
-                  <Td>{new Date(inquiry.created_at).toISOString()}</Td>
+                  <Td>{formatDate(inquiry.created_at)}</Td>
                 </Tr>
               ))}
             </Tbody>
