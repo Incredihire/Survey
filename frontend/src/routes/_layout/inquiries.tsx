@@ -50,8 +50,13 @@ function getInquiriesQueryOptions() {
 
 // Format date to user's timezone
 // ex. Sep 17, 2024 14:13 PM
-function formatDate(date: Date) {
-  return dayjs.utc(date).tz(userTimezone).format("MMM DD, YYYY HH:mm A");
+function formatDate(date: Date): string {
+  try {
+    return dayjs.utc(date).tz(userTimezone).format("MMM DD, YYYY HH:mm A");
+  } catch (error) {
+    console.error("Error formatting date:", error);
+    return new Date(date).toISOString();
+  }
 }
 
 function InquiriesTable() {
