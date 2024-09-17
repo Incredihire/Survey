@@ -45,12 +45,12 @@ def read_inquries(
     return InquriesPublic(data=inquries, count=count)
 
 
-@router.get("/{id}", response_model=InquiryPublic)
-def read_inquiry(session: SessionDep, id: uuid.UUID) -> Inquiry:
+@router.get("/{inquiry_id}", response_model=InquiryPublic)
+def read_inquiry(session: SessionDep, inquiry_id: uuid.UUID) -> Inquiry:
     """
     Get inquiry by ID
     """
-    inquiry = session.get(Inquiry, id)
+    inquiry = session.get(Inquiry, inquiry_id)
     if not inquiry:
         raise HTTPException(status_code=404, detail="Inquiry not found")
     return inquiry
