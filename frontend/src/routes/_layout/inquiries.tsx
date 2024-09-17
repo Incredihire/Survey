@@ -56,7 +56,7 @@ function getInquiriesQueryOptions() {
 function formatDate(date: Date): string {
   try {
     // eslint-disable-next-line
-    return dayjs.utc(date).tz(userTimezone).format("MMM DD, YYYY HH:mm A");
+    return dayjs.utc(date).tz(userTimezone).format("MMM DD, YYYY hh:mm A");
   } catch (error) {
     console.error("Error formatting date:", error);
     return new Date(date).toISOString();
