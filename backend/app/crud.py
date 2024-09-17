@@ -76,7 +76,7 @@ def get_inquiry_by_text(*, session: Session, text: str) -> Inquiry | None:
     return session_text
 
 
-def get_inquiry_by_id(*, session: Session, inquiry_id: str) -> Inquiry | None:
+def get_inquiry_by_id(*, session: Session, inquiry_id: uuid) -> Inquiry | None:
     statement = select(Inquiry).where(Inquiry.id == inquiry_id)
     session_text = session.exec(statement).first()
     return session_text
