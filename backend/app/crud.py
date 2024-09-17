@@ -1,7 +1,7 @@
 import uuid
 from typing import Any
 
-from sqlmodel import Session, select
+from sqlmodel import Session, func, select
 
 from app.core.security import get_password_hash, verify_password
 from app.models import (
@@ -74,3 +74,21 @@ def get_inquiry_by_text(*, session: Session, text: str) -> Inquiry | None:
     statement = select(Inquiry).where(Inquiry.text == text)
     session_text = session.exec(statement).first()
     return session_text
+
+
+def get_inquiry_by_id(*, session: Session, inquiry_id: str) -> Inquiry | None:
+    statement = select(Inquiry).where(Inquiry.id == inquiry_id)
+    session_text = session.exec(statement).first()
+    return session_text
+
+
+def get_inquiries(
+    *, session: Session, skip: int = 0, limit: int = 100
+) -> list[Inquiry]:
+    statement = select(Inquiry).offset(skip).limit(limit)
+    return session.exec(statement).all()
+
+
+def count_inquiries(*, session: Session) -> int:
+    statement = select(func.count()).select_from(Inquiry)
+    return session.exec(statement).one()

@@ -1,7 +1,6 @@
 import uuid
 
 from fastapi import APIRouter, HTTPException
-from sqlmodel import func, select
 
 from app import crud
 from app.api.deps import SessionDep
@@ -36,13 +35,10 @@ def read_inquries(
     """
     Retrieve inquries.
     """
-    count_statement = select(func.count()).select_from(Inquiry)
-    count = session.exec(count_statement).one()
+    count = crud.count_inquiries(session=session)
+    inquiries = crud.get_inquiries(session=session, skip=skip, limit=limit)
 
-    statement = select(Inquiry).offset(skip).limit(limit)
-    inquries = session.exec(statement).all()
-
-    return InquriesPublic(data=inquries, count=count)
+    return InquriesPublic(data=inquiries, count=count)
 
 
 @router.get("/{inquiry_id}", response_model=InquiryPublic)
@@ -50,7 +46,7 @@ def read_inquiry(session: SessionDep, inquiry_id: uuid.UUID) -> Inquiry:
     """
     Get inquiry by ID
     """
-    inquiry = session.get(Inquiry, inquiry_id)
+    inquiry = crud.get_inquiry_by_id(session=session, inquiry_id=inquiry_id)
     if not inquiry:
         raise HTTPException(status_code=404, detail="Inquiry not found")
     return inquiry
