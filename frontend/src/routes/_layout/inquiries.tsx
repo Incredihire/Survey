@@ -17,6 +17,7 @@ import { z } from "zod";
 import * as InquiriesService from "../../client/services/inquiriesService";
 import Navbar from "../../components/Common/Navbar";
 import AddInquiry from "../../components/Inquiries/AddInquiry";
+import { InquiriesPublic } from "../../client";
 
 // Already typed by zod library https://zod.dev/
 // eslint-disable-next-line
@@ -40,24 +41,10 @@ function getInquiriesQueryOptions() {
   };
 }
 
-function Inquiries() {
-  return (
-    <Container maxW="full">
-      <Heading size="lg" textAlign={{ base: "center", md: "left" }} pt={12}>
-        Inquiries Management
-      </Heading>
-
-      <Navbar type={"Inquiry"} addModalAs={AddInquiry} />
-      <InquiriesTable />
-    </Container>
-  );
-}
-
 function InquiriesTable() {
   const { data: inquiries, isPending } = useQuery({
     ...getInquiriesQueryOptions(),
   });
-
 
   const sortedInquiries = inquiries?.data.sort((a, b) => {
     const dateA = new Date(a.created_at).getTime();
@@ -105,5 +92,18 @@ function InquiriesTable() {
         </Table>
       </TableContainer>
     </>
+  );
+}
+
+function Inquiries() {
+  return (
+    <Container maxW="full">
+      <Heading size="lg" textAlign={{ base: "center", md: "left" }} pt={12}>
+        Inquiries Management
+      </Heading>
+
+      <Navbar type={"Inquiry"} addModalAs={AddInquiry} />
+      <InquiriesTable />
+    </Container>
   );
 }

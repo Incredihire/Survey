@@ -29,7 +29,7 @@ export type ItemUpdate = {
 }
 
 export type ItemsPublic = {
-  data: InquiriesPublic[];
+  data: ItemPublic[];
   count: number;
 };
 
@@ -44,7 +44,7 @@ export interface InquiryPublic {
 }
 
 export interface InquiriesPublic {
-  data: InquiriesPublic[];
+  data: InquiryPublic[];
   count: number;
 }
 
