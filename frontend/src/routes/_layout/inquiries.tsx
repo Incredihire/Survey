@@ -69,7 +69,7 @@ function InquiriesTable() {
 
   // Sort inquries from Newest to oldest
   const sortedInquiries = inquiries?.data.sort((a, b) => {
-    return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
   });
 
   return (
