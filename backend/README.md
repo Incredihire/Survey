@@ -12,6 +12,13 @@
 cp .env.example .env
 ```
 
+* Create an `.env` file in the frontend folder as well
+```bash
+cd frontend
+cp .env.example .env
+```
+
+
 * Start the stack with Docker Compose:
 
 ```bash
