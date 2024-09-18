@@ -1,8 +1,10 @@
+import uuid
+
 from fastapi import APIRouter, HTTPException
 
-from app import crud
+import app.services.inquiries as inquiries_service
 from app.api.deps import SessionDep
-from app.models import Inquiry, InquiryCreate, InquiryPublic
+from app.models import Inquiry, InquiryCreate, InquiryPublic, InquriesPublic
 
 router = APIRouter()
 
@@ -12,7 +14,9 @@ def create_inquiry(*, session: SessionDep, inquiry_in: InquiryCreate) -> Inquiry
     """
     Create new inquiry.
     """
-    inquiry = crud.get_inquiry_by_text(session=session, text=inquiry_in.text)
+    inquiry = inquiries_service.get_inquiry_by_text(
+        session=session, text=inquiry_in.text
+    )
     if inquiry:
         raise HTTPException(
             status_code=400,
@@ -23,4 +27,29 @@ def create_inquiry(*, session: SessionDep, inquiry_in: InquiryCreate) -> Inquiry
     session.add(inquiry)
     session.commit()
     session.refresh(inquiry)
+    return inquiry
+
+
+@router.get("/", response_model=InquriesPublic)
+def get_inquries(
+    session: SessionDep, skip: int = 0, limit: int = 100
+) -> InquriesPublic:
+    """
+    Retrieve inquries.
+    """
+    count = inquiries_service.count_inquiries(session=session)
+    inquiries = inquiries_service.get_inquiries(session=session, skip=skip, limit=limit)
+    return InquriesPublic(data=inquiries, count=count)
+
+
+@router.get("/{inquiry_id}", response_model=InquiryPublic)
+def read_inquiry(session: SessionDep, inquiry_id: uuid.UUID) -> Inquiry:
+    """
+    Get inquiry by ID
+    """
+    inquiry = inquiries_service.get_inquiry_by_id(
+        session=session, inquiry_id=inquiry_id
+    )
+    if not inquiry:
+        raise HTTPException(status_code=404, detail="Inquiry not found")
     return inquiry
