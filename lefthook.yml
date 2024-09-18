@@ -1,0 +1,10 @@
+pre-commit:
+  # parallel: true
+  commands:
+    frontend-check-biome:
+      root: "frontend/"
+      glob: "*.{js,ts,jsx,tsx}"
+      run: npm run lint {staged_files}
+      stage_fixed: true
+    backend-check:
+    # backend linting and other
