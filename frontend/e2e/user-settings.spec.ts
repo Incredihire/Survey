@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test"
 import { firstSuperuser, firstSuperuserPassword } from "./config.ts"
-import { randomEmail, randomPassword } from "./utils/random"
-import { logInUser, logOutUser, signUpNewUser } from "./utils/user"
+import { randomEmail, randomPassword } from "./utils/random.ts"
+import { logInUser, logOutUser, signUpNewUser } from "./utils/user.ts"
 
 const tabs = ["My profile", "Password", "Appearance"]
 
