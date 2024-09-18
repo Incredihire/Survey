@@ -55,7 +55,6 @@ function getInquiriesQueryOptions() {
 // ex. Sep 17, 2024 14:13 PM
 function formatDate(date: Date): string {
   try {
-    // eslint-disable-next-line
     return dayjs.utc(date).tz(userTimezone).format("MMM DD, YYYY hh:mm A");
   } catch (error) {
     console.error("Error formatting date:", error);
