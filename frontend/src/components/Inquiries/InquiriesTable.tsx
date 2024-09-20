@@ -45,7 +45,7 @@ function formatDate(date: string): string {
   }
 }
 
-function InquiriesTable() {
+const InquiriesTable = () => {
   const { data: inquiries, isPending } = useQuery({
     ...getInquiriesQueryOptions(),
   })
