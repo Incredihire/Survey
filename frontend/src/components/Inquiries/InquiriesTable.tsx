@@ -36,7 +36,13 @@ function formatDate(date: string): string {
     if (typeof date !== "string") {
       throw new Error("Invalid date type. Expected a string.")
     }
-    return dayjs.utc(date).tz(userTimezone).format("MMM DD, YYYY hh:mm A")
+
+    const parsedDate = dayjs.utc(date)
+    if (!parsedDate.isValid()) {
+      throw new Error("Invalid date format.")
+    }
+
+    return parsedDate.tz(userTimezone).format("MMM DD, YYYY hh:mm A")
   } catch (error) {
     console.error("Error formatting date:", error)
     return ""
