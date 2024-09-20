@@ -25,8 +25,18 @@ interface AddInquiryProps {
     onClose: () => void
 }
 
-const MIN_LENGTH = 10;
-const MAX_LENGTH = 255;
+export const MIN_INQUIRY_LENGTH = 10;
+export const MAX_INQUIRY_LENGTH = 256;
+
+function isValidUnicode(str: string): boolean {
+    let retval: boolean;
+    try {
+        retval = str === decodeURIComponent(encodeURIComponent(str));
+    } catch {
+        retval = false
+    }
+    return retval;
+}
 
 const AddInquiry = ({isOpen, onClose}: AddInquiryProps) => {
     const queryClient = useQueryClient()
@@ -61,7 +71,7 @@ const AddInquiry = ({isOpen, onClose}: AddInquiryProps) => {
             handleError(err, showToast)
         },
         onSettled: async () => {
-            await queryClient.invalidateQueries({ queryKey: ["inquiries"] });
+            await queryClient.invalidateQueries({queryKey: ["inquiries"]});
         },
     })
 
@@ -89,40 +99,38 @@ const AddInquiry = ({isOpen, onClose}: AddInquiryProps) => {
                             <FormLabel htmlFor="text">Inquiry Text</FormLabel>
                             <Textarea
                                 id="text"
+                                data-testid="add-inquiry-text"
                                 { /* eslint-disable-next-line  */
                                     ...register("text", {
-                                    required: "Inquiry text is required.",
-                                    minLength: {
-                                        value: MIN_LENGTH,
-                                        message: `Inquiry must be at least ${MIN_LENGTH} characters.`
-                                    },
-                                    maxLength: {
-                                        value: MAX_LENGTH,
-                                        message: `Inquiry can not be greater than ${MAX_LENGTH} characters.`
-                                    },
-                                    pattern: {
-                                        value: /^[A-Z]/,
-                                        message: "Inquiry must start with a capital letter."
-                                    },
-                                })}
+                                        required: "Inquiry text is required.",
+                                        minLength: {
+                                            value: MIN_INQUIRY_LENGTH,
+                                            message: `Inquiry must be at least ${MIN_INQUIRY_LENGTH} characters.`
+                                        },
+                                        maxLength: {
+                                            value: MAX_INQUIRY_LENGTH,
+                                            message: `Inquiry can not be greater than ${MAX_INQUIRY_LENGTH} characters.`
+                                        },
+                                        validate: (value: string) => isValidUnicode(value) || "Inquiry must be a valid unicode string.",
+                                    })}
                                 placeholder="Enter the text of your inquiry."
                             />
 
 
                             {
-                            // errors is already typed by react-hook-form https://react-hook-form.com/docs/useform#errors */
-                            /* eslint-disable */
-                            errors.text && (
-                                <FormErrorMessage>{errors.text.message}</FormErrorMessage>
-                            )
-                            /* eslint-enable */
+                                // errors is already typed by react-hook-form https://react-hook-form.com/docs/useform#errors */
+                                /* eslint-disable */
+                                errors.text && (
+                                    <FormErrorMessage>{errors.text.message}</FormErrorMessage>
+                                )
+                                /* eslint-enable */
                             }
                         </FormControl>
                     </ModalBody>
 
                     <ModalFooter gap={3}>
                         {/* eslint-disable-next-line */}
-                        <Button variant="primary" type="submit" isLoading={isSubmitting}>
+                        <Button isLoading={isSubmitting} variant="primary" type="submit" data-testid="submit-add-inquiry">
                             Save
                         </Button>
                         <Button onClick={onClose}>Cancel</Button>

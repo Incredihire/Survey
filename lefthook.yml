@@ -1,0 +1,15 @@
+pre-commit:
+  parallel: true
+  commands:
+    frontend-check-biome:
+      root: "frontend/"
+      glob: "*.{js,ts,jsx,tsx}"
+      run: npm run lint {staged_files}
+      stage_fixed: true
+    backend-check:
+      root: "backend/"  
+      glob: "*.py"
+      run: |
+        poetry run ruff check --select I --fix {staged_files}
+        poetry run ruff format {staged_files}
+      stage_fixed: true

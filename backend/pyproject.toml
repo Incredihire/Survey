@@ -7,7 +7,7 @@ authors = ["Admin <admin@example.com>"]
 [tool.poetry.dependencies]
 python = "^3.10"
 uvicorn = {extras = ["standard"], version = "^0.24.0.post1"}
-fastapi = "^0.114.0"
+fastapi = "^0.114.2"
 python-multipart = "^0.0.9"
 email-validator = "^2.1.0.post1"
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
@@ -28,7 +28,7 @@ sentry-sdk = {extras = ["fastapi"], version = "^2.14.0"}
 pyjwt = "^2.8.0"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^7.4.3"
+pytest = "^8.3.3"
 mypy = "^1.8.0"
 ruff = "^0.6.5"
 pre-commit = "^3.6.2"

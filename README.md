@@ -1,239 +1,158 @@
-# Full Stack FastAPI Template
+# Survey Web Application
 
-<a href="https://github.com/fastapi/full-stack-fastapi-template/actions?query=workflow%3ATest" target="_blank"><img src="https://github.com/fastapi/full-stack-fastapi-template/workflows/Test/badge.svg" alt="Test"></a>
-<a href="https://coverage-badge.samuelcolvin.workers.dev/redirect/fastapi/full-stack-fastapi-template" target="_blank"><img src="https://coverage-badge.samuelcolvin.workers.dev/fastapi/full-stack-fastapi-template.svg" alt="Coverage"></a>
+This project was created using [full-stack-fastapi-template](https://github.com/fastapi/full-stack-fastapi-template).
 
-## Technology Stack and Features
+## Project Setup
 
-- ⚡ [**FastAPI**](https://fastapi.tiangolo.com) for the Python backend API.
-    - 🧰 [SQLModel](https://sqlmodel.tiangolo.com) for the Python SQL database interactions (ORM).
-    - 🔍 [Pydantic](https://docs.pydantic.dev), used by FastAPI, for the data validation and settings management.
-    - 💾 [PostgreSQL](https://www.postgresql.org) as the SQL database.
-- 🚀 [React](https://react.dev) for the frontend.
-    - 💃 Using TypeScript, hooks, Vite, and other parts of a modern frontend stack.
-    - 🎨 [Chakra UI](https://chakra-ui.com) for the frontend components.
-    - 🤖 An automatically generated frontend client.
-    - 🧪 [Playwright](https://playwright.dev) for End-to-End testing.
-    - 🦇 Dark mode support.
-- 🐋 [Docker Compose](https://www.docker.com) for development and production.
-- 🔒 Secure password hashing by default.
-- 🔑 JWT (JSON Web Token) authentication.
-- 📫 Email based password recovery.
-- ✅ Tests with [Pytest](https://pytest.org).
-- 📞 [Traefik](https://traefik.io) as a reverse proxy / load balancer.
-- 🚢 Deployment instructions using Docker Compose, including how to set up a frontend Traefik proxy to handle automatic HTTPS certificates.
-- 🏭 CI (continuous integration) and CD (continuous deployment) based on GitHub Actions.
+### Requirments
+* [Docker](https://docs.docker.com/engine/install/)
+* [Poetry](https://python-poetry.org/docs/)
+* [Node](https://nodejs.org/en/download/package-manager)
+* [Python](https://www.python.org/downloads/?ref=blog.latitude.so)
 
-### Dashboard Login
+### Environment Variables
 
-[![API docs](img/login.png)](https://github.com/fastapi/full-stack-fastapi-template)
+Begin by making a copy of the `.env.example` file and renaming it to `.env`.
 
-### Dashboard - Admin
-
-[![API docs](img/dashboard.png)](https://github.com/fastapi/full-stack-fastapi-template)
-
-### Dashboard - Create User
-
-[![API docs](img/dashboard-create.png)](https://github.com/fastapi/full-stack-fastapi-template)
-
-### Dashboard - Items
-
-[![API docs](img/dashboard-items.png)](https://github.com/fastapi/full-stack-fastapi-template)
-
-### Dashboard - User Settings
-
-[![API docs](img/dashboard-user-settings.png)](https://github.com/fastapi/full-stack-fastapi-template)
-
-### Dashboard - Dark Mode
-
-[![API docs](img/dashboard-dark.png)](https://github.com/fastapi/full-stack-fastapi-template)
-
-### Interactive API Documentation
-
-[![API docs](img/docs.png)](https://github.com/fastapi/full-stack-fastapi-template)
-
-## How To Use It
-
-You can **just fork or clone** this repository and use it as is.
-
-✨ It just works. ✨
-
-### How to Use a Private Repository
-
-If you want to have a private repository, GitHub won't allow you to simply fork it as it doesn't allow changing the visibility of forks.
-
-But you can do the following:
-
-- Create a new GitHub repo, for example `my-full-stack`.
-- Clone this repository manually, set the name with the name of the project you want to use, for example `my-full-stack`:
-
-```bash
-git clone git@github.com:fastapi/full-stack-fastapi-template.git my-full-stack
+You'll find two `.env.example` files in our project: one from root and one from frontend directory. Go through these directories and run the following to create a copy of `.env.exmaple` as `.env` file:
+```
+cp .env.example .env
 ```
 
-- Enter into the new directory:
+The `env` file contains the configuration variables necessary for the project. You can customize the values of these variables accordingly.
 
-```bash
-cd my-full-stack
+> Hint: For development, you should set both `POSTGRES_USER` and`POSTGRES_PASSWORD` as `postgres`.
+
+
+### Install Packages
+
+Run the following from backend directory:
+```
+poetry install
 ```
 
-- Set the new origin to your new repository, copy it from the GitHub interface, for example:
-
-```bash
-git remote set-url origin git@github.com:octocat/my-full-stack.git
+Run the following from frontend directory:
+```
+npm install
 ```
 
-- Add this repo as another "remote" to allow you to get updates later:
+## Local Development 
 
-```bash
-git remote add upstream git@github.com:fastapi/full-stack-fastapi-template.git
+### Development Setup
+
+Start by running docker container. Run the following from the project's root directory:
+```
+docker compose up -d
 ```
 
-- Push the code to your new repository:
-
-```bash
-git push -u origin master
+Once the container is up and running, you should have following images running:
+```
+IMAGE                    NAMES
+survey_backend:latest    survey-backend-1
+adminer                  survey-adminer-1
+schickling/mailcatcher   survey-mailcatcher-1
+survey_frontend:latest   survey-frontend-1
+postgres:12              survey-db-1
+traefik:3.0              survey-proxy-1
 ```
 
-### Update From the Original Template
+You can verify by opening up Docker Desktop or running the following in terminal:
+```
+docker ps
+```
+> Hint: If you are on Windows and your backend image doesn't run and you see /app/prestart.sh: not found error, you should change your `prestart.sh` to use `LF` line endings.
 
-After cloning the repository, and after doing changes, you might want to get the latest changes from this original template.
+> Note: You don't actually need all of these images running during development. Only `survey_backend`, `adminer` and `postgres` images are neccesary.
 
-- Make sure you added the original repository as a remote, you can check it with:
+These are URLs hosted by docker container:
+* Frontend: http://localhost
+* Backend: http://localhost/api/
+* Automatic Interactive Docs (Swagger UI): http://localhost/docs
+* Interactive Database Manager (Adminer): http://localhost:8080
+* Traefik UI: http://localhost:8090
 
-```bash
-git remote -v
+### Frontend Development
 
-origin    git@github.com:octocat/my-full-stack.git (fetch)
-origin    git@github.com:octocat/my-full-stack.git (push)
-upstream    git@github.com:fastapi/full-stack-fastapi-template.git (fetch)
-upstream    git@github.com:fastapi/full-stack-fastapi-template.git (push)
+Our docker container doesn't support live-update for frontend. So, you should start a local server to see the changes you make by running the following from frontend directory:
+```
+npm run dev
 ```
 
-- Pull the latest changes without merging:
+This will start a frontend server on `localhost:5173`. Any changes made to frontend will be visible here.
 
-```bash
-git pull --no-commit upstream master
+> Note: Frontend will make all API requests to base url specified as `VITE_API_URL` in frontend's `.env` file.
+
+### Backend Development
+
+When the docker container is up and running, any changes you make to the backend will auto-update.
+
+Open up [Adminer](http://localhost:8080) to see interactive database manager.
+
+Open up [Swagger](http://localhost/docs) to see interactive API.
+
+### VS Code Debugging
+
+To debug frontend, you simply open the **Run and Debug** panel and select **Debug Frontend**.
+
+To debug backend, start by configuring Poetry to create virtual environment within the project folder.
+
+Go to backend directory:
+```
+cd backend
 ```
 
-This will download the latest changes from this template without committing them, that way you can check everything is right before committing.
+Check installed poetry environment by running
+```
+poetry env info
+```
+This will list path to the virtual environment created by Poetry:
+```
+➜  backend git:(vscode-debug) ✗ poetry env info
 
-- If there are conflicts, solve them in your editor.
+Virtualenv
+Python:         3.12.5
+Implementation: CPython
+Path:           /home/ilhanbae/.cache/pypoetry/virtualenvs/app-6zZbMuyK-py3.12
+Executable:     /home/ilhanbae/.cache/pypoetry/virtualenvs/app-6zZbMuyK-py3.12/bin/python
+Valid:          True
 
-- Once you are done, commit the changes:
-
-```bash
-git merge --continue
+Base
+Platform:   linux
+OS:         posix
+Python:     3.12.5
+Path:       /home/linuxbrew/.linuxbrew/Cellar/python@3.12/3.12.5
+Executable: /home/linuxbrew/.linuxbrew/Cellar/python@3.12/3.12.5/bin/python3.12
 ```
 
-### Configure
+Now this virtual environment needs to be removed, because the path to this folder vary from machine and we need debugger to access these virtual environment in more consistent way. 
 
-You can then update configs in the `.env` files to customize your configurations.
 
-Before deploying it, make sure you change at least the values for:
+Remove the virtual env by running:
+> Note: If you don't see any path listed under Virtualenv, you can skip this step.
+```
+poetry env remove app-6zZbMuyK-py3.12
+``` 
 
-- `SECRET_KEY`
-- `FIRST_SUPERUSER_PASSWORD`
-- `POSTGRES_PASSWORD`
+Configure poetry to create virtual environment within the project folder by running:
 
-You can (and should) pass these as environment variables from secrets.
-
-Read the [deployment.md](./deployment.md) docs for more details.
-
-### Generate Secret Keys
-
-Some environment variables in the `.env` file have a default value of `changethis`.
-
-You have to change them with a secret key, to generate secret keys you can run the following command:
-
-```bash
-python -c "import secrets; print(secrets.token_urlsafe(32))"
+```
+poetry config virtualenvs.in-project true
 ```
 
-Copy the content and use that as password / secret key. And run that again to generate another secure key.
-
-## How To Use It - Alternative With Copier
-
-This repository also supports generating a new project using [Copier](https://copier.readthedocs.io).
-
-It will copy all the files, ask you configuration questions, and update the `.env` files with your answers.
-
-### Install Copier
-
-You can install Copier with:
-
-```bash
-pip install copier
+Re-install python packages using:
+```
+poetry install
 ```
 
-Or better, if you have [`pipx`](https://pipx.pypa.io/), you can run it with:
-
-```bash
-pipx install copier
+This will create `.venv` folder inside backend directory. You can also verify the virtual environment setup with 
+```
+poetry env info
 ```
 
-**Note**: If you have `pipx`, installing copier is optional, you could run it directly.
+One this setup is complete, open the **Run and Debug** panel in Visual Studio Code and select **Debug Backend**.
 
-### Generate a Project With Copier
+You can also run both of these debuggers simultaneously by selecting **Debug Frontend and Backend**.
 
-Decide a name for your new project's directory, you will use it below. For example, `my-awesome-project`.
+### Testing
+Coming soon..
 
-Go to the directory that will be the parent of your project, and run the command with your project's name:
-
-```bash
-copier copy https://github.com/fastapi/full-stack-fastapi-template my-awesome-project --trust
-```
-
-If you have `pipx` and you didn't install `copier`, you can run it directly:
-
-```bash
-pipx run copier copy https://github.com/fastapi/full-stack-fastapi-template my-awesome-project --trust
-```
-
-**Note** the `--trust` option is necessary to be able to execute a [post-creation script](https://github.com/fastapi/full-stack-fastapi-template/blob/master/.copier/update_dotenv.py) that updates your `.env` files.
-
-### Input Variables
-
-Copier will ask you for some data, you might want to have at hand before generating the project.
-
-But don't worry, you can just update any of that in the `.env` files afterwards.
-
-The input variables, with their default values (some auto generated) are:
-
-- `project_name`: (default: `"FastAPI Project"`) The name of the project, shown to API users (in .env).
-- `stack_name`: (default: `"fastapi-project"`) The name of the stack used for Docker Compose labels and project name (no spaces, no periods) (in .env).
-- `secret_key`: (default: `"changethis"`) The secret key for the project, used for security, stored in .env, you can generate one with the method above.
-- `first_superuser`: (default: `"admin@example.com"`) The email of the first superuser (in .env).
-- `first_superuser_password`: (default: `"changethis"`) The password of the first superuser (in .env).
-- `smtp_host`: (default: "") The SMTP server host to send emails, you can set it later in .env.
-- `smtp_user`: (default: "") The SMTP server user to send emails, you can set it later in .env.
-- `smtp_password`: (default: "") The SMTP server password to send emails, you can set it later in .env.
-- `emails_from_email`: (default: `"info@example.com"`) The email account to send emails from, you can set it later in .env.
-- `postgres_password`: (default: `"changethis"`) The password for the PostgreSQL database, stored in .env, you can generate one with the method above.
-- `sentry_dsn`: (default: "") The DSN for Sentry, if you are using it, you can set it later in .env.
-
-## Backend Development
-
-Backend docs: [backend/README.md](./backend/README.md).
-
-## Frontend Development
-
-Frontend docs: [frontend/README.md](./frontend/README.md).
-
-## Deployment
-
-Deployment docs: [deployment.md](./deployment.md).
-
-## Development
-
-General development docs: [development.md](./development.md).
-
-This includes using Docker Compose, custom local domains, `.env` configurations, etc.
-
-## Release Notes
-
-Check the file [release-notes.md](./release-notes.md).
-
-## License
-
-The Full Stack FastAPI Template is licensed under the terms of the MIT license.
