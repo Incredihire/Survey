@@ -29,17 +29,17 @@ function getInquiriesQueryOptions() {
   }
 }
 
-// Format date to user's timezone
+// Format ISO date to the user's timezone.
 // ex. Sep 17, 2024 14:13 PM
-function formatDate(date: Date): string {
+function formatDate(date: string): string {
   try {
-    if (!(date instanceof Date)) {
-      throw new Error("Invalid date object")
+    if (typeof date !== "string") {
+      throw new Error("Invalid date type. Expected a string.")
     }
     return dayjs.utc(date).tz(userTimezone).format("MMM DD, YYYY hh:mm A")
   } catch (error) {
     console.error("Error formatting date:", error)
-    return date.toISOString()
+    return ""
   }
 }
 

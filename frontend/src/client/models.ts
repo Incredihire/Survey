@@ -40,7 +40,7 @@ export interface InquiryCreate {
 export interface InquiryPublic {
   text: string;
   id: string;
-  created_at: Date;
+  created_at: string;
 }
 
 export interface InquiriesPublic {
