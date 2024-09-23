@@ -32,11 +32,12 @@ function getInquiriesQueryOptions() {
 // Format ISO date to the user's timezone.
 // ex. Sep 17, 2024 14:13 PM
 function formatDate(date: string): string {
-  if (typeof date !== "string") return ""
+  const invalidDateMessage = "Invalid Date"
+  if (typeof date !== "string") return invalidDateMessage
   const parsedDate = dayjs.utc(date)
   return parsedDate.isValid()
     ? parsedDate.tz(userTimezone).format("MMM DD, YYYY hh:mm A")
-    : ""
+    : invalidDateMessage
 }
 
 const InquiriesTable = () => {
