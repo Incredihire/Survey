@@ -1,3 +1,7 @@
+// Disabling these ESLint rules for mocking the "dayjs" module
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 import { useQuery } from "@tanstack/react-query"
 import { render, screen } from "@testing-library/react"
 import InquiriesTable from "../../src/components/Inquiries/InquiriesTable"
