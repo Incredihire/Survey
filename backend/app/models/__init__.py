@@ -15,6 +15,7 @@ Important:
 from .auth import Message, NewPassword, Token, TokenPayload, UpdatePassword
 from .inquiry import Inquiry, InquiryCreate, InquiryPublic, InquriesPublic
 from .item import Item, ItemCreate, ItemPublic, ItemsPublic, ItemUpdate
+from .theme import Theme, ThemeCreate, ThemePublic, ThemesPublic
 from .user import (
     User,
     UserCreate,
@@ -39,6 +40,11 @@ __all__ = [
     "InquiryPublic",
     "InquiryPublic",
     "InquriesPublic",
+    # theme model
+    "Theme",
+    "ThemeCreate",
+    "ThemePublic",
+    "ThemesPublic",
     # item model
     "Item",
     "ItemCreate",
