@@ -34,10 +34,13 @@ function getInquiriesQueryOptions() {
 function formatDate(date: string): string {
   const invalidDateMessage = "Invalid Date"
   if (typeof date !== "string") return invalidDateMessage
+  // Unsafe access to 'error' typed value is handled by dayjs' isValid function
+  /* eslint-disable */
   const parsedDate = dayjs.utc(date)
   return parsedDate.isValid()
     ? parsedDate.tz(userTimezone).format("MMM DD, YYYY hh:mm A")
     : invalidDateMessage
+  /* eslint-enable */
 }
 
 const InquiriesTable = () => {
@@ -65,7 +68,10 @@ const InquiriesTable = () => {
               <Tr>
                 {new Array(3).fill(null).map((_, index) => (
                   <Td key={index}>
-                    <SkeletonText noOfLines={1} />
+                    <SkeletonText
+                      noOfLines={1}
+                      data-testid="inquiry-placeholder"
+                    />
                   </Td>
                 ))}
               </Tr>
@@ -78,6 +84,7 @@ const InquiriesTable = () => {
                   onClick={() => {
                     console.log(inquiry)
                   }}
+                  data-testid="inquiry-row"
                 >
                   <Td data-testid="inquiry-text">{inquiry.text}</Td>
                   <Td data-testid="inquiry-datetime">
