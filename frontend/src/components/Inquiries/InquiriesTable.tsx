@@ -32,17 +32,11 @@ function getInquiriesQueryOptions() {
 // Format ISO date to the user's timezone.
 // ex. Sep 17, 2024 14:13 PM
 function formatDate(date: string): string {
-  try {
-    if (typeof date !== "string") {
-      throw new Error("Invalid date type. Expected a string.")
-    }
-    // unsafe acess to "error" typed value will be caught by try-catch block
-    // eslint-disable-next-line
-    return dayjs.utc(date).tz(userTimezone).format("MMM DD, YYYY hh:mm A")
-  } catch (error) {
-    console.error("Error formatting date:", error)
-    return ""
-  }
+  if (typeof date !== "string") return ""
+  const parsedDate = dayjs.utc(date)
+  return parsedDate.isValid()
+    ? parsedDate.tz(userTimezone).format("MMM DD, YYYY hh:mm A")
+    : ""
 }
 
 const InquiriesTable = () => {
@@ -84,8 +78,10 @@ const InquiriesTable = () => {
                     console.log(inquiry)
                   }}
                 >
-                  <Td>{inquiry.text}</Td>
-                  <Td>{formatDate(inquiry.created_at)}</Td>
+                  <Td data-testid="inquiry-text">{inquiry.text}</Td>
+                  <Td data-testid="inquiry-datetime">
+                    {formatDate(inquiry.created_at)}
+                  </Td>
                 </Tr>
               ))}
             </Tbody>
