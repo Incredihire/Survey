@@ -23,7 +23,7 @@ psycopg = {extras = ["binary"], version = "^3.1.13"}
 sqlmodel = "^0.0.22"
 # Pin bcrypt until passlib supports the latest
 bcrypt = "4.0.1"
-pydantic-settings = "^2.2.1"
+pydantic-settings = "^2.5.2"
 sentry-sdk = {extras = ["fastapi"], version = "^2.14.0"}
 pyjwt = "^2.8.0"
 
