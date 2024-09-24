@@ -39,7 +39,6 @@ const inquiries = [
   },
 ]
 
-// Mock dependencies
 jest.mock("@tanstack/react-query")
 
 describe("Inquiries Table", () => {
@@ -146,7 +145,7 @@ describe("Inquiries Table", () => {
     })
 
     renderComponent()
-    console.log = jest.fn() // Mock console.log
+    console.log = jest.fn()
 
     const inquiryRow = screen.getByTestId("inquiry-row")
     inquiryRow.click()
