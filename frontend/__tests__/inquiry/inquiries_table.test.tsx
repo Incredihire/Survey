@@ -1,6 +1,8 @@
 // Disabling these ESLint rules for mocking the "dayjs" module
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+// Disabling to mock return value of "dayjs.tz.guess" function
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 
 import { useQuery } from "@tanstack/react-query"
 import { render, screen } from "@testing-library/react"
