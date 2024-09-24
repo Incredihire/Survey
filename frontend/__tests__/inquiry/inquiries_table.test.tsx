@@ -8,7 +8,6 @@ import { useQuery } from "@tanstack/react-query"
 import { render, screen } from "@testing-library/react"
 import InquiriesTable from "../../src/components/Inquiries/InquiriesTable"
 import "@testing-library/jest-dom"
-
 import dayjs from "dayjs"
 
 const inquiries = [
