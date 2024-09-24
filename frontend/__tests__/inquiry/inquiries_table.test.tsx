@@ -65,7 +65,6 @@ describe("Inquiries Table", () => {
   //     isPending: true,
   //   });
   //   render(<InquiriesTable />);
-  //   renderComponent();
   //   screen.debug();
   //   expect(screen.getByTestId("inquiry-placeholder")).toBeInTheDocument();
   // });
