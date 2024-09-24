@@ -7,12 +7,7 @@ import { render, screen } from "@testing-library/react"
 import InquiriesTable from "../../src/components/Inquiries/InquiriesTable"
 import "@testing-library/jest-dom"
 
-// import dayjs from "dayjs";
-// import utc from "dayjs/plugin/utc";
-// import timezone from "dayjs/plugin/timezone";
-
-// dayjs.extend(utc);
-// dayjs.extend(timezone);
+import dayjs from "dayjs"
 
 const inquiries = [
   {
@@ -44,18 +39,6 @@ const inquiries = [
 
 // Mock dependencies
 jest.mock("@tanstack/react-query")
-jest.mock("dayjs", () => {
-  const actualDayjs = jest.requireActual("dayjs")
-  return {
-    __esModule: true,
-    default: actualDayjs,
-    tz: {
-      ...actualDayjs.tz,
-      guess: jest.fn().mockReturnValue("America/Los_Angeles"),
-    },
-    utc: actualDayjs.utc,
-  }
-})
 
 describe("Inquiries Table", () => {
   const renderComponent = () => render(<InquiriesTable />)
@@ -105,16 +88,18 @@ describe("Inquiries Table", () => {
     )
   })
 
-  // it("should display correct inquiry created date and time, formatted to the user's timzeone.", () => {
-  //   (useQuery as jest.Mock).mockReturnValue({
-  //     data: { data: [inquiries[0]] },
-  //     isPending: false,
-  //   });
-  //   renderComponent();
-  //   expect(screen.getByTestId("inquiry-datetime")).toHaveTextContent(
-  //     "Sep 22, 2024 11:20 AM" // America/Los_Angeles Timezone
-  //   );
-  // });
+  it("should display correct inquiry created date and time, formatted to the user's timzeone.", () => {
+    ;(useQuery as jest.Mock).mockReturnValue({
+      data: { data: [inquiries[0]] },
+      isPending: false,
+    })
+    // Pretend user's in America/Los_Angeles Timezone
+    jest.spyOn(dayjs.tz, "guess").mockReturnValue("America/Los_Angeles")
+    renderComponent()
+    expect(screen.getByTestId("inquiry-datetime")).toHaveTextContent(
+      "Sep 22, 2024 11:20 AM",
+    )
+  })
 
   it("should display Invalid Date for inquiries with invalid created date and time.", () => {
     const inquiry = {
