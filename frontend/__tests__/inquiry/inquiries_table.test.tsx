@@ -73,7 +73,7 @@ describe("Inquiries Table", () => {
       isPending: false,
     })
     renderComponent()
-    expect(screen.getAllByRole("row").length).toBe(inquiries.length + 1) // header row + inquiries
+    expect(screen.getAllByTestId("inquiry-row").length).toBe(inquiries.length)
   })
 
   it("should display correct inquiry text.", () => {
