@@ -15,35 +15,34 @@ import utc from "dayjs/plugin/utc"
 import * as InquiriesService from "../../client/services/inquiriesService.ts"
 
 // Dayjs Configurations
-// eslint-disable-next-line
+/* eslint-disable */
 dayjs.extend(utc)
-// eslint-disable-next-line
 dayjs.extend(timezone)
-// eslint-disable-next-line
-const userTimezone = dayjs.tz.guess()
-
-function getInquiriesQueryOptions() {
-  return {
-    queryKey: ["inquiries"],
-    queryFn: () => InquiriesService.readInquiries(),
-  }
-}
-
-// Format ISO date to the user's timezone.
-// ex. Sep 17, 2024 14:13 PM
-function formatDate(date: string): string {
-  const invalidDateMessage = "Invalid Date"
-  if (typeof date !== "string") return invalidDateMessage
-  // Unsafe access to 'error' typed value is handled by dayjs' isValid function
-  /* eslint-disable */
-  const parsedDate = dayjs.utc(date)
-  return parsedDate.isValid()
-    ? parsedDate.tz(userTimezone).format("MMM DD, YYYY hh:mm A")
-    : invalidDateMessage
-  /* eslint-enable */
-}
+/* eslint-enable */
 
 const InquiriesTable = () => {
+  // Format ISO date to the user's timezone.
+  // ex. Sep 17, 2024 14:13 PM
+  function formatDate(date: string): string {
+    const invalidDateMessage = "Invalid Date"
+    if (typeof date !== "string") return invalidDateMessage
+    // Unsafe access to 'error' typed value is handled by dayjs' isValid function
+    /* eslint-disable */
+    const parsedDate = dayjs.utc(date)
+    const userTimezone = dayjs.tz.guess()
+    return parsedDate.isValid()
+      ? parsedDate.tz(userTimezone).format("MMM DD, YYYY hh:mm A")
+      : invalidDateMessage
+    /* eslint-enable */
+  }
+
+  function getInquiriesQueryOptions() {
+    return {
+      queryKey: ["inquiries"],
+      queryFn: () => InquiriesService.readInquiries(),
+    }
+  }
+
   const { data: inquiries, isPending } = useQuery({
     ...getInquiriesQueryOptions(),
   })
