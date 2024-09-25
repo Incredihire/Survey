@@ -73,16 +73,6 @@ describe("Inquiries Table", () => {
     expect(screen.getAllByRole("row").length).toBe(1) // just the header row
   })
 
-  // it("should display skeleton text when data is loading.", async () => {
-  //   (useQuery as jest.Mock).mockReturnValue({
-  //     data: null,
-  //     isPending: true,
-  //   });
-  //   render(<InquiriesTable />);
-  //   screen.debug();
-  //   expect(screen.getByTestId("inquiry-placeholder")).toBeInTheDocument();
-  // });
-
   it("should display correct number of inquiries in table.", () => {
     ;(useQuery as jest.Mock).mockReturnValue({
       data: { data: multipleInquiries },

@@ -70,10 +70,7 @@ const InquiriesTable = () => {
             <Tr>
               {new Array(3).fill(null).map((_, index) => (
                 <Td key={index}>
-                  <SkeletonText
-                    noOfLines={1}
-                    data-testid="inquiry-placeholder"
-                  />
+                  <SkeletonText noOfLines={1} />
                 </Td>
               ))}
             </Tr>
