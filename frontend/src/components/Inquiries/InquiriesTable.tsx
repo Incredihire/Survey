@@ -50,7 +50,7 @@ const InquiriesTable = () => {
 
   // Sort inquiries from Newest to oldest
   const sortedInquiries = useMemo(() => {
-    if (!inquiries || !inquiries.data) return []
+    if (!inquiries?.data) return []
     return inquiries.data.sort((a, b) => {
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     })
