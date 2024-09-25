@@ -123,18 +123,15 @@ describe("Inquiries Table", () => {
     })
     renderComponent()
 
-    const rows = screen.getAllByRole("row")
-    expect(rows[1]).toHaveTextContent("How is your work-life balance?")
-    expect(rows[2]).toHaveTextContent("Is communication effective?")
-    expect(rows[3]).toHaveTextContent(
-      "How is feedback typically given and received within the team?",
+    const dateColumns = screen.getAllByTestId("inquiry-datetime")
+    const inquiryDates = dateColumns.map(
+      (col) => new Date(col.textContent?.trim() || ""),
     )
-    expect(rows[4]).toHaveTextContent(
-      "How satisfied are you with the work environment?",
-    )
-    expect(rows[5]).toHaveTextContent(
-      "How do you feel about your current role?",
-    )
+    for (let i = 1; i < inquiryDates.length; i++) {
+      expect(inquiryDates[i].getTime()).toBeLessThan(
+        inquiryDates[i - 1].getTime(),
+      )
+    }
   })
 
   it("should log the inquiry details on console when clicked.", () => {
@@ -142,8 +139,8 @@ describe("Inquiries Table", () => {
       data: { data: [inquiries[0]] },
       isPending: false,
     })
-
     renderComponent()
+
     console.log = jest.fn()
 
     const inquiryRow = screen.getByTestId("inquiry-row")
