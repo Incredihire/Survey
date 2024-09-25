@@ -10,7 +10,7 @@ import InquiriesTable from "../../src/components/Inquiries/InquiriesTable"
 import "@testing-library/jest-dom"
 import dayjs from "dayjs"
 
-const inquiries = [
+const multipleInquiries = [
   {
     id: "92bc71bf-f42c-4b56-b55d-fddaf4633550",
     text: "How is your work-life balance?",
@@ -35,6 +35,22 @@ const inquiries = [
     id: "f919b688-f9c6-49cb-87c0-4dab68a4a04c",
     text: "How is feedback typically given and received within the team?",
     created_at: "2024-09-22T09:20:53.734830",
+  },
+]
+
+const singleInquiry = [
+  {
+    id: "92bc71bf-f42c-4b56-b55d-fddaf4633550",
+    text: "How is your work-life balance?",
+    created_at: "2024-09-22T18:20:53.734830",
+  },
+]
+
+const inquiryWithoutCreationDate = [
+  {
+    id: "92bc71bf-f42c-4b56-b55d-fddaf4633550",
+    text: "How is your work-life balance?",
+    created_at: "",
   },
 ]
 
@@ -69,16 +85,18 @@ describe("Inquiries Table", () => {
 
   it("should display correct number of inquiries in table.", () => {
     ;(useQuery as jest.Mock).mockReturnValue({
-      data: { data: inquiries },
+      data: { data: multipleInquiries },
       isPending: false,
     })
     renderComponent()
-    expect(screen.getAllByTestId("inquiry-row").length).toBe(inquiries.length)
+    expect(screen.getAllByTestId("inquiry-row").length).toBe(
+      multipleInquiries.length,
+    )
   })
 
   it("should display correct inquiry text.", () => {
     ;(useQuery as jest.Mock).mockReturnValue({
-      data: { data: [inquiries[0]] },
+      data: { data: singleInquiry },
       isPending: false,
     })
     renderComponent()
@@ -89,7 +107,7 @@ describe("Inquiries Table", () => {
 
   it("should display correct inquiry created date and time, formatted to the user's timzeone.", () => {
     ;(useQuery as jest.Mock).mockReturnValue({
-      data: { data: [inquiries[0]] },
+      data: { data: singleInquiry },
       isPending: false,
     })
     // Pretend user's in America/Los_Angeles Timezone
@@ -101,13 +119,8 @@ describe("Inquiries Table", () => {
   })
 
   it("should display Invalid Date for inquiries with invalid created date and time.", () => {
-    const inquiry = {
-      id: "92bc71bf-f42c-4b56-b55d-fddaf4633550",
-      text: "How is your work-life balance?",
-      created_at: "",
-    }
     ;(useQuery as jest.Mock).mockReturnValue({
-      data: { data: [inquiry] },
+      data: { data: inquiryWithoutCreationDate },
       isPending: false,
     })
     renderComponent()
@@ -118,7 +131,7 @@ describe("Inquiries Table", () => {
 
   it("should display inquiries from newest to oldest.", () => {
     ;(useQuery as jest.Mock).mockReturnValue({
-      data: { data: inquiries },
+      data: { data: multipleInquiries },
       isPending: false,
     })
     renderComponent()
@@ -138,7 +151,7 @@ describe("Inquiries Table", () => {
 
   it("should log the inquiry details on console when clicked.", () => {
     ;(useQuery as jest.Mock).mockReturnValue({
-      data: { data: [inquiries[0]] },
+      data: { data: singleInquiry },
       isPending: false,
     })
     renderComponent()
@@ -150,9 +163,9 @@ describe("Inquiries Table", () => {
 
     expect(console.log).toHaveBeenCalledWith(
       expect.objectContaining({
-        id: inquiries[0].id,
-        text: inquiries[0].text,
-        created_at: inquiries[0].created_at,
+        id: singleInquiry[0].id,
+        text: singleInquiry[0].text,
+        created_at: singleInquiry[0].created_at,
       }),
     )
   })
