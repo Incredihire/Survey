@@ -12,6 +12,7 @@ import { useQuery } from "@tanstack/react-query"
 import dayjs from "dayjs"
 import timezone from "dayjs/plugin/timezone"
 import utc from "dayjs/plugin/utc"
+import { useMemo } from "react"
 import * as InquiriesService from "../../client/services/inquiriesService.ts"
 
 // Dayjs Configurations
@@ -47,37 +48,40 @@ const InquiriesTable = () => {
     ...getInquiriesQueryOptions(),
   })
 
-  // Sort inquries from Newest to oldest
-  const sortedInquiries = inquiries?.data.sort((a, b) => {
-    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-  })
+  // Sort inquiries from Newest to oldest
+  const sortedInquiries = useMemo(() => {
+    if (!inquiries || !inquiries.data) return []
+    return inquiries.data.sort((a, b) => {
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    })
+  }, [inquiries])
 
   return (
-    <>
-      <TableContainer>
-        <Table>
-          <Thead>
+    <TableContainer>
+      <Table>
+        <Thead>
+          <Tr>
+            <Th>Text</Th>
+            <Th>Created At</Th>
+          </Tr>
+        </Thead>
+        {isPending ? (
+          <Tbody>
             <Tr>
-              <Th>Text</Th>
-              <Th>Created At</Th>
+              {new Array(3).fill(null).map((_, index) => (
+                <Td key={index}>
+                  <SkeletonText
+                    noOfLines={1}
+                    data-testid="inquiry-placeholder"
+                  />
+                </Td>
+              ))}
             </Tr>
-          </Thead>
-          {isPending ? (
-            <Tbody>
-              <Tr>
-                {new Array(3).fill(null).map((_, index) => (
-                  <Td key={index}>
-                    <SkeletonText
-                      noOfLines={1}
-                      data-testid="inquiry-placeholder"
-                    />
-                  </Td>
-                ))}
-              </Tr>
-            </Tbody>
-          ) : (
-            <Tbody>
-              {sortedInquiries?.map((inquiry) => (
+          </Tbody>
+        ) : (
+          <Tbody>
+            {sortedInquiries.length > 0 ? (
+              sortedInquiries.map((inquiry) => (
                 <Tr
                   key={inquiry.id}
                   onClick={() => {
@@ -90,12 +94,14 @@ const InquiriesTable = () => {
                     {formatDate(inquiry.created_at)}
                   </Td>
                 </Tr>
-              ))}
-            </Tbody>
-          )}
-        </Table>
-      </TableContainer>
-    </>
+              ))
+            ) : (
+              <></>
+            )}
+          </Tbody>
+        )}
+      </Table>
+    </TableContainer>
   )
 }
 
