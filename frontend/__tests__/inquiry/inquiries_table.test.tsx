@@ -125,9 +125,11 @@ describe("Inquiries Table", () => {
 
     const dateColumns = screen.getAllByTestId("inquiry-datetime")
     const inquiryDates = dateColumns.map(
-      (col) => new Date(col.textContent?.trim() || ""),
+      (col) => new Date(col.textContent?.trim() ?? ""),
     )
     for (let i = 1; i < inquiryDates.length; i++) {
+      // The inquiries used for this test always have valid created_at datetime value
+      /* eslint-disable-next-line */
       expect(inquiryDates[i].getTime()).toBeLessThan(
         inquiryDates[i - 1].getTime(),
       )
