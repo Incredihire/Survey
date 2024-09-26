@@ -1,7 +1,6 @@
 import uuid
 from typing import TYPE_CHECKING
 
-from fastapi import Response
 from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
 
