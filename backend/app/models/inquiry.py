@@ -1,7 +1,13 @@
 import uuid
 from datetime import datetime, timezone
+from typing import TYPE_CHECKING
 
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
+
+from app.models.response import Response
+
+if TYPE_CHECKING:
+    from app.models.scheduled_inquiry import ScheduledInquiry
 
 
 # Shared properties
@@ -19,6 +25,11 @@ class Inquiry(InquiryBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     text: str = Field(min_length=10, max_length=255, unique=True)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+    scheduled_inquiries: list["ScheduledInquiry"] = Relationship(
+        back_populates="inquiry"
+    )
+    responses: list["Response"] = Relationship(back_populates="inquiry")
 
 
 # Properties to return via API, id is always required

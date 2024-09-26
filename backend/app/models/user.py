@@ -1,10 +1,13 @@
 import uuid
 from typing import TYPE_CHECKING
 
+from fastapi import Response
 from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
+    from app.models.response import Response
+
     from .item import Item
 
 
@@ -47,7 +50,10 @@ class UpdatePassword(SQLModel):
 class User(UserBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     hashed_password: str
+
+    # Relationships
     items: list["Item"] = Relationship(back_populates="owner", cascade_delete=True)
+    responses: list["Response"] = Relationship(back_populates="user")
 
 
 # Properties to return via API, id is always required
