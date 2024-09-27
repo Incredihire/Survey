@@ -1,8 +1,8 @@
 """Create Response, ScheduledInquiry tables, modify relationships to other tables
 
-Revision ID: 3e009221a721
-Revises: fda83aff7cb5
-Create Date: 2024-09-25 17:47:23.126713
+Revision ID: 77f3f29a016b
+Revises: 172eeb4bd7a6
+Create Date: 2024-09-27 12:14:56.688105
 
 """
 
@@ -11,8 +11,8 @@ import sqlmodel.sql.sqltypes
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision = "3e009221a721"
-down_revision = "fda83aff7cb5"
+revision = "77f3f29a016b"
+down_revision = "172eeb4bd7a6"
 branch_labels = None
 depends_on = None
 
