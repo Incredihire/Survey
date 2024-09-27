@@ -1,4 +1,4 @@
-import uuid
+from uuid import UUID
 
 from sqlmodel import Session, func, select
 
@@ -19,7 +19,7 @@ def get_inquiry_by_text(*, session: Session, text: str) -> Inquiry | None:
     return session_text
 
 
-def get_inquiry_by_id(*, session: Session, inquiry_id: uuid.UUID) -> Inquiry | None:
+def get_inquiry_by_id(*, session: Session, inquiry_id: UUID) -> Inquiry | None:
     statement = select(Inquiry).where(Inquiry.id == inquiry_id)
     session_text = session.exec(statement).first()
     return session_text
@@ -28,6 +28,10 @@ def get_inquiry_by_id(*, session: Session, inquiry_id: uuid.UUID) -> Inquiry | N
 def get_inquiries(
     *, session: Session, skip: int = 0, limit: int = 100
 ) -> list[Inquiry]:
+    if skip < 0:
+        raise ValueError("Invalid value for 'skip': it must be non-negative")
+    if limit < 0:
+        raise ValueError("Invalid value for 'limit': it must be non-negative")
     statement = select(Inquiry).offset(skip).limit(limit)
     result = session.exec(statement).all()
     return list(result)

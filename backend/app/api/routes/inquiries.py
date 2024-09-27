@@ -23,11 +23,7 @@ def create_inquiry(*, session: SessionDep, inquiry_in: InquiryCreate) -> Inquiry
             detail="This inquiry already exists.",
         )
 
-    inquiry = Inquiry.model_validate(inquiry_in)
-    session.add(inquiry)
-    session.commit()
-    session.refresh(inquiry)
-    return inquiry
+    return inquiries_service.create_inquiry(session=session, inquiry_in=inquiry_in)
 
 
 @router.get("/", response_model=InquriesPublic)
@@ -37,6 +33,16 @@ def get_inquries(
     """
     Retrieve inquries.
     """
+    if skip < 0:
+        raise HTTPException(
+            status_code=400, detail="Invalid value for 'skip': it must be non-negative"
+        )
+    if limit <= 0:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid value for 'limit': it must be non-negative",
+        )
+
     count = inquiries_service.count_inquiries(session=session)
     inquiries = inquiries_service.get_inquiries(session=session, skip=skip, limit=limit)
     return InquriesPublic(data=inquiries, count=count)
