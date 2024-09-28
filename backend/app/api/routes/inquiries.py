@@ -33,6 +33,16 @@ def get_inquries(
     """
     Retrieve inquries.
     """
+    if skip < 0:
+        raise HTTPException(
+            status_code=400, detail="Invalid value for 'skip': it must be non-negative"
+        )
+    if limit <= 0:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid value for 'limit': it must be non-negative",
+        )
+
     count = inquiries_service.count_inquiries(session=session)
     inquiries = inquiries_service.get_inquiries(session=session, skip=skip, limit=limit)
     return InquriesPublic(data=inquiries, count=count)

@@ -7,7 +7,7 @@ from fastapi import HTTPException
 from fastapi.testclient import TestClient
 from jwt import InvalidTokenError
 from pydantic import ValidationError
-from sqlmodel import Session, SQLModel, create_engine
+from sqlmodel import Session, SQLModel, create_engine, select
 from sqlmodel.pool import StaticPool
 from starlette import status
 
@@ -16,7 +16,7 @@ from app.core import security
 from app.core.config import settings
 from app.core.db import init_db
 from app.main import app
-from app.models import TokenPayload, User
+from app.models import Inquiry, TokenPayload, User
 from app.tests.utils.user import authentication_token_from_email
 from app.tests.utils.utils import get_superuser_token_headers
 
@@ -41,6 +41,19 @@ def client_fixture(db: Session) -> Generator[TestClient, None, None]:
     client = TestClient(app)
     yield client
     app.dependency_overrides.clear()
+
+
+# Clear specified tables after running each test function
+@pytest.fixture(scope="function", autouse=True)
+def clear_tables_after_tests(db: Session) -> Generator[None, None, None]:
+    yield
+    tables_to_clear = [Inquiry]
+    for table in tables_to_clear:
+        statement = select(table)
+        results = db.exec(statement).all()
+        for record in results:
+            db.delete(record)
+    db.commit()
 
 
 @pytest.fixture(scope="module")

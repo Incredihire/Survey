@@ -15,6 +15,13 @@ Important:
 from .auth import Message, NewPassword, Token, TokenPayload, UpdatePassword
 from .inquiry import Inquiry, InquiryCreate, InquiryPublic, InquriesPublic
 from .item import Item, ItemCreate, ItemPublic, ItemsPublic, ItemUpdate
+from .response import Response, ResponseCreate, ResponsePublic, ResponsesPublic
+from .scheduled_inquiry import (
+    ScheduledInquiriesPublic,
+    ScheduledInquiry,
+    ScheduledInquiryCreate,
+    ScheduledInquiryPublic,
+)
 from .theme import Theme, ThemeCreate, ThemePublic, ThemesPublic
 from .user import (
     User,
@@ -59,4 +66,14 @@ __all__ = [
     "UsersPublic",
     "UserUpdate",
     "UserUpdateMe",
+    # response model
+    "Response",
+    "ResponseCreate",
+    "ResponsePublic",
+    "ResponsesPublic",
+    # scheduled_inquiry model
+    "ScheduledInquiry",
+    "ScheduledInquiryCreate",
+    "ScheduledInquiryPublic",
+    "ScheduledInquiriesPublic",
 ]
