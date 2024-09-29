@@ -55,7 +55,7 @@ def test_create_theme_when_name_is_too_long_should_raise_validation_error(
         themes.create_theme(session=db, theme_in=theme_data)
 
 
-def test_create_theme_when_theme_already_exists_should_raise_integrity_error(
+def test_create_theme_when_theme_exists_should_raise_integrity_error(
     db: Session,
 ) -> None:
     name = "RepeatedTheme"
