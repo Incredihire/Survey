@@ -1,4 +1,4 @@
-import type { ApiError } from "./client"
+import { z } from "zod"
 
 export const emailPattern = {
   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
@@ -8,6 +8,15 @@ export const emailPattern = {
 export const namePattern = {
   value: /^[A-Za-z\s\u00C0-\u017F]{1,30}$/,
   message: "Invalid name",
+}
+
+export const isISODateTimeString = (date: string): boolean => {
+  // Unsafe access to 'error' type value is handled by zod's safeParse function
+  /* eslint-disable */
+  const isoDateTimeSchema = z.string().datetime({ local: true })
+  const parseResult = isoDateTimeSchema.safeParse(date)
+  return parseResult.success
+  /* eslint-enable */
 }
 
 export const passwordRules = (isRequired = true) => {
@@ -41,13 +50,4 @@ export const confirmPasswordRules = (
   }
 
   return rules
-}
-
-export const handleError = (err: ApiError, showToast: any) => {
-  const errDetail = (err.body as any)?.detail
-  let errorMessage = errDetail || "Something went wrong."
-  if (Array.isArray(errDetail) && errDetail.length > 0) {
-    errorMessage = errDetail[0].msg
-  }
-  showToast("Error", errorMessage, "error")
 }

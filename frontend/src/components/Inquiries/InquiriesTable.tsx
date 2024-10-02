@@ -9,34 +9,11 @@ import {
   Tr,
 } from "@chakra-ui/react"
 import { useQuery } from "@tanstack/react-query"
-import dayjs from "dayjs"
-import timezone from "dayjs/plugin/timezone"
-import utc from "dayjs/plugin/utc"
 import { useMemo } from "react"
 import * as InquiriesService from "../../client/services/inquiriesService.ts"
-
-// Dayjs Configurations
-/* eslint-disable */
-dayjs.extend(utc)
-dayjs.extend(timezone)
-/* eslint-enable */
+import { formatISODateToUserTimezone } from "../../utils/date.ts"
 
 const InquiriesTable = () => {
-  // Format ISO date to the user's timezone.
-  // ex. Sep 17, 2024 14:13 PM
-  function formatDate(date: string): string {
-    const invalidDateMessage = "Invalid Date"
-    if (typeof date !== "string") return invalidDateMessage
-    // Unsafe access to 'error' typed value is handled by dayjs' isValid function
-    /* eslint-disable */
-    const parsedDate = dayjs.utc(date)
-    const userTimezone = dayjs.tz.guess()
-    return parsedDate.isValid()
-      ? parsedDate.tz(userTimezone).format("MMM DD, YYYY hh:mm A")
-      : invalidDateMessage
-    /* eslint-enable */
-  }
-
   function getInquiriesQueryOptions() {
     return {
       queryKey: ["inquiries"],
@@ -88,7 +65,7 @@ const InquiriesTable = () => {
                 >
                   <Td data-testid="inquiry-text">{inquiry.text}</Td>
                   <Td data-testid="inquiry-datetime">
-                    {formatDate(inquiry.created_at)}
+                    {formatISODateToUserTimezone(inquiry.created_at)}
                   </Td>
                 </Tr>
               ))

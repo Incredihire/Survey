@@ -9,7 +9,8 @@
     "lint": "biome check --write --staged --no-errors-on-unmatched --files-ignore-unknown=true ./",
     "lint:eslint": "eslint",
     "preview": "vite preview",
-    "test": "jest"
+    "test": "jest",
+    "generate-client": "openapi-ts --input ./openapi.json --output ./src/client --client axios --exportSchemas true"
   },
   "dependencies": {
     "@chakra-ui/icons": "2.1.1",

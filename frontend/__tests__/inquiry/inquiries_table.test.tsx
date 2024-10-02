@@ -108,15 +108,13 @@ describe("Inquiries Table", () => {
     )
   })
 
-  it("should display Invalid Date for inquiries with invalid created date and time.", () => {
+  it("should throw an error for inquiry with invalid created date and time.", () => {
     ;(useQuery as jest.Mock).mockReturnValue({
       data: { data: inquiryWithoutCreationDate },
       isPending: false,
     })
-    renderComponent()
-    expect(screen.getByTestId("inquiry-datetime")).toHaveTextContent(
-      "Invalid Date",
-    )
+    jest.spyOn(console, "error").mockImplementation(jest.fn())
+    expect(() => renderComponent()).toThrow()
   })
 
   it("should display inquiries from newest to oldest.", () => {

@@ -16,7 +16,7 @@ from app.core import security
 from app.core.config import settings
 from app.core.db import init_db
 from app.main import app
-from app.models import Inquiry, TokenPayload, User
+from app.models import Inquiry, Schedule, TokenPayload, User
 from app.tests.utils.user import authentication_token_from_email
 from app.tests.utils.utils import get_superuser_token_headers
 
@@ -47,7 +47,7 @@ def client_fixture(db: Session) -> Generator[TestClient, None, None]:
 @pytest.fixture(scope="function", autouse=True)
 def clear_tables_after_tests(db: Session) -> Generator[None, None, None]:
     yield
-    tables_to_clear = [Inquiry]
+    tables_to_clear = [Inquiry, Schedule]
     for table in tables_to_clear:
         statement = select(table)
         results = db.exec(statement).all()
