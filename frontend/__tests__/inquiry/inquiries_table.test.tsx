@@ -136,25 +136,4 @@ describe("Inquiries Table", () => {
       )
     }
   })
-
-  it("should log the inquiry details on console when clicked.", () => {
-    ;(useQuery as jest.Mock).mockReturnValue({
-      data: { data: singleInquiry },
-      isPending: false,
-    })
-    renderComponent()
-
-    console.log = jest.fn()
-
-    const inquiryRow = screen.getByTestId("inquiry-row")
-    inquiryRow.click()
-
-    expect(console.log).toHaveBeenCalledWith(
-      expect.objectContaining({
-        id: singleInquiry[0].id,
-        text: singleInquiry[0].text,
-        created_at: singleInquiry[0].created_at,
-      }),
-    )
-  })
 })

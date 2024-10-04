@@ -37,6 +37,11 @@ export interface InquiryCreate {
   text: string;
 }
 
+export interface InquiryUpdate {
+  id: string;
+  text: string;
+}
+
 export interface InquiryPublic {
   text: string;
   id: string;

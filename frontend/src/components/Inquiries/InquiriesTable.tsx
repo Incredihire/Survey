@@ -1,4 +1,6 @@
+import { EditIcon } from "@chakra-ui/icons"
 import {
+  IconButton,
   SkeletonText,
   Table,
   TableContainer,
@@ -7,12 +9,14 @@ import {
   Th,
   Thead,
   Tr,
+  useDisclosure,
 } from "@chakra-ui/react"
 import { useQuery } from "@tanstack/react-query"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
+import type { InquiryPublic } from "../../client/models.ts"
 import * as InquiriesService from "../../client/services/inquiriesService.ts"
 import { formatISODateToUserTimezone } from "../../utils/date.ts"
-
+import AddOrEditInquiryModal from "./AddOrEditInquiryModal.tsx"
 const InquiriesTable = () => {
   function getInquiriesQueryOptions() {
     return {
@@ -33,49 +37,73 @@ const InquiriesTable = () => {
     })
   }, [inquiries])
 
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [selectedInquiry, setSelectedInquiry] = useState<
+    InquiryPublic | undefined
+  >(undefined)
+
+  const handleEditClick = (inquiry: InquiryPublic) => {
+    setSelectedInquiry(inquiry)
+    onOpen()
+  }
+
   return (
-    <TableContainer>
-      <Table>
-        <Thead>
-          <Tr>
-            <Th>Text</Th>
-            <Th>Created At</Th>
-          </Tr>
-        </Thead>
-        {isPending ? (
-          <Tbody>
+    <>
+      <TableContainer>
+        <Table>
+          <Thead>
             <Tr>
-              {new Array(3).fill(null).map((_, index) => (
-                <Td key={index}>
-                  <SkeletonText noOfLines={1} />
-                </Td>
-              ))}
+              <Th>Text</Th>
+              <Th>Created At</Th>
+              <Th>Actions</Th>
             </Tr>
-          </Tbody>
-        ) : (
-          <Tbody>
-            {sortedInquiries.length > 0 ? (
-              sortedInquiries.map((inquiry) => (
-                <Tr
-                  key={inquiry.id}
-                  onClick={() => {
-                    console.log(inquiry)
-                  }}
-                  data-testid="inquiry-row"
-                >
-                  <Td data-testid="inquiry-text">{inquiry.text}</Td>
-                  <Td data-testid="inquiry-datetime">
-                    {formatISODateToUserTimezone(inquiry.created_at)}
+          </Thead>
+          {isPending ? (
+            <Tbody>
+              <Tr>
+                {new Array(3).fill(null).map((_, index) => (
+                  <Td key={index}>
+                    <SkeletonText noOfLines={1} />
                   </Td>
+                ))}
+              </Tr>
+            </Tbody>
+          ) : (
+            <Tbody>
+              {sortedInquiries.length > 0 ? (
+                sortedInquiries.map((inquiry) => (
+                  <Tr key={inquiry.id} data-testid="inquiry-row">
+                    <Td data-testid="inquiry-text">{inquiry.text}</Td>
+                    <Td data-testid="inquiry-datetime">
+                      {formatISODateToUserTimezone(inquiry.created_at)}
+                    </Td>
+                    <Td>
+                      <IconButton
+                        aria-label="Edit Inquiry"
+                        icon={<EditIcon />}
+                        onClick={() => {
+                          handleEditClick(inquiry)
+                        }}
+                      />
+                    </Td>
+                  </Tr>
+                ))
+              ) : (
+                <Tr>
+                  <Td colSpan={3}>No inquiries found</Td>
                 </Tr>
-              ))
-            ) : (
-              <></>
-            )}
-          </Tbody>
-        )}
-      </Table>
-    </TableContainer>
+              )}
+            </Tbody>
+          )}
+        </Table>
+      </TableContainer>
+      <AddOrEditInquiryModal
+        isOpen={isOpen}
+        onClose={onClose}
+        mode={selectedInquiry ? "edit" : "add"}
+        inquiry={selectedInquiry}
+      />
+    </>
   )
 }
 

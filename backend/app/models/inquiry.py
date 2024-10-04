@@ -18,8 +18,11 @@ class InquiryBase(SQLModel):
     text: str = Field(min_length=MIN_LENGTH, max_length=MAX_LENGTH)
 
 
-# Properties to receive on inquiry creation
 class InquiryCreate(InquiryBase):
+    text: str = Field(min_length=MIN_LENGTH, max_length=MAX_LENGTH)
+
+
+class InquiryUpdate(InquiryBase):
     text: str = Field(min_length=MIN_LENGTH, max_length=MAX_LENGTH)
 
 
@@ -45,3 +48,7 @@ class InquiryPublic(InquiryBase):
 class InquriesPublic(SQLModel):
     data: list[InquiryPublic]
     count: int
+
+
+# Schema
+# https://lucid.app/lucidchart/2d988dda-8c81-4024-9cfe-33e23521288b/edit?invitationId=inv_32e97de0-7f01-43aa-85d3-72ad0b6e1f2b&page=0_0#

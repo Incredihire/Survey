@@ -14,7 +14,7 @@ import "@testing-library/jest-dom"
 import {
   MAX_INQUIRY_LENGTH,
   MIN_INQUIRY_LENGTH,
-} from "../../src/components/Inquiries/AddInquiry"
+} from "../../src/components/Inquiries/AddOrEditInquiryModal"
 
 const unicodeText =
   "Тенденция к взаимопомощи у человека имеет столь отдаленное происхождение и так глубоко переплетена со всей прошлой эволюцией человеческого рода, что она сохранилась у человечества вплоть до настоящего времени, несмотря на все превратности истории."

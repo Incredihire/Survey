@@ -2,9 +2,15 @@ import uuid
 
 from fastapi import APIRouter, HTTPException
 
-import app.services.inquiries as inquiries_service
 from app.api.deps import SessionDep
-from app.models import Inquiry, InquiryCreate, InquiryPublic, InquriesPublic
+from app.models import (
+    Inquiry,
+    InquiryCreate,
+    InquiryPublic,
+    InquiryUpdate,
+    InquriesPublic,
+)
+from app.services import inquiries as inquiries_service
 
 router = APIRouter()
 
@@ -59,3 +65,26 @@ def read_inquiry(session: SessionDep, inquiry_id: uuid.UUID) -> Inquiry:
     if not inquiry:
         raise HTTPException(status_code=404, detail="Inquiry not found")
     return inquiry
+
+
+@router.put("/{inquiry_id}", response_model=InquiryPublic)
+def update_inquiry(
+    *, session: SessionDep, inquiry_id: uuid.UUID, inquiry_update: InquiryUpdate
+) -> Inquiry:
+    """
+    Update an existing inquiry.
+    """
+    inquiry = inquiries_service.get_inquiry_by_id(
+        session=session, inquiry_id=inquiry_id
+    )
+    if not inquiry:
+        raise HTTPException(
+            status_code=404,
+            detail="Inquiry not found.",
+        )
+
+    return inquiries_service.edit_inquiry(
+        session=session,
+        inquiry_id=inquiry_id,
+        inquiry_update=inquiry_update,
+    )

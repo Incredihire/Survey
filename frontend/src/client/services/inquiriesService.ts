@@ -43,3 +43,16 @@ export function readInquiries(
     },
   });
 }
+
+
+export function updateInquiry(updatedInquiry: InquiryPublic): CancelablePromise<InquiryPublic> {
+  return __request(OpenAPI, {
+    method: 'PUT', // Or 'PATCH', depending on your backend implementation
+    url: `/api/v1/inquiries/${updatedInquiry.id}`, // Adjust the endpoint if needed
+    body: updatedInquiry,
+    mediaType: 'application/json',
+    errors: {
+      422: 'Validation Error',
+    },
+  });
+}
