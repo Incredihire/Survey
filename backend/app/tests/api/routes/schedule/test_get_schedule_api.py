@@ -1,8 +1,9 @@
 from fastapi.testclient import TestClient
 from sqlmodel import Session
 
-from app.core.config import settings
-from app.tests.utils.schedule_utils import (
+from .....core.config import settings
+from .....tests.utils.schedule_utils import (
+    assert_response_content_equals_original_object,
     create_first_schedule,
     create_second_schedule,
     first_valid_schedule,
@@ -52,10 +53,4 @@ def test_get_schedule_when_a_schedule_has_been_added_twice_should_return_the_lat
     )
     assert response.status_code == 200
     content = response.json()
-    schedule = content["schedule"]
-    assert schedule["daysBetween"] == second_valid_schedule["schedule"]["daysBetween"]
-    assert schedule["endDate"] == second_valid_schedule["schedule"]["endDate"]
-    assert schedule["startDate"] == second_valid_schedule["schedule"]["startDate"]
-    assert schedule["timesOfDay"] == second_valid_schedule["schedule"]["timesOfDay"]
-    assert schedule["skipWeekends"]
-    assert schedule["skipHolidays"]
+    assert_response_content_equals_original_object(content, second_valid_schedule)

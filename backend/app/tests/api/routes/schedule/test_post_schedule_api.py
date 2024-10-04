@@ -2,8 +2,9 @@ import re
 
 from fastapi.testclient import TestClient
 
-from app.core.config import settings
-from app.tests.utils.schedule_utils import (
+from .....core.config import settings
+from .....tests.utils.schedule_utils import (
+    assert_response_content_equals_original_object,
     first_valid_schedule,
     not_a_schedule_string,
     schedule_with_bad_date,
@@ -24,12 +25,7 @@ def test_create_schedule_when_there_is_no_schedule_should_make_new_schedule(
     assert response.status_code == 200
     content = response.json()
     schedule = content["schedule"]
-    assert schedule["daysBetween"] == first_valid_schedule["schedule"]["daysBetween"]
-    assert schedule["endDate"] == first_valid_schedule["schedule"]["endDate"]
-    assert schedule["startDate"] == first_valid_schedule["schedule"]["startDate"]
-    assert schedule["timesOfDay"] == first_valid_schedule["schedule"]["timesOfDay"]
-    assert not schedule["skipWeekends"]
-    assert not schedule["skipHolidays"]
+    assert_response_content_equals_original_object(content, first_valid_schedule)
 
 
 def test_create_schedule_when_there_is_already_a_schedule_should_return_the_new_schedule(
@@ -47,13 +43,7 @@ def test_create_schedule_when_there_is_already_a_schedule_should_return_the_new_
     )
     assert response.status_code == 200
     content = response.json()
-    schedule = content["schedule"]
-    assert schedule["daysBetween"] == second_valid_schedule["schedule"]["daysBetween"]
-    assert schedule["endDate"] == second_valid_schedule["schedule"]["endDate"]
-    assert schedule["startDate"] == second_valid_schedule["schedule"]["startDate"]
-    assert schedule["timesOfDay"] == second_valid_schedule["schedule"]["timesOfDay"]
-    assert schedule["skipWeekends"]
-    assert schedule["skipHolidays"]
+    assert_response_content_equals_original_object(content, second_valid_schedule)
 
 
 def test_create_schedule_when_time_is_malformed_should_return_error(

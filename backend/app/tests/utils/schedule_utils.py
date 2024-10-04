@@ -1,7 +1,10 @@
+from enum import Enum
+
 from sqlmodel import Session
 
-from app.models import ScheduleCreate
-from app.services.schedule import create_schedule
+from ...models import ScheduleCreate
+from ...services.schedule import create_schedule
+from .json import json_bool_convert
 
 first_schedule_string = '{"startDate":"2024-10-02","endDate":"2024-11-01","daysBetween":1,"skipWeekends":false,"skipHolidays":false,"timesOfDay":["08:00"]}'
 second_schedule_string = '{"startDate":"2024-12-12","endDate":"2024-12-22","daysBetween":1,"skipWeekends":true,"skipHolidays":true,"timesOfDay":["18:00"]}'
@@ -74,3 +77,20 @@ def create_first_schedule(db: Session) -> None:
 
 def create_second_schedule(db: Session) -> None:
     create_test_schedule(db=db, schedule_obj=second_valid_schedule)
+
+
+def assert_response_content_equals_original_object(
+    content: object, original_object: object
+) -> bool:
+    content_schedule = content["schedule"]
+    original_schedule = original_object["schedule"]
+    assert content_schedule["daysBetween"] == original_schedule["daysBetween"]
+    assert content_schedule["endDate"] == original_schedule["endDate"]
+    assert content_schedule["startDate"] == original_schedule["startDate"]
+    assert content_schedule["timesOfDay"] == original_schedule["timesOfDay"]
+    assert content_schedule["skipWeekends"] == json_bool_convert(
+        original_schedule["skipWeekends"]
+    )
+    assert content_schedule["skipHolidays"] == json_bool_convert(
+        original_schedule["skipHolidays"]
+    )
