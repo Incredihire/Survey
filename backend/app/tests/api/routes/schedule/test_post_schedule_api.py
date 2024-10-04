@@ -24,7 +24,6 @@ def test_create_schedule_when_there_is_no_schedule_should_make_new_schedule(
     )
     assert response.status_code == 200
     content = response.json()
-    schedule = content["schedule"]
     assert_response_content_equals_original_object(content, first_valid_schedule)
 
 

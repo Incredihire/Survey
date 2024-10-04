@@ -1,4 +1,4 @@
-from enum import Enum
+from typing import TypedDict
 
 from sqlmodel import Session
 
@@ -6,10 +6,38 @@ from ...models import ScheduleCreate
 from ...services.schedule import create_schedule
 from .json import json_bool_convert
 
+
+class ScheduleObjectDict(TypedDict):
+    startDate: str
+    endDate: str
+    daysBetween: int
+    skipWeekends: str
+    skipHolidays: str
+    timesOfDay: list[str]
+
+
+class ScheduleContentDict(TypedDict):
+    startDate: str
+    endDate: str
+    daysBetween: int
+    skipWeekends: bool
+    skipHolidays: bool
+    timesOfDay: list[str]
+
+
+class ScheduleObject(TypedDict):
+    schedule: ScheduleObjectDict
+
+
+class ScheduleContent(TypedDict):
+    schedule: ScheduleContentDict
+
+
 first_schedule_string = '{"startDate":"2024-10-02","endDate":"2024-11-01","daysBetween":1,"skipWeekends":false,"skipHolidays":false,"timesOfDay":["08:00"]}'
 second_schedule_string = '{"startDate":"2024-12-12","endDate":"2024-12-22","daysBetween":1,"skipWeekends":true,"skipHolidays":true,"timesOfDay":["18:00"]}'
 
-first_valid_schedule = {
+
+first_valid_schedule: ScheduleObject = {
     "schedule": {
         "startDate": "2024-10-02",
         "endDate": "2024-11-01",
@@ -20,7 +48,7 @@ first_valid_schedule = {
     }
 }
 
-second_valid_schedule = {
+second_valid_schedule: ScheduleObject = {
     "schedule": {
         "startDate": "2024-12-12",
         "endDate": "2024-12-22",
@@ -80,8 +108,8 @@ def create_second_schedule(db: Session) -> None:
 
 
 def assert_response_content_equals_original_object(
-    content: object, original_object: object
-) -> bool:
+    content: ScheduleContent, original_object: ScheduleObject
+) -> None:
     content_schedule = content["schedule"]
     original_schedule = original_object["schedule"]
     assert content_schedule["daysBetween"] == original_schedule["daysBetween"]
