@@ -1,5 +1,5 @@
 from app.api.routes.schedule import convert_schedule_string_to_schedule_data
-from app.models import Schedule, ScheduleData
+from app.models import Schedule, ScheduleInfo
 from app.tests.utils.schedule_utils import first_schedule_string, first_valid_schedule
 
 
@@ -9,6 +9,6 @@ def test_convert_db_schedule_to_json_should_convert_db_to_serializable_object() 
         id=id,
         schedule=first_schedule_string,
     )
-    sched_data = ScheduleData.model_validate(first_valid_schedule["schedule"])
+    sched_data = ScheduleInfo.model_validate(first_valid_schedule["schedule"])
     db_convert_output = convert_schedule_string_to_schedule_data(db_sched.schedule)
     assert db_convert_output == sched_data
