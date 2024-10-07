@@ -23,6 +23,7 @@ const useAuth = () => {
   const queryClient = useQueryClient()
   const { data: user, isLoading } = useQuery<UserPublic | null, Error>({
     queryKey: ["currentUser"],
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     queryFn: UsersService.usersReadUserMe,
     enabled: isLoggedIn(),
   })
