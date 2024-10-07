@@ -17,9 +17,9 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import { type UserCreate } from "../../client"
-import * as UsersService from "../../client/services/usersService"
+import type { UserCreate } from "../../client"
 import type { ApiError } from "../../client/core/ApiError"
+import { UsersService } from "../../client/services"
 import useCustomToast from "../../hooks/useCustomToast"
 import { emailPattern, handleError } from "../../utils"
 
@@ -56,7 +56,7 @@ const AddUser = ({ isOpen, onClose }: AddUserProps) => {
 
   const mutation = useMutation({
     mutationFn: (data: UserCreate) =>
-      UsersService.createUser({ requestBody: data }),
+      UsersService.usersCreateUser({ requestBody: data }),
     onSuccess: () => {
       showToast("Success!", "User created successfully.", "success")
       reset()

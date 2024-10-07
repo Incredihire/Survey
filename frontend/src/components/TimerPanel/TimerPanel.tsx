@@ -23,7 +23,7 @@ import useCreateSchedule from "../../hooks/useCreateSchedule.ts"
 
 interface TimerFormData {
   startDate: string
-  endDate?: string
+  endDate: string | null
   daysBetween: number
   skipWeekends: boolean
   skipHolidays: boolean
@@ -68,7 +68,7 @@ const TimerPanel = () => {
     const submissionData: {
       schedule: {
         skipHolidays: boolean
-        endDate: string | undefined
+        endDate: string | null
         skipWeekends: boolean
         daysBetween: number
         timesOfDay: string[]

@@ -15,8 +15,8 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import { type ApiError, type ItemCreate } from "../../client"
-import * as ItemsService from "../../client/services/itemsService"
+import type { ApiError, ItemCreate } from "../../client"
+import { ItemsService } from "../../client/services"
 import useCustomToast from "../../hooks/useCustomToast"
 import { handleError } from "../../utils"
 
@@ -44,7 +44,7 @@ const AddItem = ({ isOpen, onClose }: AddItemProps) => {
 
   const mutation = useMutation({
     mutationFn: (data: ItemCreate) =>
-      ItemsService.createItem({ requestBody: data }),
+      ItemsService.itemsCreateItem({ requestBody: data }),
     onSuccess: () => {
       showToast("Success!", "Item created successfully.", "success")
       reset()

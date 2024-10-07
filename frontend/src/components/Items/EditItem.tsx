@@ -15,12 +15,8 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { type SubmitHandler, useForm } from "react-hook-form"
 
-import {
-  type ApiError,
-  type ItemPublic,
-  type ItemUpdate,
-} from "../../client"
-import * as ItemsService from "../../client/services/itemsService"
+import type { ApiError, ItemPublic, ItemUpdate } from "../../client"
+import { ItemsService } from "../../client/services"
 import useCustomToast from "../../hooks/useCustomToast"
 import { handleError } from "../../utils"
 
@@ -46,7 +42,7 @@ const EditItem = ({ item, isOpen, onClose }: EditItemProps) => {
 
   const mutation = useMutation({
     mutationFn: (data: ItemUpdate) =>
-      ItemsService.updateItem({ id: item.id, requestBody: data }),
+      ItemsService.itemsUpdateItem({ id: item.id, requestBody: data }),
     onSuccess: () => {
       showToast("Success!", "Item updated successfully.", "success")
       onClose()

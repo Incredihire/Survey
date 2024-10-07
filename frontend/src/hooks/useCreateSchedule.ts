@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import type { ApiError, TDataCreateSchedule } from "../client"
-import * as scheduleService from "../client/services/scheduleService"
+import type { ApiError, ScheduleCreate } from "../client"
+import { ScheduleService } from "../client/services"
 import { handleError } from "../utils"
 import useCustomToast from "./useCustomToast"
 
@@ -8,13 +8,11 @@ const useCreateSchedule = () => {
   const showToast = useCustomToast()
   const queryClient = useQueryClient()
 
-  const mutation = useMutation<
-    TDataCreateSchedule,
-    ApiError,
-    TDataCreateSchedule
-  >({
-    mutationFn: (schedule: TDataCreateSchedule) =>
-      scheduleService.createSchedule(schedule).then((response) => response),
+  const mutation = useMutation<ScheduleCreate, ApiError, ScheduleCreate>({
+    mutationFn: (schedule: ScheduleCreate) =>
+      ScheduleService.scheduleCreateSchedule({ requestBody: schedule }).then(
+        (response) => response,
+      ),
     onSuccess: () => {
       showToast("Success!", "Schedule created successfully.", "success")
     },
@@ -27,7 +25,7 @@ const useCreateSchedule = () => {
     },
   })
 
-  const createSchedule = (data: TDataCreateSchedule) => {
+  const createSchedule = (data: ScheduleCreate) => {
     mutation.mutate(data)
   }
 
