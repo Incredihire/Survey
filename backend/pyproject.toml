@@ -24,7 +24,7 @@ sqlmodel = "^0.0.22"
 # Pin bcrypt until passlib supports the latest
 bcrypt = "4.2.0"
 pydantic-settings = "^2.5.2"
-sentry-sdk = {extras = ["fastapi"], version = "^2.14.0"}
+sentry-sdk = {extras = ["fastapi"], version = "^2.15.0"}
 pyjwt = "^2.8.0"
 
 [tool.poetry.group.dev.dependencies]
