@@ -4,12 +4,12 @@ from fastapi import APIRouter, HTTPException
 
 import app.services.schedule as schedule_service
 from app.api.deps import SessionDep
-from app.models import ScheduleCreate, ScheduleData, SchedulePublic
+from app.models import ScheduleCreate, ScheduleInfo, SchedulePublic
 
 router = APIRouter()
 
 
-def verify_schedule(schedule: ScheduleData) -> None:
+def verify_schedule(schedule: ScheduleInfo) -> None:
     try:
         datetime.datetime.strptime(
             f"{schedule.startDate} {schedule.timesOfDay[0]}", "%Y-%m-%d %H:%M"
@@ -28,9 +28,9 @@ def verify_schedule(schedule: ScheduleData) -> None:
 
 def convert_schedule_string_to_schedule_data(
     schedule_string: str,
-) -> ScheduleData:
+) -> ScheduleInfo:
     try:
-        return ScheduleData.model_validate_json(schedule_string)
+        return ScheduleInfo.model_validate_json(schedule_string)
     except Exception:
         raise ValueError("Could not retrieve schedule")
 

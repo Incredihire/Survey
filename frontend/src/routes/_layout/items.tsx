@@ -17,7 +17,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useEffect } from "react"
 import { z } from "zod"
 
-import * as ItemsService from "../../client/services/itemsService"
+import { ItemsService } from "../../client/services"
 import ActionsMenu from "../../components/Common/ActionsMenu"
 import Navbar from "../../components/Common/Navbar"
 import AddItem from "../../components/Items/AddItem"
@@ -36,7 +36,10 @@ const PER_PAGE = 5
 function getItemsQueryOptions({ page }: { page: number }) {
   return {
     queryFn: () =>
-      ItemsService.readItems({ skip: (page - 1) * PER_PAGE, limit: PER_PAGE }),
+      ItemsService.itemsReadItems({
+        skip: (page - 1) * PER_PAGE,
+        limit: PER_PAGE,
+      }),
     queryKey: ["items", { page }],
   }
 }

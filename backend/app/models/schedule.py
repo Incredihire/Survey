@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from sqlmodel import Field, SQLModel
 
 
-class ScheduleData(BaseModel):
+class ScheduleInfo(BaseModel):
     startDate: str
     endDate: str | None
     daysBetween: int
@@ -17,7 +17,7 @@ class ScheduleData(BaseModel):
 
 # Properties to receive on Schedule creation
 class ScheduleCreate(SQLModel):
-    schedule: ScheduleData
+    schedule: ScheduleInfo
 
 
 # Database model
@@ -28,5 +28,5 @@ class Schedule(SQLModel, table=True):
 
 # Properties to return via API for a single Schedule
 class SchedulePublic(BaseModel):
-    schedule: ScheduleData
+    schedule: ScheduleInfo
     id: uuid.UUID
