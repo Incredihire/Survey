@@ -45,7 +45,7 @@ def test_create_schedule_when_there_is_already_a_schedule_should_return_the_new_
     assert_response_content_equals_original_object(content, second_valid_schedule)
 
 
-def test_create_schedule_when_time_is_malformed_should_return_error(
+def test_create_schedule_when_schedule_is_missing_an_attribute_should_return_error(
     client: TestClient, superuser_token_headers: dict[str, str]
 ) -> None:
     response = client.post(
@@ -57,7 +57,7 @@ def test_create_schedule_when_time_is_malformed_should_return_error(
     assert re.search("Schedule input is not valid", response.content.decode("utf-8"))
 
 
-def test2_create_schedule_when_time_is_malformed_should_return_error(
+def test_create_schedule_when_time_is_malformed_should_return_error(
     client: TestClient, superuser_token_headers: dict[str, str]
 ) -> None:
     response = client.post(
@@ -69,7 +69,7 @@ def test2_create_schedule_when_time_is_malformed_should_return_error(
     assert re.search("Schedule input is not valid", response.content.decode("utf-8"))
 
 
-def test3_create_schedule_when_time_is_malformed_should_return_error(
+def test_create_schedule_when_date_is_malformed_should_return_error(
     client: TestClient, superuser_token_headers: dict[str, str]
 ) -> None:
     response = client.post(
@@ -81,7 +81,7 @@ def test3_create_schedule_when_time_is_malformed_should_return_error(
     assert re.search("Schedule input is not valid", response.content.decode("utf-8"))
 
 
-def test4_create_schedule_when_time_is_malformed_should_return_error(
+def test_create_schedule_when_data_is_not_a_schedule_string_should_return_error(
     client: TestClient, superuser_token_headers: dict[str, str]
 ) -> None:
     response = client.post(
