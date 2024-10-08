@@ -1,7 +1,8 @@
-import uuid
 from typing import TYPE_CHECKING
 
 from sqlmodel import Field, Relationship, SQLModel
+
+from .mixins import IdMixin
 
 if TYPE_CHECKING:
     from app.models.inquiry import Inquiry
@@ -9,26 +10,24 @@ if TYPE_CHECKING:
 
 # Shared properties
 class ScheduledInquiryBase(SQLModel):
-    inquiry_id: uuid.UUID = Field(foreign_key="inquiry.id", ondelete="CASCADE")
+    inquiry_id: int = Field(foreign_key="inquiry.id", ondelete="CASCADE")
     rank: int = Field(ge=1)  # rank starts at 1
 
 
 # Properties to receive on ScheduledInquiry creation
 class ScheduledInquiryCreate(SQLModel):
-    inquiry_id: uuid.UUID = Field(foreign_key="inquiry.id")
+    inquiry_id: int = Field(foreign_key="inquiry.id")
 
 
 # Database model
-class ScheduledInquiry(ScheduledInquiryBase, table=True):
-    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-
+class ScheduledInquiry(ScheduledInquiryBase, IdMixin, table=True):
     # Relationships
     inquiry: "Inquiry" = Relationship(back_populates="scheduled_inquiries")
 
 
 # Properties to return via API. Contains Inquiry text.
 class ScheduledInquiryPublic(ScheduledInquiryBase):
-    id: uuid.UUID
+    id: int
 
 
 class ScheduledInquiryPublicWithInquiryText(ScheduledInquiryPublic):

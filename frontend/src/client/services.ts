@@ -34,7 +34,7 @@ skip?: number
                     
                 };
 InquiriesReadInquiry: {
-                    inquiryId: string
+                    inquiryId: number
                     
                 };
     }
@@ -50,7 +50,7 @@ skip?: number
                     
                 };
 ThemesReadTheme: {
-                    themeId: string
+                    themeId: number
                     
                 };
     }
@@ -78,16 +78,16 @@ UsersRegisterUser: {
                     
                 };
 UsersReadUserById: {
-                    userId: string
+                    userId: number
                     
                 };
 UsersUpdateUser: {
                     requestBody: UserUpdate
-userId: string
+userId: number
                     
                 };
 UsersDeleteUser: {
-                    userId: string
+                    userId: number
                     
                 };
     }
@@ -110,16 +110,16 @@ ItemsCreateItem: {
                     
                 };
 ItemsReadItem: {
-                    id: string
+                    id: number
                     
                 };
 ItemsUpdateItem: {
-                    id: string
+                    id: number
 requestBody: ItemUpdate
                     
                 };
 ItemsDeleteItem: {
-                    id: string
+                    id: number
                     
                 };
     }

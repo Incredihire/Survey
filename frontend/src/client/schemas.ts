@@ -69,9 +69,8 @@ export const $InquiryPublic = {
 	isRequired: true,
 },
 		id: {
-	type: 'string',
+	type: 'number',
 	isRequired: true,
-	format: 'uuid',
 },
 		created_at: {
 	type: 'string',
@@ -135,14 +134,12 @@ export const $ItemPublic = {
 }],
 },
 		id: {
-	type: 'string',
+	type: 'number',
 	isRequired: true,
-	format: 'uuid',
 },
 		owner_id: {
-	type: 'string',
+	type: 'number',
 	isRequired: true,
-	format: 'uuid',
 },
 	},
 } as const;
@@ -264,9 +261,8 @@ export const $SchedulePublic = {
 	isRequired: true,
 },
 		id: {
-	type: 'string',
+	type: 'number',
 	isRequired: true,
-	format: 'uuid',
 },
 	},
 } as const;
@@ -290,9 +286,8 @@ export const $ScheduledInquiriesPublic = {
 export const $ScheduledInquiryCreate = {
 	properties: {
 		inquiry_id: {
-	type: 'string',
+	type: 'number',
 	isRequired: true,
-	format: 'uuid',
 },
 	},
 } as const;
@@ -300,9 +295,8 @@ export const $ScheduledInquiryCreate = {
 export const $ScheduledInquiryPublic = {
 	properties: {
 		inquiry_id: {
-	type: 'string',
+	type: 'number',
 	isRequired: true,
-	format: 'uuid',
 },
 		rank: {
 	type: 'number',
@@ -310,9 +304,8 @@ export const $ScheduledInquiryPublic = {
 	minimum: 1,
 },
 		id: {
-	type: 'string',
+	type: 'number',
 	isRequired: true,
-	format: 'uuid',
 },
 	},
 } as const;
@@ -320,9 +313,8 @@ export const $ScheduledInquiryPublic = {
 export const $ScheduledInquiryPublicWithInquiryText = {
 	properties: {
 		inquiry_id: {
-	type: 'string',
+	type: 'number',
 	isRequired: true,
-	format: 'uuid',
 },
 		rank: {
 	type: 'number',
@@ -330,9 +322,8 @@ export const $ScheduledInquiryPublicWithInquiryText = {
 	minimum: 1,
 },
 		id: {
-	type: 'string',
+	type: 'number',
 	isRequired: true,
-	format: 'uuid',
 },
 		text: {
 	type: 'string',
@@ -379,9 +370,8 @@ export const $ThemePublic = {
 }],
 },
 		id: {
-	type: 'string',
+	type: 'number',
 	isRequired: true,
-	format: 'uuid',
 },
 	},
 } as const;
@@ -492,9 +482,8 @@ export const $UserPublic = {
 }],
 },
 		id: {
-	type: 'string',
+	type: 'number',
 	isRequired: true,
-	format: 'uuid',
 },
 	},
 } as const;

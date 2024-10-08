@@ -1,11 +1,10 @@
-import uuid
-
 from fastapi.testclient import TestClient
 from sqlmodel import Session
 
 from app.core.config import settings
 from app.models.theme import ThemeCreate
 from app.services.themes import create_theme
+from app.tests.utils.utils import bad_integer_id
 
 
 def test_get_themes_when_themes_exist_should_return_all_themes(
@@ -44,8 +43,8 @@ def test_get_themes_when_themes_exist_should_return_all_themes(
     new_length = len(new_themes)
 
     assert new_length == initial_length + 2
-    assert any(theme["id"] == str(created_theme_1.id) for theme in new_themes)
-    assert any(theme["id"] == str(created_theme_2.id) for theme in new_themes)
+    assert any(theme["id"] == created_theme_1.id for theme in new_themes)
+    assert any(theme["id"] == created_theme_2.id for theme in new_themes)
 
 
 def test_get_theme_by_id_when_theme_exists_should_retrieve_theme(
@@ -63,7 +62,7 @@ def test_get_theme_by_id_when_theme_exists_should_retrieve_theme(
     assert response.status_code == 200
     content = response.json()
 
-    assert content["id"] == str(created_theme.id)
+    assert content["id"] == created_theme.id
     assert content["name"] == created_theme.name
     assert content["description"] == created_theme.description
 
@@ -71,7 +70,7 @@ def test_get_theme_by_id_when_theme_exists_should_retrieve_theme(
 def test_get_theme_by_id_when_theme_does_not_exist_should_return_not_found(
     client: TestClient, superuser_token_headers: dict[str, str]
 ) -> None:
-    non_existent_id = uuid.uuid4()
+    non_existent_id = bad_integer_id
     response = client.get(
         f"{settings.API_V1_STR}/themes/{non_existent_id}",
         headers=superuser_token_headers,

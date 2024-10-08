@@ -1,5 +1,3 @@
-import uuid
-
 from fastapi import APIRouter, HTTPException
 
 import app.services.inquiries as inquiries_service
@@ -49,7 +47,7 @@ def get_inquries(
 
 
 @router.get("/{inquiry_id}", response_model=InquiryPublic)
-def read_inquiry(session: SessionDep, inquiry_id: uuid.UUID) -> Inquiry:
+def read_inquiry(session: SessionDep, inquiry_id: int) -> Inquiry:
     """
     Get inquiry by ID
     """

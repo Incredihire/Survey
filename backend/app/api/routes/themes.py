@@ -1,5 +1,3 @@
-import uuid
-
 from fastapi import APIRouter, HTTPException
 
 import app.services.themes as themes_service
@@ -34,7 +32,7 @@ def get_themes(session: SessionDep, skip: int = 0, limit: int = 100) -> ThemesPu
 
 
 @router.get("/{theme_id}", response_model=ThemePublic)
-def read_theme(session: SessionDep, theme_id: uuid.UUID) -> Theme:
+def read_theme(session: SessionDep, theme_id: int) -> Theme:
     """
     Get theme by ID
     """

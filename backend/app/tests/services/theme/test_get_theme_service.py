@@ -1,9 +1,8 @@
-import uuid
-
 from sqlmodel import Session
 
 from app.models.theme import ThemeCreate
 from app.services import themes
+from app.tests.utils.utils import bad_integer_id
 
 
 def test_get_theme_by_name_when_theme_is_created_should_retrieve_theme(
@@ -34,7 +33,7 @@ def test_get_theme_by_id_when_theme_exists_should_retrieve_theme(db: Session) ->
     theme_data = ThemeCreate(name="UniqueTheme", description="Unique description")
     created_theme = themes.create_theme(session=db, theme_in=theme_data)
 
-    retrieved_theme = themes.get_theme_by_id(session=db, theme_id=created_theme.id)
+    retrieved_theme = themes.get_theme_by_id(session=db, theme_id=created_theme.id)  # type: ignore
 
     assert retrieved_theme is not None
     assert retrieved_theme.id == created_theme.id
@@ -43,6 +42,6 @@ def test_get_theme_by_id_when_theme_exists_should_retrieve_theme(db: Session) ->
 def test_get_theme_by_id_when_theme_does_not_exist_should_return_none(
     db: Session,
 ) -> None:
-    non_existent_id = uuid.uuid4()
+    non_existent_id = bad_integer_id
     theme = themes.get_theme_by_id(session=db, theme_id=non_existent_id)
     assert theme is None

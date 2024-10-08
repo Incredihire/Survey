@@ -1,5 +1,3 @@
-from uuid import UUID
-
 from sqlmodel import Session, func, select
 
 from app.models import Inquiry, InquiryCreate
@@ -19,7 +17,7 @@ def get_inquiry_by_text(*, session: Session, text: str) -> Inquiry | None:
     return session_text
 
 
-def get_inquiry_by_id(*, session: Session, inquiry_id: UUID) -> Inquiry | None:
+def get_inquiry_by_id(*, session: Session, inquiry_id: int) -> Inquiry | None:
     statement = select(Inquiry).where(Inquiry.id == inquiry_id)
     session_text = session.exec(statement).first()
     return session_text

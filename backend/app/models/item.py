@@ -1,7 +1,8 @@
-import uuid
 from typing import TYPE_CHECKING, Optional
 
 from sqlmodel import Field, Relationship, SQLModel
+
+from .mixins import IdMixin
 
 if TYPE_CHECKING:
     from .user import User
@@ -24,19 +25,16 @@ class ItemUpdate(ItemBase):
 
 
 # Database model, database table inferred from class name
-class Item(ItemBase, table=True):
-    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+class Item(ItemBase, IdMixin, table=True):
     title: str = Field(max_length=255)
-    owner_id: uuid.UUID = Field(
-        foreign_key="user.id", nullable=False, ondelete="CASCADE"
-    )
+    owner_id: int = Field(foreign_key="user.id", nullable=False, ondelete="CASCADE")
     owner: Optional["User"] = Relationship(back_populates="items")
 
 
 # Properties to return via API, id is always required
 class ItemPublic(ItemBase):
-    id: uuid.UUID
-    owner_id: uuid.UUID
+    id: int
+    owner_id: int
 
 
 class ItemsPublic(SQLModel):

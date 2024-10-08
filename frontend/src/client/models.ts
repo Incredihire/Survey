@@ -23,7 +23,7 @@ export type InquiryCreate = {
 
 export type InquiryPublic = {
 	text: string;
-	id: string;
+	id: number;
 	created_at: string;
 };
 
@@ -46,8 +46,8 @@ export type ItemCreate = {
 export type ItemPublic = {
 	title: string;
 	description?: string | null;
-	id: string;
-	owner_id: string;
+	id: number;
+	owner_id: number;
 };
 
 
@@ -98,7 +98,7 @@ export type ScheduleInfo = {
 
 export type SchedulePublic = {
 	schedule: ScheduleInfo;
-	id: string;
+	id: number;
 };
 
 
@@ -111,23 +111,23 @@ export type ScheduledInquiriesPublic = {
 
 
 export type ScheduledInquiryCreate = {
-	inquiry_id: string;
+	inquiry_id: number;
 };
 
 
 
 export type ScheduledInquiryPublic = {
-	inquiry_id: string;
+	inquiry_id: number;
 	rank: number;
-	id: string;
+	id: number;
 };
 
 
 
 export type ScheduledInquiryPublicWithInquiryText = {
-	inquiry_id: string;
+	inquiry_id: number;
 	rank: number;
-	id: string;
+	id: number;
 	text: string;
 };
 
@@ -143,7 +143,7 @@ export type ThemeCreate = {
 export type ThemePublic = {
 	name: string;
 	description?: string | null;
-	id: string;
+	id: number;
 };
 
 
@@ -184,7 +184,7 @@ export type UserPublic = {
 	is_active?: boolean;
 	is_superuser?: boolean;
 	full_name?: string | null;
-	id: string;
+	id: number;
 };
 
 

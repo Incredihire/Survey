@@ -3,6 +3,7 @@ from sqlmodel import Session
 
 from app.models import Inquiry
 from app.tests.utils.api_post import api_post
+from app.tests.utils.utils import bad_integer_id
 
 route_prefix = "scheduledinquiries"
 
@@ -10,7 +11,7 @@ route_prefix = "scheduledinquiries"
 def test_add_to_schedule_when_called_with_invalid_inquiry_id_returns_422(
     client: TestClient, superuser_token_headers: dict[str, str]
 ) -> None:
-    invalid_inquiry_id = "f4d24b3e-a1af-437d-8dc4-2d50a7608725"
+    invalid_inquiry_id = bad_integer_id
     test_dto = {"inquiry_id": invalid_inquiry_id}
 
     content = api_post(

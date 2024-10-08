@@ -1,4 +1,3 @@
-import uuid
 from unittest.mock import patch
 
 from fastapi.testclient import TestClient
@@ -8,7 +7,7 @@ import app.services.users as users_service
 from app.core.config import settings
 from app.core.security import verify_password
 from app.models import User, UserCreate
-from app.tests.utils.utils import random_email, random_lower_string
+from app.tests.utils.utils import bad_integer_id, random_email, random_lower_string
 
 
 def test_get_users_superuser_me(
@@ -106,7 +105,7 @@ def test_get_existing_user_permissions_error(
     client: TestClient, normal_user_token_headers: dict[str, str]
 ) -> None:
     r = client.get(
-        f"{settings.API_V1_STR}/users/{uuid.uuid4()}",
+        f"{settings.API_V1_STR}/users/{bad_integer_id}",
         headers=normal_user_token_headers,
     )
     assert r.status_code == 403
@@ -351,7 +350,7 @@ def test_update_user_not_exists(
 ) -> None:
     data = {"full_name": "Updated_full_name"}
     r = client.patch(
-        f"{settings.API_V1_STR}/users/{uuid.uuid4()}",
+        f"{settings.API_V1_STR}/users/{bad_integer_id}",
         headers=superuser_token_headers,
         json=data,
     )
@@ -448,7 +447,7 @@ def test_delete_user_not_found(
     client: TestClient, superuser_token_headers: dict[str, str]
 ) -> None:
     r = client.delete(
-        f"{settings.API_V1_STR}/users/{uuid.uuid4()}",
+        f"{settings.API_V1_STR}/users/{bad_integer_id}",
         headers=superuser_token_headers,
     )
     assert r.status_code == 404

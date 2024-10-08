@@ -1,5 +1,3 @@
-from uuid import UUID
-
 from sqlmodel import Session, col, desc, func, select
 
 from app.models import (
@@ -11,7 +9,7 @@ from app.models import (
 from app.models.scheduled_inquiry import ScheduledInquiryPublicWithInquiryText
 
 
-def create(*, session: Session, inquiry_id: UUID) -> ScheduledInquiryPublic:
+def create(*, session: Session, inquiry_id: int) -> ScheduledInquiryPublic:
     highest_rank = session.exec(
         select(ScheduledInquiry.rank).order_by(desc(ScheduledInquiry.rank))
     ).first()
