@@ -96,7 +96,6 @@ export const $InquriesPublic = {
 	},
 } as const;
 
- main
 export const $Message = {
 	properties: {
 		message: {
