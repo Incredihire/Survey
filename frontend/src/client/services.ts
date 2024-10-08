@@ -2,7 +2,7 @@ import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
 
-import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,InquiryCreate,InquiryPublic,InquriesPublic,ThemeCreate,ThemePublic,ThemesPublic,UpdatePassword,UserCreate,UserRegister,UsersPublic,UserUpdate,UserUpdateMe,ItemCreate,ItemPublic,ItemsPublic,ItemUpdate,ScheduledInquiriesPublic,ScheduledInquiryCreate,ScheduledInquiryPublic,ScheduleCreate,SchedulePublic } from './models';
+import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,InquiryCreate,InquiryPublic,InquriesPublic,ThemeCreate,ThemePublic,ThemesPublic,UpdatePassword,UserCreate,UserRegister,UsersPublic,UserUpdate,UserUpdateMe,ScheduledInquiriesPublic,ScheduledInquiryCreate,ScheduledInquiryPublic,ScheduleCreate,SchedulePublic } from './models';
 
 export type LoginData = {
         LoginLoginAccessToken: {
@@ -99,32 +99,8 @@ export type UtilsData = {
                 };
     }
 
-export type ItemsData = {
-        ItemsReadItems: {
-                    limit?: number
-skip?: number
-                    
-                };
-ItemsCreateItem: {
-                    requestBody: ItemCreate
-                    
-                };
-ItemsReadItem: {
-                    id: number
-                    
-                };
-ItemsUpdateItem: {
-                    id: number
-requestBody: ItemUpdate
-                    
-                };
-ItemsDeleteItem: {
-                    id: number
-                    
-                };
-    }
 
-export type ScheduledInquiriesData = {
+	export type ScheduledInquiriesData = {
         ScheduledInquiriesAddToSchedule: {
                     requestBody: ScheduledInquiryCreate
                     
@@ -609,123 +585,6 @@ emailTo,
 			url: '/api/v1/utils/test-email/',
 			query: {
 				email_to: emailTo
-			},
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
-
-}
-
-export class ItemsService {
-
-	/**
-	 * Read Items
-	 * Retrieve items.
-	 * @returns ItemsPublic Successful Response
-	 * @throws ApiError
-	 */
-	public static itemsReadItems(data: ItemsData['ItemsReadItems'] = {}): CancelablePromise<ItemsPublic> {
-		const {
-skip = 0,
-limit = 100,
-} = data;
-		return __request(OpenAPI, {
-			method: 'GET',
-			url: '/api/v1/items/',
-			query: {
-				skip, limit
-			},
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
-
-	/**
-	 * Create Item
-	 * Create new item.
-	 * @returns ItemPublic Successful Response
-	 * @throws ApiError
-	 */
-	public static itemsCreateItem(data: ItemsData['ItemsCreateItem']): CancelablePromise<ItemPublic> {
-		const {
-requestBody,
-} = data;
-		return __request(OpenAPI, {
-			method: 'POST',
-			url: '/api/v1/items/',
-			body: requestBody,
-			mediaType: 'application/json',
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
-
-	/**
-	 * Read Item
-	 * Get item by ID.
-	 * @returns ItemPublic Successful Response
-	 * @throws ApiError
-	 */
-	public static itemsReadItem(data: ItemsData['ItemsReadItem']): CancelablePromise<ItemPublic> {
-		const {
-id,
-} = data;
-		return __request(OpenAPI, {
-			method: 'GET',
-			url: '/api/v1/items/{id}',
-			path: {
-				id
-			},
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
-
-	/**
-	 * Update Item
-	 * Update an item.
-	 * @returns ItemPublic Successful Response
-	 * @throws ApiError
-	 */
-	public static itemsUpdateItem(data: ItemsData['ItemsUpdateItem']): CancelablePromise<ItemPublic> {
-		const {
-id,
-requestBody,
-} = data;
-		return __request(OpenAPI, {
-			method: 'PUT',
-			url: '/api/v1/items/{id}',
-			path: {
-				id
-			},
-			body: requestBody,
-			mediaType: 'application/json',
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
-
-	/**
-	 * Delete Item
-	 * Delete an item.
-	 * @returns Message Successful Response
-	 * @throws ApiError
-	 */
-	public static itemsDeleteItem(data: ItemsData['ItemsDeleteItem']): CancelablePromise<Message> {
-		const {
-id,
-} = data;
-		return __request(OpenAPI, {
-			method: 'DELETE',
-			url: '/api/v1/items/{id}',
-			path: {
-				id
 			},
 			errors: {
 				422: `Validation Error`,

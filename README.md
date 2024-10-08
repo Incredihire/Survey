@@ -30,7 +30,6 @@ Run the following from backend directory:
 ```
 poetry install
 ```
-
 Run the following from frontend directory:
 ```
 npm install

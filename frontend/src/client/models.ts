@@ -36,36 +36,6 @@ export type InquriesPublic = {
 
 
 
-export type ItemCreate = {
-	title: string;
-	description?: string | null;
-};
-
-
-
-export type ItemPublic = {
-	title: string;
-	description?: string | null;
-	id: number;
-	owner_id: number;
-};
-
-
-
-export type ItemUpdate = {
-	title?: string | null;
-	description?: string | null;
-};
-
-
-
-export type ItemsPublic = {
-	data: Array<ItemPublic>;
-	count: number;
-};
-
-
-
 export type Message = {
 	message: string;
 };

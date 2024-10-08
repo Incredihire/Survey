@@ -1,30 +1,12 @@
-import {
-  SkeletonText,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from "@chakra-ui/react"
-import { useQuery } from "@tanstack/react-query"
+import { Box, Flex, Spinner } from "@chakra-ui/react"
 import { useMemo } from "react"
-import type { InquiryPublic } from "../../client"
-import { InquiriesService } from "../../client/services"
-import { formatISODateToUserTimezone } from "../../utils/date.ts"
+import type { InquiryPublic } from "../../client/models.ts"
+import { useInquiries } from "../../hooks/useInquiries.ts"
+import { DataTable } from "../Common/Table.tsx"
+import { columns } from "./InquiriesTable.columns.ts"
 
 const InquiriesTable = () => {
-  function getInquiriesQueryOptions() {
-    return {
-      queryKey: ["inquiries"],
-      queryFn: () => InquiriesService.inquiriesGetInquries(),
-    }
-  }
-
-  const { data: inquiries, isPending } = useQuery({
-    ...getInquiriesQueryOptions(),
-  })
+  const { data: inquiries, isLoading } = useInquiries()
 
   // Sort inquiries from Newest to oldest
   const sortedInquiries = useMemo(() => {
@@ -34,49 +16,24 @@ const InquiriesTable = () => {
     })
   }, [inquiries])
 
+  const handleRowClick = (inquiry: InquiryPublic) => {
+    console.log("Row clicked:", inquiry)
+  }
+
   return (
-    <TableContainer>
-      <Table>
-        <Thead>
-          <Tr>
-            <Th>Text</Th>
-            <Th>Created At</Th>
-          </Tr>
-        </Thead>
-        {isPending ? (
-          <Tbody>
-            <Tr>
-              {new Array(3).fill(null).map((_, index) => (
-                <Td key={index}>
-                  <SkeletonText noOfLines={1} />
-                </Td>
-              ))}
-            </Tr>
-          </Tbody>
-        ) : (
-          <Tbody>
-            {sortedInquiries.length > 0 ? (
-              sortedInquiries.map((inquiry: InquiryPublic) => (
-                <Tr
-                  key={inquiry.id}
-                  onClick={() => {
-                    console.log(inquiry)
-                  }}
-                  data-testid="inquiry-row"
-                >
-                  <Td data-testid="inquiry-text">{inquiry.text}</Td>
-                  <Td data-testid="inquiry-datetime">
-                    {formatISODateToUserTimezone(inquiry.created_at)}
-                  </Td>
-                </Tr>
-              ))
-            ) : (
-              <></>
-            )}
-          </Tbody>
-        )}
-      </Table>
-    </TableContainer>
+    <Box>
+      {isLoading ? (
+        <Flex align="center" justify="center" height={200}>
+          <Spinner size="xl" />
+        </Flex>
+      ) : (
+        <DataTable
+          data={sortedInquiries}
+          columns={columns}
+          onRowClick={handleRowClick}
+        />
+      )}
+    </Box>
   )
 }
 
