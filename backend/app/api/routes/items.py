@@ -41,7 +41,7 @@ def read_items(
 
 
 @router.get("/{id}", response_model=ItemPublic)
-def read_item(session: SessionDep, current_user: CurrentUser, id: int) -> Any:
+def read_item(session: SessionDep, current_user: CurrentUser) -> Any:
     """
     Get item by ID.
     """
@@ -72,7 +72,6 @@ def update_item(
     *,
     session: SessionDep,
     current_user: CurrentUser,
-    id: int,
     item_in: ItemUpdate,
 ) -> Any:
     """
@@ -92,7 +91,7 @@ def update_item(
 
 
 @router.delete("/{id}")
-def delete_item(session: SessionDep, current_user: CurrentUser, id: int) -> Message:
+def delete_item(session: SessionDep, current_user: CurrentUser) -> Message:
     """
     Delete an item.
     """
