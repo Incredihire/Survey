@@ -1,21 +1,20 @@
 import { Box, Flex, Icon, Text, useColorModeValue } from "@chakra-ui/react"
 import { useQueryClient } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
-import { FiBriefcase, FiHome, FiHelpCircle, FiSettings, FiUsers } from "react-icons/fi"
+import { FiHelpCircle, FiHome, FiSettings, FiUsers } from "react-icons/fi"
 
+import type { IconType } from "react-icons"
 import type { UserPublic } from "../../client"
-import {IconType} from "react-icons";
 
 interface SidebarItem {
-  icon: IconType;
-  title: string;
-  path: string;
+  icon: IconType
+  title: string
+  path: string
 }
 const items: SidebarItem[] = [
   { icon: FiHome, title: "Dashboard", path: "/" },
   // These are coming from our dependencies untyped, so we'll disable the linting for these lines
   /* eslint-disable */
-  { icon: FiBriefcase, title: "Items", path: "/items" },
   { icon: FiHelpCircle, title: "Inquiries", path: "/inquiries" },
   { icon: FiSettings, title: "User Settings", path: "/settings" },
   /* eslint-enable */
