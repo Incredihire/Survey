@@ -21,7 +21,8 @@ import type { UserCreate } from "../../client"
 import type { ApiError } from "../../client/core/ApiError"
 import { UsersService } from "../../client/services"
 import useCustomToast from "../../hooks/useCustomToast"
-import { emailPattern, handleError } from "../../utils"
+import { handleError } from "../../utils/showToastOnError"
+import { emailPattern } from "../../utils/validation"
 
 interface AddUserProps {
   isOpen: boolean

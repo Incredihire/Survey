@@ -15,7 +15,8 @@ import type { ApiError } from "../client"
 import { LoginService } from "../client/services"
 import { isLoggedIn } from "../hooks/useAuth"
 import useCustomToast from "../hooks/useCustomToast"
-import { emailPattern, handleError } from "../utils"
+import { handleError } from "../utils/showToastOnError"
+import { emailPattern } from "../utils/validation"
 
 interface FormData {
   email: string

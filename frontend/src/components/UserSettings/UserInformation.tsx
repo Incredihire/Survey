@@ -19,7 +19,8 @@ import type { ApiError, UserPublic, UserUpdateMe } from "../../client"
 import { UsersService } from "../../client/services"
 import useAuth from "../../hooks/useAuth"
 import useCustomToast from "../../hooks/useCustomToast"
-import { emailPattern, handleError } from "../../utils"
+import { handleError } from "../../utils/showToastOnError"
+import { emailPattern } from "../../utils/validation"
 
 const UserInformation = () => {
   const queryClient = useQueryClient()
