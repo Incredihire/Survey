@@ -19,7 +19,7 @@ import type { ApiError } from "../../client"
 import type { InquiryCreate } from "../../client/models"
 import { InquiriesService } from "../../client/services"
 import useCustomToast from "../../hooks/useCustomToast"
-import { handleError } from "../../utils"
+import { handleError } from "../../utils/showToastOnError"
 
 interface AddInquiryProps {
   isOpen: boolean

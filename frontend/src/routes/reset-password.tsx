@@ -16,7 +16,8 @@ import type { ApiError, NewPassword } from "../client"
 import { LoginService } from "../client/services"
 import { isLoggedIn } from "../hooks/useAuth"
 import useCustomToast from "../hooks/useCustomToast"
-import { confirmPasswordRules, handleError, passwordRules } from "../utils"
+import { handleError } from "../utils/showToastOnError"
+import { confirmPasswordRules, passwordRules } from "../utils/validation"
 
 interface NewPasswordForm extends NewPassword {
   confirm_password: string

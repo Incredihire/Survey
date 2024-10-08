@@ -15,7 +15,7 @@ import type { ApiError } from "../../client"
 import { UsersService } from "../../client/services"
 import useAuth from "../../hooks/useAuth"
 import useCustomToast from "../../hooks/useCustomToast"
-import { handleError } from "../../utils"
+import { handleError } from "../../utils/showToastOnError"
 
 interface DeleteProps {
   isOpen: boolean

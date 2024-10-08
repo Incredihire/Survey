@@ -20,7 +20,8 @@ import { type SubmitHandler, useForm } from "react-hook-form"
 import type { ApiError, UserPublic, UserUpdate } from "../../client"
 import { UsersService } from "../../client/services"
 import useCustomToast from "../../hooks/useCustomToast"
-import { emailPattern, handleError } from "../../utils"
+import { handleError } from "../../utils/showToastOnError"
+import { emailPattern } from "../../utils/validation"
 
 interface EditUserProps {
   user: UserPublic
