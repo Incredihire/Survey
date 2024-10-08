@@ -5,7 +5,7 @@ import {
   createColumnHelper,
 } from "@tanstack/react-table"
 import type { InquiryPublic } from "../../client"
-import { formatISODateToUserTimezone } from "../../utils"
+import { formatISODateToUserTimezone } from "../../utils/date"
 
 const columnHelper: ColumnHelperType<InquiryPublic> =
   createColumnHelper<InquiryPublic>()
