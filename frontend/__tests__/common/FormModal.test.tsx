@@ -34,18 +34,16 @@ describe("FormModal", () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-
     ;(useCustomToast as jest.Mock).mockReturnValue(mockShowToast)
-
     ;(useMutation as jest.Mock).mockImplementation(
       ({ onSuccess, onError, onSettled }) => ({
         mutate: (data: any) => {
           mockMutationFn(data)
-            .then((result: any) => {
+            .then((result: unknown) => {
               onSuccess?.(result)
               onSettled?.()
             })
-            .catch((error: any) => {
+            .catch((error: unknown) => {
               onError?.(error)
               onSettled?.()
             })
@@ -53,7 +51,6 @@ describe("FormModal", () => {
         isLoading: false,
       }),
     )
-
     ;(useQueryClient as jest.Mock).mockReturnValue({
       invalidateQueries: jest.fn(),
     })

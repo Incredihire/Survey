@@ -90,7 +90,7 @@ const FormModal = <T extends Record<string, any>>({
     },
     onSettled: () => {
       if (queryKeyToInvalidate) {
-        queryClient.invalidateQueries({ queryKey: queryKeyToInvalidate })
+        void queryClient.invalidateQueries({ queryKey: queryKeyToInvalidate })
       }
     },
   })
@@ -113,6 +113,7 @@ const FormModal = <T extends Record<string, any>>({
         <ModalBody pb={6}>
           {fields.map((field) => {
             const fieldName = field.name as keyof T
+            // eslint-disable-next-line security/detect-object-injection
             const isError = !!errors[fieldName]
             const InputComponent = field.type === "textarea" ? Textarea : Input
             return (
