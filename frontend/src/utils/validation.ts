@@ -51,3 +51,13 @@ export const confirmPasswordRules = (
 
   return rules
 }
+
+export function isValidUnicode(str: string): boolean {
+  let retval: boolean
+  try {
+    retval = str === decodeURIComponent(encodeURIComponent(str))
+  } catch {
+    retval = false
+  }
+  return retval
+}

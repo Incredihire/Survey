@@ -1,15 +1,22 @@
 import { Box, Flex, Icon, Text, useColorModeValue } from "@chakra-ui/react"
 import { useQueryClient } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
-import { FiBriefcase, FiHome, FiHelpCircle, FiSettings, FiUsers } from "react-icons/fi"
+import {
+  FiBriefcase,
+  FiFolder,
+  FiHelpCircle,
+  FiHome,
+  FiSettings,
+  FiUsers,
+} from "react-icons/fi"
 
+import type { IconType } from "react-icons"
 import type { UserPublic } from "../../client"
-import {IconType} from "react-icons";
 
 interface SidebarItem {
-  icon: IconType;
-  title: string;
-  path: string;
+  icon: IconType
+  title: string
+  path: string
 }
 const items: SidebarItem[] = [
   { icon: FiHome, title: "Dashboard", path: "/" },
@@ -17,6 +24,7 @@ const items: SidebarItem[] = [
   /* eslint-disable */
   { icon: FiBriefcase, title: "Items", path: "/items" },
   { icon: FiHelpCircle, title: "Inquiries", path: "/inquiries" },
+  { icon: FiFolder, title: "Themes", path: "/themes" },
   { icon: FiSettings, title: "User Settings", path: "/settings" },
   /* eslint-enable */
 ]
