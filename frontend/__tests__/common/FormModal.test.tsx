@@ -21,12 +21,19 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import type { ApiError } from "../../src/client"
 import FormModal, {
   type FieldDefinition,
+  type FormModalProps,
 } from "../../src/components/Common/FormModal"
 import useCustomToast from "../../src/hooks/useCustomToast"
 
+interface TestFormData {
+  username: string
+  bio?: string
+}
+
 describe("FormModal", () => {
   const mockOnClose = jest.fn()
-  const mockMutationFn = jest.fn()
+
+  const mockMutationFn: jest.Mock<Promise<void>, [TestFormData]> = jest.fn()
 
   const mockShowToast = jest.fn()
 
@@ -37,10 +44,10 @@ describe("FormModal", () => {
     ;(useCustomToast as jest.Mock).mockReturnValue(mockShowToast)
     ;(useMutation as jest.Mock).mockImplementation(
       ({ onSuccess, onError, onSettled }) => ({
-        mutate: (data: any) => {
+        mutate: (data: TestFormData) => {
           mockMutationFn(data)
-            .then((result: unknown) => {
-              onSuccess?.(result)
+            .then(() => {
+              onSuccess?.()
               onSettled?.()
             })
             .catch((error: unknown) => {
@@ -56,12 +63,14 @@ describe("FormModal", () => {
     })
   })
 
-  const renderFormModal = (props = {}) => {
-    const defaultProps = {
+  const renderFormModal = (
+    props: Partial<FormModalProps<TestFormData>> = {},
+  ) => {
+    const defaultProps: FormModalProps<TestFormData> = {
       isOpen: true,
       onClose: mockOnClose,
       title: "Test Form Modal",
-      fields: [] as FieldDefinition<any>[],
+      fields: [] as FieldDefinition<TestFormData>[],
       mutationFn: mockMutationFn,
       successMessage: "Form submitted successfully",
       ...props,
@@ -87,13 +96,14 @@ describe("FormModal", () => {
   })
 
   it("renders fields based on the fields prop", () => {
-    const fields: FieldDefinition<any>[] = [
+    const fields: FieldDefinition<TestFormData>[] = [
       {
         name: "username",
         label: "Username",
         placeholder: "Enter your username",
+        type: "input",
         validation: { required: "Username is required" },
-        inputProps: { "data-testid": "username-input" },
+        inputProps: { "data-testid": "username-input", size: "md" },
       },
       {
         name: "bio",
@@ -101,7 +111,7 @@ describe("FormModal", () => {
         type: "textarea",
         placeholder: "Tell us about yourself",
         validation: { required: "Bio is required" },
-        inputProps: { "data-testid": "bio-textarea" },
+        inputProps: { "data-testid": "bio-textarea", rows: 4 },
       },
     ]
 
@@ -115,16 +125,16 @@ describe("FormModal", () => {
   })
 
   it("submits the form with valid data", async () => {
-    // Ensure mockMutationFn resolves successfully
-    mockMutationFn.mockResolvedValueOnce({})
+    mockMutationFn.mockResolvedValueOnce(undefined)
 
-    const fields: FieldDefinition<any>[] = [
+    const fields: FieldDefinition<TestFormData>[] = [
       {
         name: "username",
         label: "Username",
         placeholder: "Enter your username",
+        type: "input",
         validation: { required: "Username is required" },
-        inputProps: { "data-testid": "username-input" },
+        inputProps: { "data-testid": "username-input", size: "md" },
       },
     ]
 
@@ -149,13 +159,14 @@ describe("FormModal", () => {
   })
 
   it("displays validation errors", async () => {
-    const fields: FieldDefinition<any>[] = [
+    const fields: FieldDefinition<TestFormData>[] = [
       {
         name: "username",
         label: "Username",
         placeholder: "Enter your username",
+        type: "input",
         validation: { required: "Username is required" },
-        inputProps: { "data-testid": "username-input" },
+        inputProps: { "data-testid": "username-input", size: "md" },
       },
     ]
 
@@ -169,7 +180,7 @@ describe("FormModal", () => {
   })
 
   it("handles mutation error", async () => {
-    const mockError = {
+    const mockError: ApiError = {
       body: {
         detail: "Mutation failed",
       },
@@ -177,13 +188,14 @@ describe("FormModal", () => {
 
     mockMutationFn.mockRejectedValueOnce(mockError)
 
-    const fields: FieldDefinition<any>[] = [
+    const fields: FieldDefinition<TestFormData>[] = [
       {
         name: "username",
         label: "Username",
         placeholder: "Enter your username",
+        type: "input",
         validation: { required: "Username is required" },
-        inputProps: { "data-testid": "username-input" },
+        inputProps: { "data-testid": "username-input", size: "md" },
       },
     ]
 

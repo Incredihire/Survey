@@ -37,8 +37,9 @@ const AddInquiry = ({ isOpen, onClose }: AddInquiryProps) => {
     },
   ]
 
-  const mutationFn = (data: InquiryCreate) =>
-    InquiriesService.inquiriesCreateInquiry({ requestBody: data })
+  const mutationFn = async (data: InquiryCreate): Promise<void> => {
+    await InquiriesService.inquiriesCreateInquiry({ requestBody: data })
+  }
 
   return (
     <FormModal<InquiryCreate>

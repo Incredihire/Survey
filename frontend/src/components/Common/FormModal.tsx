@@ -1,6 +1,8 @@
 import {
   Button,
   type ButtonProps,
+  type InputProps as ChakraInputProps,
+  type TextareaProps as ChakraTextareaProps,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -15,38 +17,57 @@ import {
   Textarea,
 } from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { type SubmitHandler, useForm } from "react-hook-form"
+import {
+  type DefaultValues,
+  type FieldValues,
+  type Path,
+  type RegisterOptions,
+  type SubmitHandler,
+  useForm,
+} from "react-hook-form"
 
 import type { ApiError } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
 import { handleError } from "../../utils"
 
-interface FieldDefinition<T> {
-  name: keyof T
+type WithDataTestId<P> = P & { "data-testid"?: string }
+
+type ExtendedInputProps = WithDataTestId<ChakraInputProps>
+type ExtendedTextareaProps = WithDataTestId<ChakraTextareaProps>
+
+interface BaseFieldDefinition<
+  T extends FieldValues,
+  K extends "input" | "textarea",
+> {
+  name: Path<T>
   label: string
   placeholder?: string
-  type?: string
-  validation?: any
-  defaultValue?: any
-  inputProps?: any
+  type: K
+  validation?: RegisterOptions
+  defaultValue?: T[Path<T>]
+  inputProps?: K extends "input" ? ExtendedInputProps : ExtendedTextareaProps
 }
+
+type FieldDefinition<T extends FieldValues> =
+  | BaseFieldDefinition<T, "input">
+  | BaseFieldDefinition<T, "textarea">
 
 interface ExtendedButtonProps extends ButtonProps {
   "data-testid"?: string
 }
 
-export interface FormModalProps<T> {
+export interface FormModalProps<T extends FieldValues> {
   isOpen: boolean
   onClose: () => void
   title: string
   fields: FieldDefinition<T>[]
-  mutationFn: (data: T) => Promise<any>
+  mutationFn: (data: T) => Promise<void>
   successMessage: string
   queryKeyToInvalidate?: string[]
   submitButtonProps?: ExtendedButtonProps
 }
 
-const FormModal = <T extends Record<string, any>>({
+const FormModal = <T extends FieldValues>({
   isOpen,
   onClose,
   title,
@@ -59,12 +80,14 @@ const FormModal = <T extends Record<string, any>>({
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
 
-  const defaultValues: any = fields.reduce(
-    (acc: Record<string, any>, field) => {
-      acc[field.name as string] = field.defaultValue || ""
+  const defaultValues: DefaultValues<T> = fields.reduce(
+    (acc, field) => {
+      if (field.defaultValue !== undefined) {
+        acc[field.name] = field.defaultValue
+      }
       return acc
     },
-    {},
+    {} as DefaultValues<T>,
   )
 
   const {
@@ -112,24 +135,48 @@ const FormModal = <T extends Record<string, any>>({
         <ModalCloseButton />
         <ModalBody pb={6}>
           {fields.map((field) => {
-            const fieldName = field.name as keyof T
-            // eslint-disable-next-line security/detect-object-injection
-            const isError = !!errors[fieldName]
-            const InputComponent = field.type === "textarea" ? Textarea : Input
+            const isError = !!errors[field.name]
+            if (field.type === "textarea") {
+              // For Textarea
+              return (
+                <FormControl
+                  isInvalid={isError}
+                  mb={4}
+                  key={String(field.name)}
+                >
+                  <FormLabel htmlFor={String(field.name)}>
+                    {field.label}
+                  </FormLabel>
+                  <Textarea
+                    id={String(field.name)}
+                    placeholder={field.placeholder}
+                    {...register(field.name, field.validation)}
+                    {...field.inputProps}
+                  />
+                  {isError && (
+                    <FormErrorMessage>
+                      {(errors[field.name]?.message as string) ||
+                        "Invalid input"}
+                    </FormErrorMessage>
+                  )}
+                </FormControl>
+              )
+            }
+            // For Input
             return (
               <FormControl isInvalid={isError} mb={4} key={String(field.name)}>
                 <FormLabel htmlFor={String(field.name)}>
                   {field.label}
                 </FormLabel>
-                <InputComponent
+                <Input
                   id={String(field.name)}
                   placeholder={field.placeholder}
-                  {...register(field.name as any, field.validation)}
+                  {...register(field.name, field.validation)}
                   {...field.inputProps}
                 />
                 {isError && (
                   <FormErrorMessage>
-                    {(errors[fieldName] as any)?.message}
+                    {(errors[field.name]?.message as string) || "Invalid input"}
                   </FormErrorMessage>
                 )}
               </FormControl>

@@ -18,7 +18,7 @@ const AddTheme = ({ isOpen, onClose }: AddThemeProps) => {
       name: "name",
       label: "Theme Name",
       placeholder: "Enter theme name.",
-      type: "text",
+      type: "input",
       validation: {
         required: "Theme name is required.",
         minLength: {
@@ -50,8 +50,9 @@ const AddTheme = ({ isOpen, onClose }: AddThemeProps) => {
     },
   ]
 
-  const mutationFn = (data: ThemeCreate) =>
-    ThemesService.themesCreateTheme({ requestBody: data })
+  const mutationFn = async (data: ThemeCreate): Promise<void> => {
+    await ThemesService.themesCreateTheme({ requestBody: data })
+  }
 
   return (
     <FormModal<ThemeCreate>
