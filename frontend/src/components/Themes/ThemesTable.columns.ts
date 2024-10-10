@@ -9,7 +9,7 @@ export const themesColumns: ColumnDef<ThemePublic, string>[] = [
     cell: (info) => info.getValue(),
   }),
   columnHelper.accessor("description", {
-    header: "Created At",
+    header: "Description",
     cell: (info) => info.getValue(),
   }),
 ]
