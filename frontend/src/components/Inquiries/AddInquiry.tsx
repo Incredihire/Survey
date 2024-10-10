@@ -1,6 +1,6 @@
 import type { InquiryCreate } from "../../client/models"
 import { InquiriesService } from "../../client/services"
-import { isValidUnicode } from "../../utils"
+import { isValidUnicode } from "../../utils/validation"
 import FormModal, { type FieldDefinition } from "../Common/FormModal"
 
 export const MIN_INQUIRY_LENGTH = 10

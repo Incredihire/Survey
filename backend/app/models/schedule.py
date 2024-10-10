@@ -1,9 +1,9 @@
 # The Schedule is stored in the database as a string.
 # However, it is created with a JSON object and returns a JSON object
-import uuid
-
 from pydantic import BaseModel
-from sqlmodel import Field, SQLModel
+from sqlmodel import SQLModel
+
+from .mixins import IdMixin
 
 
 class ScheduleInfo(BaseModel):
@@ -21,12 +21,11 @@ class ScheduleCreate(SQLModel):
 
 
 # Database model
-class Schedule(SQLModel, table=True):
-    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+class Schedule(SQLModel, IdMixin, table=True):
     schedule: str
 
 
 # Properties to return via API for a single Schedule
 class SchedulePublic(BaseModel):
     schedule: ScheduleInfo
-    id: uuid.UUID
+    id: int

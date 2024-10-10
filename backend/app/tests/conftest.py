@@ -1,22 +1,15 @@
-import uuid
 from collections.abc import Generator
 
-import jwt
 import pytest
-from fastapi import HTTPException
 from fastapi.testclient import TestClient
-from jwt import InvalidTokenError
-from pydantic import ValidationError
 from sqlmodel import Session, SQLModel, create_engine, select
 from sqlmodel.pool import StaticPool
-from starlette import status
 
-from app.api.deps import SessionDep, TokenDep, get_current_user, get_db
-from app.core import security
+from app.api.deps import get_db
 from app.core.config import settings
 from app.core.db import init_db
 from app.main import app
-from app.models import Inquiry, Schedule, TokenPayload, User
+from app.models import Inquiry, Schedule
 from app.tests.utils.user import authentication_token_from_email
 from app.tests.utils.utils import get_superuser_token_headers
 
@@ -66,26 +59,3 @@ def normal_user_token_headers(client: TestClient, db: Session) -> dict[str, str]
     return authentication_token_from_email(
         client=client, email=settings.EMAIL_TEST_USER, db=db
     )
-
-
-# sqlite does not have a native UUID type but our users do so we need to override get_current_user
-def get_current_user_force_uuid(session: SessionDep, token: TokenDep) -> User:
-    try:
-        payload = jwt.decode(
-            token, settings.SECRET_KEY, algorithms=[security.ALGORITHM]
-        )
-        token_data = TokenPayload(**payload)
-    except (InvalidTokenError, ValidationError):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Could not validate credentials",
-        )
-    user = session.get(User, uuid.UUID(token_data.sub))
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    if not user.is_active:
-        raise HTTPException(status_code=400, detail="Inactive user")
-    return user
-
-
-app.dependency_overrides[get_current_user] = get_current_user_force_uuid

@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import type { ApiError, ScheduleCreate } from "../client"
 import { ScheduleService } from "../client/services"
-import { handleError } from "../utils"
+import { handleError } from "../utils/showToastOnError"
 import useCustomToast from "./useCustomToast"
 
 const useCreateSchedule = () => {

@@ -28,7 +28,7 @@ import {
 
 import type { ApiError } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
-import { handleError } from "../../utils"
+import { handleError } from "../../utils/showToastOnError"
 
 type WithDataTestId<P> = P & { "data-testid"?: string }
 

@@ -46,7 +46,7 @@ def create_schedule(
     schedule_data = convert_schedule_string_to_schedule_data(
         schedule_string=db_schedule.schedule
     )
-    return SchedulePublic(id=db_schedule.id, schedule=schedule_data)
+    return SchedulePublic(id=db_schedule.id, schedule=schedule_data)  # type: ignore
 
 
 @router.get("/", response_model=SchedulePublic | None)
@@ -57,4 +57,4 @@ def get_schedule(*, session: SessionDep) -> SchedulePublic | None:
     schedule_data = convert_schedule_string_to_schedule_data(
         schedule_string=db_schedule.schedule
     )
-    return SchedulePublic(id=db_schedule.id, schedule=schedule_data)
+    return SchedulePublic(id=db_schedule.id, schedule=schedule_data)  # type: ignore

@@ -34,7 +34,7 @@ skip?: number
                     
                 };
 InquiriesReadInquiry: {
-                    inquiryId: string
+                    inquiryId: number
                     
                 };
     }
@@ -50,7 +50,7 @@ skip?: number
                     
                 };
 ThemesReadTheme: {
-                    themeId: string
+                    themeId: number
                     
                 };
     }
@@ -78,16 +78,16 @@ UsersRegisterUser: {
                     
                 };
 UsersReadUserById: {
-                    userId: string
+                    userId: number
                     
                 };
 UsersUpdateUser: {
                     requestBody: UserUpdate
-userId: string
+userId: number
                     
                 };
 UsersDeleteUser: {
-                    userId: string
+                    userId: number
                     
                 };
     }
@@ -99,7 +99,8 @@ export type UtilsData = {
                 };
     }
 
-export type ScheduledInquiriesData = {
+
+	export type ScheduledInquiriesData = {
         ScheduledInquiriesAddToSchedule: {
                     requestBody: ScheduledInquiryCreate
                     

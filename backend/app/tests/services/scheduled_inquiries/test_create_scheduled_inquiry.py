@@ -25,7 +25,8 @@ def test_create_when_no_scheduled_inquiries_exist_should_assign_rank_1(
     expected_rank = 1
 
     scheduled_inquiry = scheduled_inquiries_service.create(
-        session=db, inquiry_id=db_inquiry.id
+        session=db,
+        inquiry_id=db_inquiry.id,  # type: ignore
     )
 
     db_scheduled_inquiry = db.get(ScheduledInquiry, scheduled_inquiry.id)
@@ -40,11 +41,12 @@ def test_create_when_previous_highest_rank_is_1_should_assign_rank_2(
     db: Session, db_inquiry: Inquiry
 ) -> None:
     # First scheduled inquiry will have rank 1
-    scheduled_inquiries_service.create(session=db, inquiry_id=db_inquiry.id)
+    scheduled_inquiries_service.create(session=db, inquiry_id=db_inquiry.id)  # type: ignore
 
     # Additional scheduled inquiries will be assinged the next highest rank
     next_scheduled_inquiry = scheduled_inquiries_service.create(
-        session=db, inquiry_id=db_inquiry.id
+        session=db,
+        inquiry_id=db_inquiry.id,  # type: ignore
     )
 
     db_scheduled_inquiry = db.get(ScheduledInquiry, next_scheduled_inquiry.id)

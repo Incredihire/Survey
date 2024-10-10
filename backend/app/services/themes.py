@@ -1,5 +1,3 @@
-import uuid
-
 from sqlmodel import Session, func, select
 
 from app.models import Theme, ThemeCreate
@@ -19,7 +17,7 @@ def get_theme_by_name(*, session: Session, name: str) -> Theme | None:
     return theme
 
 
-def get_theme_by_id(*, session: Session, theme_id: uuid.UUID) -> Theme | None:
+def get_theme_by_id(*, session: Session, theme_id: int) -> Theme | None:
     theme = session.get(Theme, theme_id)
     return theme
 

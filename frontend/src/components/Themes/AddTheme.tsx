@@ -1,6 +1,6 @@
 import type { ThemeCreate } from "../../client/models"
 import { ThemesService } from "../../client/services"
-import { isValidUnicode } from "../../utils"
+import { isValidUnicode } from "../../utils/validation"
 import FormModal, { type FieldDefinition } from "../Common/FormModal"
 
 const MIN_NAME_LENGTH = 1
