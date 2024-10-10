@@ -87,6 +87,7 @@ const FormModal = <T extends FieldValues>({
       }
       return acc
     },
+    // eslint-disable-next-line @typescript-eslint/prefer-reduce-type-parameter
     {} as DefaultValues<T>,
   )
 
