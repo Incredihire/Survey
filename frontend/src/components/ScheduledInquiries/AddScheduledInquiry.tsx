@@ -53,7 +53,7 @@ const AddScheduledInquiry = ({ inquiry }: AddScheduledInquiryProps) => {
         isOpen={isModalOpen}
         onClose={closeModal}
         onSubmit={handleSubmit}
-        title={`You're about ot add this inquiry to the schedule. Are you sure?`}
+        title={`You're about to add this inquiry to the schedule. Are you sure?`}
         content={<span>{inquiry.text}</span>}
         submitButtonText="Continue"
       />
