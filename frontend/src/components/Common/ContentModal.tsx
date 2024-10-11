@@ -9,7 +9,7 @@ import {
   ModalOverlay,
 } from "@chakra-ui/react"
 
-export interface SimpleModalProps {
+export interface ContentModalProps {
   isOpen: boolean
   onClose: () => void
   title: string
@@ -18,14 +18,14 @@ export interface SimpleModalProps {
   content: React.ReactNode
 }
 
-const SimpleModal = ({
+const ContentModal = ({
   isOpen,
   onClose,
   title,
   onSubmit,
   submitButtonText,
   content,
-}: SimpleModalProps) => {
+}: ContentModalProps) => {
   return (
     <Modal
       isOpen={isOpen}
@@ -55,4 +55,4 @@ const SimpleModal = ({
   )
 }
 
-export default SimpleModal
+export default ContentModal

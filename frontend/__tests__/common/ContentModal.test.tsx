@@ -1,16 +1,16 @@
 import "@testing-library/jest-dom"
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-import SimpleModal, {
-  type SimpleModalProps,
-} from "../../src/components/Common/SimpleModal"
+import ContentModal, {
+  type ContentModalProps,
+} from "../../src/components/Common/ContentModal"
 
-describe("SimpleModal", () => {
+describe("ContentModal", () => {
   const mockOnClose = jest.fn()
   const mockOnSubmit = jest.fn()
 
-  const renderSimpleModal = (props: Partial<SimpleModalProps> = {}) => {
-    const defaultProps: SimpleModalProps = {
+  const renderContentModal = (props: Partial<ContentModalProps> = {}) => {
+    const defaultProps: ContentModalProps = {
       isOpen: true,
       onClose: mockOnClose,
       title: "Test Modal Title",
@@ -20,7 +20,7 @@ describe("SimpleModal", () => {
       ...props,
     }
 
-    return render(<SimpleModal {...defaultProps} />)
+    return render(<ContentModal {...defaultProps} />)
   }
 
   beforeEach(() => {
@@ -28,7 +28,7 @@ describe("SimpleModal", () => {
   })
 
   it("renders the modal when isOpen is true", () => {
-    renderSimpleModal()
+    renderContentModal()
 
     expect(screen.getByText("Test Modal Title")).toBeInTheDocument()
     expect(screen.getByText("Test Content")).toBeInTheDocument()
@@ -37,13 +37,13 @@ describe("SimpleModal", () => {
   })
 
   it("does not render the modal when isOpen is false", () => {
-    renderSimpleModal({ isOpen: false })
+    renderContentModal({ isOpen: false })
 
     expect(screen.queryByText("Test Modal Title")).not.toBeInTheDocument()
   })
 
   it("calls onSubmit when the submit button is clicked", async () => {
-    renderSimpleModal()
+    renderContentModal()
 
     const submitButton = screen.getByText("Submit")
     await userEvent.click(submitButton)
@@ -52,7 +52,7 @@ describe("SimpleModal", () => {
   })
 
   it("calls onClose when the cancel button is clicked", async () => {
-    renderSimpleModal()
+    renderContentModal()
 
     const cancelButton = screen.getByText("Cancel")
     await userEvent.click(cancelButton)
@@ -61,7 +61,7 @@ describe("SimpleModal", () => {
   })
 
   it("calls onClose when the close button is clicked", async () => {
-    renderSimpleModal()
+    renderContentModal()
 
     const closeButton = screen.getByLabelText("Close")
     await userEvent.click(closeButton)
@@ -70,7 +70,7 @@ describe("SimpleModal", () => {
   })
 
   it("renders the correct submit button text", () => {
-    renderSimpleModal({ submitButtonText: "Save" })
+    renderContentModal({ submitButtonText: "Save" })
 
     expect(screen.getByText("Save")).toBeInTheDocument()
   })
