@@ -4,7 +4,7 @@ import { InquiriesService } from "../client"
 function getInquiriesQueryOptions() {
   return {
     queryKey: ["inquiries"],
-    queryFn: () => InquiriesService.inquiriesGetInquries(),
+    queryFn: () => InquiriesService.getInquries(),
   }
 }
 

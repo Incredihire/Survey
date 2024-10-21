@@ -42,13 +42,6 @@ export type Message = {
 
 
 
-export type NewPassword = {
-	token: string;
-	new_password: string;
-};
-
-
-
 export type ScheduleCreate = {
 	schedule: ScheduleInfo;
 };
@@ -132,13 +125,6 @@ export type Token = {
 
 
 
-export type UpdatePassword = {
-	current_password: string;
-	new_password: string;
-};
-
-
-
 export type UserCreate = {
 	email: string;
 	is_active?: boolean;
@@ -155,31 +141,6 @@ export type UserPublic = {
 	is_superuser?: boolean;
 	full_name?: string | null;
 	id: number;
-};
-
-
-
-export type UserRegister = {
-	email: string;
-	password: string;
-	full_name?: string | null;
-};
-
-
-
-export type UserUpdate = {
-	email?: string | null;
-	is_active?: boolean;
-	is_superuser?: boolean;
-	full_name?: string | null;
-	password?: string | null;
-};
-
-
-
-export type UserUpdateMe = {
-	full_name?: string | null;
-	email?: string | null;
 };
 
 

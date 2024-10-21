@@ -2,110 +2,80 @@ import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
 
-import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,InquiryCreate,InquiryPublic,InquriesPublic,ThemeCreate,ThemePublic,ThemesPublic,UpdatePassword,UserCreate,UserRegister,UsersPublic,UserUpdate,UserUpdateMe,ScheduledInquiriesPublic,ScheduledInquiryCreate,ScheduledInquiryPublic,ScheduleCreate,SchedulePublic } from './models';
+import type { Body_login_login_access_token,Token,UserPublic,InquiryCreate,InquiryPublic,InquriesPublic,ThemeCreate,ThemePublic,ThemesPublic,Message,UserCreate,UsersPublic,ScheduledInquiriesPublic,ScheduledInquiryCreate,ScheduledInquiryPublic,ScheduleCreate,SchedulePublic } from './models';
 
 export type LoginData = {
-        LoginLoginAccessToken: {
+        LoginAccessToken: {
                     formData: Body_login_login_access_token
-                    
-                };
-LoginRecoverPassword: {
-                    email: string
-                    
-                };
-LoginResetPassword: {
-                    requestBody: NewPassword
-                    
-                };
-LoginRecoverPasswordHtmlContent: {
-                    email: string
                     
                 };
     }
 
 export type InquiriesData = {
-        InquiriesCreateInquiry: {
+        CreateInquiry: {
                     requestBody: InquiryCreate
                     
                 };
-InquiriesGetInquries: {
+GetInquries: {
                     limit?: number
 skip?: number
                     
                 };
-InquiriesReadInquiry: {
+ReadInquiry: {
                     inquiryId: number
                     
                 };
     }
 
 export type ThemesData = {
-        ThemesCreateTheme: {
+        CreateTheme: {
                     requestBody: ThemeCreate
                     
                 };
-ThemesGetThemes: {
+GetThemes: {
                     limit?: number
 skip?: number
                     
                 };
-ThemesReadTheme: {
+ReadTheme: {
                     themeId: number
                     
                 };
     }
 
 export type UsersData = {
-        UsersReadUsers: {
+        ReadUsers: {
                     limit?: number
 skip?: number
                     
                 };
-UsersCreateUser: {
+CreateUser: {
                     requestBody: UserCreate
                     
                 };
-UsersUpdateUserMe: {
-                    requestBody: UserUpdateMe
-                    
-                };
-UsersUpdatePasswordMe: {
-                    requestBody: UpdatePassword
-                    
-                };
-UsersRegisterUser: {
-                    requestBody: UserRegister
-                    
-                };
-UsersReadUserById: {
+ReadUserById: {
                     userId: number
                     
                 };
-UsersUpdateUser: {
-                    requestBody: UserUpdate
-userId: number
-                    
-                };
-UsersDeleteUser: {
+DeleteUser: {
                     userId: number
                     
                 };
     }
 
 export type UtilsData = {
-        UtilsTestEmail: {
+        TestEmail: {
                     emailTo: string
                     
                 };
     }
 
-
-	export type ScheduledInquiriesData = {
-        ScheduledInquiriesAddToSchedule: {
+export type ScheduledInquiriesData = {
+        AddToSchedule: {
                     requestBody: ScheduledInquiryCreate
                     
                 };
-ScheduledInquiriesGetScheduledInquries: {
+GetScheduledInquries: {
                     limit?: number
 skip?: number
                     
@@ -113,7 +83,7 @@ skip?: number
     }
 
 export type ScheduleData = {
-        ScheduleCreateSchedule: {
+        CreateSchedule: {
                     requestBody: ScheduleCreate
                     
                 };
@@ -127,7 +97,7 @@ export class LoginService {
 	 * @returns Token Successful Response
 	 * @throws ApiError
 	 */
-	public static loginLoginAccessToken(data: LoginData['LoginLoginAccessToken']): CancelablePromise<Token> {
+	public static loginAccessToken(data: LoginData['LoginAccessToken']): CancelablePromise<Token> {
 		const {
 formData,
 } = data;
@@ -148,75 +118,10 @@ formData,
 	 * @returns UserPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static loginTestToken(): CancelablePromise<UserPublic> {
+	public static testToken(): CancelablePromise<UserPublic> {
 				return __request(OpenAPI, {
 			method: 'POST',
 			url: '/api/v1/login/test-token',
-		});
-	}
-
-	/**
-	 * Recover Password
-	 * Password Recovery
-	 * @returns Message Successful Response
-	 * @throws ApiError
-	 */
-	public static loginRecoverPassword(data: LoginData['LoginRecoverPassword']): CancelablePromise<Message> {
-		const {
-email,
-} = data;
-		return __request(OpenAPI, {
-			method: 'POST',
-			url: '/api/v1/password-recovery/{email}',
-			path: {
-				email
-			},
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
-
-	/**
-	 * Reset Password
-	 * Reset password
-	 * @returns Message Successful Response
-	 * @throws ApiError
-	 */
-	public static loginResetPassword(data: LoginData['LoginResetPassword']): CancelablePromise<Message> {
-		const {
-requestBody,
-} = data;
-		return __request(OpenAPI, {
-			method: 'POST',
-			url: '/api/v1/reset-password/',
-			body: requestBody,
-			mediaType: 'application/json',
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
-
-	/**
-	 * Recover Password Html Content
-	 * HTML Content for Password Recovery
-	 * @returns string Successful Response
-	 * @throws ApiError
-	 */
-	public static loginRecoverPasswordHtmlContent(data: LoginData['LoginRecoverPasswordHtmlContent']): CancelablePromise<string> {
-		const {
-email,
-} = data;
-		return __request(OpenAPI, {
-			method: 'POST',
-			url: '/api/v1/password-recovery-html-content/{email}',
-			path: {
-				email
-			},
-			errors: {
-				422: `Validation Error`,
-			},
 		});
 	}
 
@@ -230,7 +135,7 @@ export class InquiriesService {
 	 * @returns InquiryPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static inquiriesCreateInquiry(data: InquiriesData['InquiriesCreateInquiry']): CancelablePromise<InquiryPublic> {
+	public static createInquiry(data: InquiriesData['CreateInquiry']): CancelablePromise<InquiryPublic> {
 		const {
 requestBody,
 } = data;
@@ -251,7 +156,7 @@ requestBody,
 	 * @returns InquriesPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static inquiriesGetInquries(data: InquiriesData['InquiriesGetInquries'] = {}): CancelablePromise<InquriesPublic> {
+	public static getInquries(data: InquiriesData['GetInquries'] = {}): CancelablePromise<InquriesPublic> {
 		const {
 skip = 0,
 limit = 100,
@@ -274,7 +179,7 @@ limit = 100,
 	 * @returns InquiryPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static inquiriesReadInquiry(data: InquiriesData['InquiriesReadInquiry']): CancelablePromise<InquiryPublic> {
+	public static readInquiry(data: InquiriesData['ReadInquiry']): CancelablePromise<InquiryPublic> {
 		const {
 inquiryId,
 } = data;
@@ -300,7 +205,7 @@ export class ThemesService {
 	 * @returns ThemePublic Successful Response
 	 * @throws ApiError
 	 */
-	public static themesCreateTheme(data: ThemesData['ThemesCreateTheme']): CancelablePromise<ThemePublic> {
+	public static createTheme(data: ThemesData['CreateTheme']): CancelablePromise<ThemePublic> {
 		const {
 requestBody,
 } = data;
@@ -321,7 +226,7 @@ requestBody,
 	 * @returns ThemesPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static themesGetThemes(data: ThemesData['ThemesGetThemes'] = {}): CancelablePromise<ThemesPublic> {
+	public static getThemes(data: ThemesData['GetThemes'] = {}): CancelablePromise<ThemesPublic> {
 		const {
 skip = 0,
 limit = 100,
@@ -344,7 +249,7 @@ limit = 100,
 	 * @returns ThemePublic Successful Response
 	 * @throws ApiError
 	 */
-	public static themesReadTheme(data: ThemesData['ThemesReadTheme']): CancelablePromise<ThemePublic> {
+	public static readTheme(data: ThemesData['ReadTheme']): CancelablePromise<ThemePublic> {
 		const {
 themeId,
 } = data;
@@ -370,7 +275,7 @@ export class UsersService {
 	 * @returns UsersPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static usersReadUsers(data: UsersData['UsersReadUsers'] = {}): CancelablePromise<UsersPublic> {
+	public static readUsers(data: UsersData['ReadUsers'] = {}): CancelablePromise<UsersPublic> {
 		const {
 skip = 0,
 limit = 100,
@@ -393,7 +298,7 @@ limit = 100,
 	 * @returns UserPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static usersCreateUser(data: UsersData['UsersCreateUser']): CancelablePromise<UserPublic> {
+	public static createUser(data: UsersData['CreateUser']): CancelablePromise<UserPublic> {
 		const {
 requestBody,
 } = data;
@@ -414,7 +319,7 @@ requestBody,
 	 * @returns UserPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static usersReadUserMe(): CancelablePromise<UserPublic> {
+	public static readUserMe(): CancelablePromise<UserPublic> {
 				return __request(OpenAPI, {
 			method: 'GET',
 			url: '/api/v1/users/me',
@@ -427,73 +332,10 @@ requestBody,
 	 * @returns Message Successful Response
 	 * @throws ApiError
 	 */
-	public static usersDeleteUserMe(): CancelablePromise<Message> {
+	public static deleteUserMe(): CancelablePromise<Message> {
 				return __request(OpenAPI, {
 			method: 'DELETE',
 			url: '/api/v1/users/me',
-		});
-	}
-
-	/**
-	 * Update User Me
-	 * Update own user.
-	 * @returns UserPublic Successful Response
-	 * @throws ApiError
-	 */
-	public static usersUpdateUserMe(data: UsersData['UsersUpdateUserMe']): CancelablePromise<UserPublic> {
-		const {
-requestBody,
-} = data;
-		return __request(OpenAPI, {
-			method: 'PATCH',
-			url: '/api/v1/users/me',
-			body: requestBody,
-			mediaType: 'application/json',
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
-
-	/**
-	 * Update Password Me
-	 * Update own password.
-	 * @returns Message Successful Response
-	 * @throws ApiError
-	 */
-	public static usersUpdatePasswordMe(data: UsersData['UsersUpdatePasswordMe']): CancelablePromise<Message> {
-		const {
-requestBody,
-} = data;
-		return __request(OpenAPI, {
-			method: 'PATCH',
-			url: '/api/v1/users/me/password',
-			body: requestBody,
-			mediaType: 'application/json',
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
-
-	/**
-	 * Register User
-	 * Create new user without the need to be logged in.
-	 * @returns UserPublic Successful Response
-	 * @throws ApiError
-	 */
-	public static usersRegisterUser(data: UsersData['UsersRegisterUser']): CancelablePromise<UserPublic> {
-		const {
-requestBody,
-} = data;
-		return __request(OpenAPI, {
-			method: 'POST',
-			url: '/api/v1/users/signup',
-			body: requestBody,
-			mediaType: 'application/json',
-			errors: {
-				422: `Validation Error`,
-			},
 		});
 	}
 
@@ -503,7 +345,7 @@ requestBody,
 	 * @returns UserPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static usersReadUserById(data: UsersData['UsersReadUserById']): CancelablePromise<UserPublic> {
+	public static readUserById(data: UsersData['ReadUserById']): CancelablePromise<UserPublic> {
 		const {
 userId,
 } = data;
@@ -520,37 +362,12 @@ userId,
 	}
 
 	/**
-	 * Update User
-	 * Update a user.
-	 * @returns UserPublic Successful Response
-	 * @throws ApiError
-	 */
-	public static usersUpdateUser(data: UsersData['UsersUpdateUser']): CancelablePromise<UserPublic> {
-		const {
-userId,
-requestBody,
-} = data;
-		return __request(OpenAPI, {
-			method: 'PATCH',
-			url: '/api/v1/users/{user_id}',
-			path: {
-				user_id: userId
-			},
-			body: requestBody,
-			mediaType: 'application/json',
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
-
-	/**
 	 * Delete User
 	 * Delete a user.
 	 * @returns Message Successful Response
 	 * @throws ApiError
 	 */
-	public static usersDeleteUser(data: UsersData['UsersDeleteUser']): CancelablePromise<Message> {
+	public static deleteUser(data: UsersData['DeleteUser']): CancelablePromise<Message> {
 		const {
 userId,
 } = data;
@@ -576,7 +393,7 @@ export class UtilsService {
 	 * @returns Message Successful Response
 	 * @throws ApiError
 	 */
-	public static utilsTestEmail(data: UtilsData['UtilsTestEmail']): CancelablePromise<Message> {
+	public static testEmail(data: UtilsData['TestEmail']): CancelablePromise<Message> {
 		const {
 emailTo,
 } = data;
@@ -601,7 +418,7 @@ export class ScheduledInquiriesService {
 	 * @returns ScheduledInquiryPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static scheduledInquiriesAddToSchedule(data: ScheduledInquiriesData['ScheduledInquiriesAddToSchedule']): CancelablePromise<ScheduledInquiryPublic> {
+	public static addToSchedule(data: ScheduledInquiriesData['AddToSchedule']): CancelablePromise<ScheduledInquiryPublic> {
 		const {
 requestBody,
 } = data;
@@ -621,7 +438,7 @@ requestBody,
 	 * @returns ScheduledInquiriesPublic Successful Response
 	 * @throws ApiError
 	 */
-	public static scheduledInquiriesGetScheduledInquries(data: ScheduledInquiriesData['ScheduledInquiriesGetScheduledInquries'] = {}): CancelablePromise<ScheduledInquiriesPublic> {
+	public static getScheduledInquries(data: ScheduledInquiriesData['GetScheduledInquries'] = {}): CancelablePromise<ScheduledInquiriesPublic> {
 		const {
 skip = 0,
 limit = 100,
@@ -647,7 +464,7 @@ export class ScheduleService {
 	 * @returns unknown Successful Response
 	 * @throws ApiError
 	 */
-	public static scheduleGetSchedule(): CancelablePromise<SchedulePublic | null> {
+	public static getSchedule(): CancelablePromise<SchedulePublic | null> {
 				return __request(OpenAPI, {
 			method: 'GET',
 			url: '/api/v1/schedule/',
@@ -659,7 +476,7 @@ export class ScheduleService {
 	 * @returns SchedulePublic Successful Response
 	 * @throws ApiError
 	 */
-	public static scheduleCreateSchedule(data: ScheduleData['ScheduleCreateSchedule']): CancelablePromise<SchedulePublic> {
+	public static createSchedule(data: ScheduleData['CreateSchedule']): CancelablePromise<SchedulePublic> {
 		const {
 requestBody,
 } = data;

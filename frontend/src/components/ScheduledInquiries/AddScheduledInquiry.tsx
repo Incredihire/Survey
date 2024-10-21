@@ -19,7 +19,7 @@ const AddScheduledInquiry = ({ inquiry }: AddScheduledInquiryProps) => {
   const [isModalOpen, setModalOpen] = useState(false)
 
   const addToScheduledInquiries = async (data: ScheduledInquiryCreate) => {
-    return ScheduledInquiriesService.scheduledInquiriesAddToSchedule({
+    return ScheduledInquiriesService.addToSchedule({
       requestBody: data,
     })
   }

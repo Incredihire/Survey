@@ -38,7 +38,7 @@ const AddInquiry = ({ isOpen, onClose }: AddInquiryProps) => {
   ]
 
   const mutationFn = async (data: InquiryCreate): Promise<void> => {
-    await InquiriesService.inquiriesCreateInquiry({ requestBody: data })
+    await InquiriesService.createInquiry({ requestBody: data })
   }
 
   return (

@@ -105,21 +105,6 @@ export const $Message = {
 	},
 } as const;
 
-export const $NewPassword = {
-	properties: {
-		token: {
-	type: 'string',
-	isRequired: true,
-},
-		new_password: {
-	type: 'string',
-	isRequired: true,
-	maxLength: 40,
-	minLength: 8,
-},
-	},
-} as const;
-
 export const $ScheduleCreate = {
 	properties: {
 		schedule: {
@@ -317,23 +302,6 @@ export const $Token = {
 	},
 } as const;
 
-export const $UpdatePassword = {
-	properties: {
-		current_password: {
-	type: 'string',
-	isRequired: true,
-	maxLength: 40,
-	minLength: 8,
-},
-		new_password: {
-	type: 'string',
-	isRequired: true,
-	maxLength: 40,
-	minLength: 8,
-},
-	},
-} as const;
-
 export const $UserCreate = {
 	properties: {
 		email: {
@@ -396,98 +364,6 @@ export const $UserPublic = {
 		id: {
 	type: 'number',
 	isRequired: true,
-},
-	},
-} as const;
-
-export const $UserRegister = {
-	properties: {
-		email: {
-	type: 'string',
-	isRequired: true,
-	format: 'email',
-	maxLength: 255,
-},
-		password: {
-	type: 'string',
-	isRequired: true,
-	maxLength: 40,
-	minLength: 8,
-},
-		full_name: {
-	type: 'any-of',
-	contains: [{
-	type: 'string',
-	maxLength: 255,
-}, {
-	type: 'null',
-}],
-},
-	},
-} as const;
-
-export const $UserUpdate = {
-	properties: {
-		email: {
-	type: 'any-of',
-	contains: [{
-	type: 'string',
-	format: 'email',
-	maxLength: 255,
-}, {
-	type: 'null',
-}],
-},
-		is_active: {
-	type: 'boolean',
-	default: true,
-},
-		is_superuser: {
-	type: 'boolean',
-	default: false,
-},
-		full_name: {
-	type: 'any-of',
-	contains: [{
-	type: 'string',
-	maxLength: 255,
-}, {
-	type: 'null',
-}],
-},
-		password: {
-	type: 'any-of',
-	contains: [{
-	type: 'string',
-	maxLength: 40,
-	minLength: 8,
-}, {
-	type: 'null',
-}],
-},
-	},
-} as const;
-
-export const $UserUpdateMe = {
-	properties: {
-		full_name: {
-	type: 'any-of',
-	contains: [{
-	type: 'string',
-	maxLength: 255,
-}, {
-	type: 'null',
-}],
-},
-		email: {
-	type: 'any-of',
-	contains: [{
-	type: 'string',
-	format: 'email',
-	maxLength: 255,
-}, {
-	type: 'null',
-}],
 },
 	},
 } as const;

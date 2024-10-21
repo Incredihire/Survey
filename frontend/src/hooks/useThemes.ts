@@ -4,7 +4,7 @@ import { ThemesService } from "../client"
 function getThemesQueryOptions() {
   return {
     queryKey: ["themes"],
-    queryFn: () => ThemesService.themesGetThemes(),
+    queryFn: () => ThemesService.getThemes(),
   }
 }
 
