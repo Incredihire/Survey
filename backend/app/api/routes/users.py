@@ -9,7 +9,6 @@ from app.api.deps import (
     SessionDep,
     get_current_active_superuser,
 )
-from app.core.config import settings
 from app.models import (
     Message,
     User,
@@ -17,7 +16,6 @@ from app.models import (
     UserPublic,
     UsersPublic,
 )
-from app.utils import send_email
 
 router = APIRouter()
 
