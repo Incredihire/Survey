@@ -11,7 +11,7 @@
       "jinja": true,
       "envFile": "${workspaceFolder}/.env",
       "osx": {
-        "python": "/Users/eugenepolonsky/Library/Caches/pypoetry/virtualenvs/app-W1kfEQN9-py3.13/bin/python"
+        "python": "${workspaceFolder}/backend/.venv/bin/python"
       },
       "linux": {
         "python": "${workspaceFolder}/backend/.venv/bin/python"
