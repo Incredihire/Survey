@@ -5,7 +5,6 @@ from sqlmodel import Session, select
 
 import app.services.users as users_service
 from app.core.config import settings
-from app.core.security import verify_password
 from app.models import User, UserCreate
 from app.tests.utils.utils import bad_integer_id, random_email, random_lower_string
 
