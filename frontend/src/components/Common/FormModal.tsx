@@ -63,7 +63,7 @@ export interface FormModalProps<T extends FieldValues> {
   title: string
   fields?: FieldDefinition<T>[]
   content?: ReactNode
-  mutationFn: (data: T) => Promise<any>
+  mutationFn: (data: T) => Promise<unknown>
   successMessage: string
   queryKeyToInvalidate?: string[]
   submitButtonProps?: ExtendedButtonProps
