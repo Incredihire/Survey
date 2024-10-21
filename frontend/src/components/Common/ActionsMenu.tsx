@@ -10,8 +10,6 @@ import { BsThreeDotsVertical } from "react-icons/bs"
 import { FiEdit, FiTrash } from "react-icons/fi"
 
 import type { UserPublic } from "../../client"
-import EditUser from "../Admin/EditUser"
-import Delete from "./DeleteAlert"
 
 interface ActionsMenuProps {
   type: string
@@ -19,7 +17,7 @@ interface ActionsMenuProps {
   disabled?: boolean
 }
 
-const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
+const ActionsMenu = ({ type, disabled }: ActionsMenuProps) => {
   const editUserModal = useDisclosure()
   const deleteModal = useDisclosure()
 
@@ -33,31 +31,17 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
           variant="unstyled"
         />
         <MenuList>
-          <MenuItem
-            onClick={editUserModal.onOpen}
-            icon={<FiEdit fontSize="16px" />}
-          >
+          <MenuItem onClick={editUserModal.onOpen} icon={<FiEdit size={16} />}>
             Edit {type}
           </MenuItem>
           <MenuItem
             onClick={deleteModal.onOpen}
-            icon={<FiTrash fontSize="16px" />}
+            icon={<FiTrash size={16} />}
             color="ui.danger"
           >
             Delete {type}
           </MenuItem>
         </MenuList>
-        <EditUser
-          user={value}
-          isOpen={editUserModal.isOpen}
-          onClose={editUserModal.onClose}
-        />
-        <Delete
-          type={type}
-          id={value.id}
-          isOpen={deleteModal.isOpen}
-          onClose={deleteModal.onClose}
-        />
       </Menu>
     </>
   )

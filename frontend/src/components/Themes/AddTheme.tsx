@@ -51,7 +51,7 @@ const AddTheme = ({ isOpen, onClose }: AddThemeProps) => {
   ]
 
   const mutationFn = async (data: ThemeCreate): Promise<void> => {
-    await ThemesService.themesCreateTheme({ requestBody: data })
+    await ThemesService.createTheme({ requestBody: data })
   }
 
   return (

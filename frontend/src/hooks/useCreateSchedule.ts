@@ -10,7 +10,7 @@ const useCreateSchedule = () => {
 
   const mutation = useMutation<ScheduleCreate, ApiError, ScheduleCreate>({
     mutationFn: (schedule: ScheduleCreate) =>
-      ScheduleService.scheduleCreateSchedule({ requestBody: schedule }).then(
+      ScheduleService.createSchedule({ requestBody: schedule }).then(
         (response) => response,
       ),
     onSuccess: () => {

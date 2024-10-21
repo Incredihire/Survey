@@ -131,14 +131,6 @@ export type Token = {
 };
 
 
-
-export type UpdatePassword = {
-	current_password: string;
-	new_password: string;
-};
-
-
-
 export type UserCreate = {
 	email: string;
 	is_active?: boolean;
@@ -164,17 +156,6 @@ export type UserRegister = {
 	password: string;
 	full_name?: string | null;
 };
-
-
-
-export type UserUpdate = {
-	email?: string | null;
-	is_active?: boolean;
-	is_superuser?: boolean;
-	full_name?: string | null;
-	password?: string | null;
-};
-
 
 
 export type UserUpdateMe = {

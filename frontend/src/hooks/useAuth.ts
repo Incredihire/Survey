@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { useState } from "react"
 
@@ -7,10 +7,8 @@ import type {
   Body_login_login_access_token as AccessToken,
   ApiError,
   UserPublic,
-  UserRegister,
 } from "../client"
 import { LoginService, UsersService } from "../client/services"
-import useCustomToast from "./useCustomToast"
 
 const isLoggedIn = () => {
   return localStorage.getItem("access_token") !== null
@@ -19,43 +17,15 @@ const isLoggedIn = () => {
 const useAuth = () => {
   const [error, setError] = useState<string | null>(null)
   const navigate = useNavigate()
-  const showToast = useCustomToast()
-  const queryClient = useQueryClient()
   const { data: user, isLoading } = useQuery<UserPublic | null, Error>({
     queryKey: ["currentUser"],
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    queryFn: UsersService.usersReadUserMe,
+    queryFn: UsersService.readUserMe,
     enabled: isLoggedIn(),
   })
 
-  const signUpMutation = useMutation({
-    mutationFn: (data: UserRegister) =>
-      UsersService.usersRegisterUser({ requestBody: data }),
-
-    onSuccess: () => {
-      navigate({ to: "/login" })
-      showToast(
-        "Account created.",
-        "Your account has been created successfully.",
-        "success",
-      )
-    },
-    onError: (err: ApiError) => {
-      let errDetail = (err.body as any)?.detail
-
-      if (err instanceof AxiosError) {
-        errDetail = err.message
-      }
-
-      showToast("Something went wrong.", errDetail, "error")
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] })
-    },
-  })
-
   const login = async (data: AccessToken) => {
-    const response = await LoginService.loginLoginAccessToken({
+    const response = await LoginService.loginAccessToken({
       formData: data,
     })
     localStorage.setItem("access_token", response.access_token)
@@ -87,7 +57,6 @@ const useAuth = () => {
   }
 
   return {
-    signUpMutation,
     loginMutation,
     logout,
     user,
