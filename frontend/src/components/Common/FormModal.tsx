@@ -67,6 +67,7 @@ export interface FormModalProps<T extends FieldValues> {
   successMessage: string
   queryKeyToInvalidate?: string[]
   submitButtonProps?: ExtendedButtonProps
+  submitButtonText?: string
 }
 
 const FormModal = <T extends FieldValues>({
@@ -79,6 +80,7 @@ const FormModal = <T extends FieldValues>({
   successMessage,
   queryKeyToInvalidate,
   submitButtonProps,
+  submitButtonText,
 }: FormModalProps<T>) => {
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
@@ -196,7 +198,7 @@ const FormModal = <T extends FieldValues>({
             type="submit"
             {...submitButtonProps}
           >
-            Save
+            {submitButtonText || "Save"}
           </Button>
           <Button onClick={onClose}>Cancel</Button>
         </ModalFooter>

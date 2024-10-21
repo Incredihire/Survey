@@ -35,6 +35,7 @@ const AddScheduledInquiry = ({ inquiry }: AddScheduledInquiryProps) => {
         mutationFn={addToScheduledInquiries}
         successMessage={"Added inquiry to schedule."}
         content={<span>{inquiry.text}</span>}
+        submitButtonText="Continue"
       />
     </>
   )
