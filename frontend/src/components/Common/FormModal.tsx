@@ -198,7 +198,7 @@ const FormModal = <T extends FieldValues>({
             type="submit"
             {...submitButtonProps}
           >
-            {submitButtonText || "Save"}
+            {submitButtonText ?? "Save"}
           </Button>
           <Button onClick={onClose}>Cancel</Button>
         </ModalFooter>
