@@ -26,6 +26,7 @@ import {
   useForm,
 } from "react-hook-form"
 
+import type { ReactNode } from "react"
 import type { ApiError } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
 import { handleError } from "../../utils/showToastOnError"
@@ -60,7 +61,8 @@ export interface FormModalProps<T extends FieldValues> {
   isOpen: boolean
   onClose: () => void
   title: string
-  fields: FieldDefinition<T>[]
+  fields?: FieldDefinition<T>[]
+  content?: ReactNode
   mutationFn: (data: T) => Promise<void>
   successMessage: string
   queryKeyToInvalidate?: string[]
@@ -71,7 +73,8 @@ const FormModal = <T extends FieldValues>({
   isOpen,
   onClose,
   title,
-  fields,
+  fields = [],
+  content = null,
   mutationFn,
   successMessage,
   queryKeyToInvalidate,
@@ -135,6 +138,7 @@ const FormModal = <T extends FieldValues>({
         <ModalHeader>{title}</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
+          {content}
           {fields.map((field) => {
             const isError = !!errors[field.name]
             if (field.type === "textarea") {
