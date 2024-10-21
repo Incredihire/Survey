@@ -2,23 +2,11 @@ import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
 
-import type { Body_login_login_access_token,Message,NewPassword,Token,UserPublic,InquiryCreate,InquiryPublic,InquriesPublic,ThemeCreate,ThemePublic,ThemesPublic,UpdatePassword,UserCreate,UserRegister,UsersPublic,UserUpdate,UserUpdateMe,ScheduledInquiriesPublic,ScheduledInquiryCreate,ScheduledInquiryPublic,ScheduleCreate,SchedulePublic } from './models';
+import type { Body_login_login_access_token,Token,UserPublic,InquiryCreate,InquiryPublic,InquriesPublic,ThemeCreate,ThemePublic,ThemesPublic,Message,UserCreate,UsersPublic,ScheduledInquiriesPublic,ScheduledInquiryCreate,ScheduledInquiryPublic,ScheduleCreate,SchedulePublic } from './models';
 
 export type LoginData = {
         LoginAccessToken: {
                     formData: Body_login_login_access_token
-                    
-                };
-RecoverPassword: {
-                    email: string
-                    
-                };
-ResetPassword: {
-                    requestBody: NewPassword
-                    
-                };
-RecoverPasswordHtmlContent: {
-                    email: string
                     
                 };
     }
@@ -65,25 +53,8 @@ CreateUser: {
                     requestBody: UserCreate
                     
                 };
-UpdateUserMe: {
-                    requestBody: UserUpdateMe
-                    
-                };
-UpdatePasswordMe: {
-                    requestBody: UpdatePassword
-                    
-                };
-RegisterUser: {
-                    requestBody: UserRegister
-                    
-                };
 ReadUserById: {
                     userId: number
-                    
-                };
-UpdateUser: {
-                    requestBody: UserUpdate
-userId: number
                     
                 };
 DeleteUser: {
@@ -151,71 +122,6 @@ formData,
 				return __request(OpenAPI, {
 			method: 'POST',
 			url: '/api/v1/login/test-token',
-		});
-	}
-
-	/**
-	 * Recover Password
-	 * Password Recovery
-	 * @returns Message Successful Response
-	 * @throws ApiError
-	 */
-	public static recoverPassword(data: LoginData['RecoverPassword']): CancelablePromise<Message> {
-		const {
-email,
-} = data;
-		return __request(OpenAPI, {
-			method: 'POST',
-			url: '/api/v1/password-recovery/{email}',
-			path: {
-				email
-			},
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
-
-	/**
-	 * Reset Password
-	 * Reset password
-	 * @returns Message Successful Response
-	 * @throws ApiError
-	 */
-	public static resetPassword(data: LoginData['ResetPassword']): CancelablePromise<Message> {
-		const {
-requestBody,
-} = data;
-		return __request(OpenAPI, {
-			method: 'POST',
-			url: '/api/v1/reset-password/',
-			body: requestBody,
-			mediaType: 'application/json',
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
-
-	/**
-	 * Recover Password Html Content
-	 * HTML Content for Password Recovery
-	 * @returns string Successful Response
-	 * @throws ApiError
-	 */
-	public static recoverPasswordHtmlContent(data: LoginData['RecoverPasswordHtmlContent']): CancelablePromise<string> {
-		const {
-email,
-} = data;
-		return __request(OpenAPI, {
-			method: 'POST',
-			url: '/api/v1/password-recovery-html-content/{email}',
-			path: {
-				email
-			},
-			errors: {
-				422: `Validation Error`,
-			},
 		});
 	}
 
@@ -434,69 +340,6 @@ requestBody,
 	}
 
 	/**
-	 * Update User Me
-	 * Update own user.
-	 * @returns UserPublic Successful Response
-	 * @throws ApiError
-	 */
-	public static updateUserMe(data: UsersData['UpdateUserMe']): CancelablePromise<UserPublic> {
-		const {
-requestBody,
-} = data;
-		return __request(OpenAPI, {
-			method: 'PATCH',
-			url: '/api/v1/users/me',
-			body: requestBody,
-			mediaType: 'application/json',
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
-
-	/**
-	 * Update Password Me
-	 * Update own password.
-	 * @returns Message Successful Response
-	 * @throws ApiError
-	 */
-	public static updatePasswordMe(data: UsersData['UpdatePasswordMe']): CancelablePromise<Message> {
-		const {
-requestBody,
-} = data;
-		return __request(OpenAPI, {
-			method: 'PATCH',
-			url: '/api/v1/users/me/password',
-			body: requestBody,
-			mediaType: 'application/json',
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
-
-	/**
-	 * Register User
-	 * Create new user without the need to be logged in.
-	 * @returns UserPublic Successful Response
-	 * @throws ApiError
-	 */
-	public static registerUser(data: UsersData['RegisterUser']): CancelablePromise<UserPublic> {
-		const {
-requestBody,
-} = data;
-		return __request(OpenAPI, {
-			method: 'POST',
-			url: '/api/v1/users/signup',
-			body: requestBody,
-			mediaType: 'application/json',
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
-
-	/**
 	 * Read User By Id
 	 * Get a specific user by id.
 	 * @returns UserPublic Successful Response
@@ -512,31 +355,6 @@ userId,
 			path: {
 				user_id: userId
 			},
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
-
-	/**
-	 * Update User
-	 * Update a user.
-	 * @returns UserPublic Successful Response
-	 * @throws ApiError
-	 */
-	public static updateUser(data: UsersData['UpdateUser']): CancelablePromise<UserPublic> {
-		const {
-userId,
-requestBody,
-} = data;
-		return __request(OpenAPI, {
-			method: 'PATCH',
-			url: '/api/v1/users/{user_id}',
-			path: {
-				user_id: userId
-			},
-			body: requestBody,
-			mediaType: 'application/json',
 			errors: {
 				422: `Validation Error`,
 			},

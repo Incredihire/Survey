@@ -75,7 +75,7 @@ const getUrl = (config: OpenAPIConfig, options: ApiRequestOptions): string => {
 			return substring;
 		});
 
-	const url = (config.BASE ? config.BASE + path : path);
+	const url = config.BASE + path;
 	return options.query ? url + getQueryString(options.query) : url;
 };
 
