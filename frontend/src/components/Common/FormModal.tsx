@@ -26,6 +26,7 @@ import {
   useForm,
 } from "react-hook-form"
 
+import type { ReactNode } from "react"
 import type { ApiError } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast"
 import { handleError } from "../../utils/showToastOnError"
@@ -60,22 +61,26 @@ export interface FormModalProps<T extends FieldValues> {
   isOpen: boolean
   onClose: () => void
   title: string
-  fields: FieldDefinition<T>[]
-  mutationFn: (data: T) => Promise<void>
+  fields?: FieldDefinition<T>[]
+  content?: ReactNode
+  mutationFn: (data: T) => Promise<unknown>
   successMessage: string
   queryKeyToInvalidate?: string[]
   submitButtonProps?: ExtendedButtonProps
+  submitButtonText?: string
 }
 
 const FormModal = <T extends FieldValues>({
   isOpen,
   onClose,
   title,
-  fields,
+  fields = [],
+  content = null,
   mutationFn,
   successMessage,
   queryKeyToInvalidate,
   submitButtonProps,
+  submitButtonText = "Save",
 }: FormModalProps<T>) => {
   const queryClient = useQueryClient()
   const showToast = useCustomToast()
@@ -135,6 +140,7 @@ const FormModal = <T extends FieldValues>({
         <ModalHeader>{title}</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
+          {content}
           {fields.map((field) => {
             const isError = !!errors[field.name]
             if (field.type === "textarea") {
@@ -192,7 +198,7 @@ const FormModal = <T extends FieldValues>({
             type="submit"
             {...submitButtonProps}
           >
-            Save
+            {submitButtonText}
           </Button>
           <Button onClick={onClose}>Cancel</Button>
         </ModalFooter>
