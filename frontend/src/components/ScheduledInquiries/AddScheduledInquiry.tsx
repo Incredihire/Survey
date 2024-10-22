@@ -20,7 +20,6 @@ const AddScheduledInquiry = ({ inquiry }: AddScheduledInquiryProps) => {
   const openModal = () => {
     setModalOpen(true)
   }
-
   const closeModal = () => {
     setModalOpen(false)
   }
