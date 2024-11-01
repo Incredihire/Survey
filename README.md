@@ -123,8 +123,8 @@ This will list path to the virtual environment created by Poetry:
 Virtualenv
 Python:         3.12.5
 Implementation: CPython
-Path:           /home/ilhanbae/.cache/pypoetry/virtualenvs/app-6zZbMuyK-py3.12
-Executable:     /home/ilhanbae/.cache/pypoetry/virtualenvs/app-6zZbMuyK-py3.12/bin/python
+Path:           /home/mitchell/ComputerScience_WSL/Incredihire/Survey/backend/.venv
+Executable:     /home/mitchell/ComputerScience_WSL/Incredihire/Survey/backend/.venv/bin/python
 Valid:          True
 
 Base
@@ -137,7 +137,7 @@ Executable: /home/linuxbrew/.linuxbrew/Cellar/python@3.12/3.12.5/bin/python3.12
 
 Create a settings.json file to point the POETRY_ENV_INFO to the Executable directory in the Virtualenv
 ```json
-{"POETRY_ENV_INFO": "/home/ilhanbae/.cache/pypoetry/virtualenvs/app-6zZbMuyK-py3.12/bin/python"}
+{"POETRY_ENV_INFO": "/home/mitchell/ComputerScience_WSL/Incredihire/Survey/backend/.venv/bin/python"}
 ```
 One this setup is complete, open the **Run and Debug** panel in Visual Studio Code and select **Debug Backend**.
 
