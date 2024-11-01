@@ -10,7 +10,7 @@
       "cwd": "${workspaceFolder}/backend",
       "jinja": true,
       "envFile": "${workspaceFolder}/.env",
-      "python": "${config:PYTHON_POETRY_PATH}"
+      "python": "${config:POETRY_ENV_INFO}"
     },
     {
       "name": "Debug Frontend: Launch Chrome against http://localhost:5173",

@@ -135,9 +135,9 @@ Path:       /home/linuxbrew/.linuxbrew/Cellar/python@3.12/3.12.5
 Executable: /home/linuxbrew/.linuxbrew/Cellar/python@3.12/3.12.5/bin/python3.12
 ```
 
-Create a settings.json file to point the PYTHON_POETRY_PATH to the Executable directory in the Virtualenv
+Create a settings.json file to point the POETRY_ENV_INFO to the Executable directory in the Virtualenv
 ```json
-{"PYTHON_POETRY_PATH": "/home/ilhanbae/.cache/pypoetry/virtualenvs/app-6zZbMuyK-py3.12/bin/python"}
+{"POETRY_ENV_INFO": "/home/ilhanbae/.cache/pypoetry/virtualenvs/app-6zZbMuyK-py3.12/bin/python"}
 ```
 One this setup is complete, open the **Run and Debug** panel in Visual Studio Code and select **Debug Backend**.
 
