@@ -10,6 +10,7 @@
       "cwd": "${workspaceFolder}/backend",
       "jinja": true,
       "envFile": "${workspaceFolder}/.env",
+      // run "python env info" to get your python path.  Put value for POETRY_ENV_INFO in settings.json
       "python": "${config:POETRY_ENV_INFO}"
     },
     {
