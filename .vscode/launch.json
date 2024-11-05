@@ -10,8 +10,6 @@
       "cwd": "${workspaceFolder}/backend",
       "jinja": true,
       "envFile": "${workspaceFolder}/.env",
-      // run "python env info" to get your python path.  Put value for POETRY_ENV_INFO in settings.json
-      "python": "${config:POETRY_ENV_INFO}"
     },
     {
       "name": "Debug Frontend: Launch Chrome against http://localhost:5173",

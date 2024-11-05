@@ -106,17 +106,13 @@ Open up [Swagger](http://localhost/docs) to see interactive API.
 
 To debug frontend, you simply open the **Run and Debug** panel and select **Debug Frontend**.
 
-To debug backend, start by configuring Poetry to create virtual environment within the project folder.
+To debug backend, you have to set your Python Interpreter path to your virtual environment
 
 Go to backend directory:
 ```
 cd backend
 ```
-Check installed poetry environment by running
-```
-poetry env info
-```
-This will list path to the virtual environment created by Poetry:
+Find the path to the python executable in the virtual environment by running `poetry env info`
 ```
 ➜  backend git:(vscode-debug) ✗ poetry env info
 
@@ -135,10 +131,8 @@ Path:       /home/linuxbrew/.linuxbrew/Cellar/python@3.12/3.12.5
 Executable: /home/linuxbrew/.linuxbrew/Cellar/python@3.12/3.12.5/bin/python3.12
 ```
 
-Create a settings.json file to point the POETRY_ENV_INFO to the Executable directory in the Virtualenv
-```json
-{"POETRY_ENV_INFO": "/home/mitchell/ComputerScience_WSL/Incredihire/Survey/backend/.venv/bin/python"}
-```
+Open up your VSCode settings (**Command Palette** > **Python: Select Interpreter**) and enter the path for the Python Virtualenv Executable given above. 
+
 One this setup is complete, open the **Run and Debug** panel in Visual Studio Code and select **Debug Backend**.
 
 You can also run both of these debuggers simultaneously by selecting **Debug Frontend and Backend**.
