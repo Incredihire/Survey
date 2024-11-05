@@ -112,17 +112,7 @@ Go to backend directory:
 ```
 cd backend
 ```
-Find the path to the python executable in the virtual environment by running `poetry env info`
-```
-➜  backend git:(vscode-debug) ✗ poetry env info
-
-Virtualenv
-Python:         3.12.5
-Implementation: CPython
-Path:           /home/mitchell/ComputerScience_WSL/Incredihire/Survey/backend/.venv
-Executable:     /home/mitchell/ComputerScience_WSL/Incredihire/Survey/backend/.venv/bin/python
-Valid:          True
-```
+Find the path to the python executable in the virtual environment by running `poetry env info --executable`
 
 Open up your VSCode settings (**Command Palette** > **Python: Select Interpreter**) and enter the path for the Python Virtualenv Executable given above. 
 
