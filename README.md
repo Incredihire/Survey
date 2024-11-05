@@ -122,13 +122,6 @@ Implementation: CPython
 Path:           /home/mitchell/ComputerScience_WSL/Incredihire/Survey/backend/.venv
 Executable:     /home/mitchell/ComputerScience_WSL/Incredihire/Survey/backend/.venv/bin/python
 Valid:          True
-
-Base
-Platform:   linux
-OS:         posix
-Python:     3.12.5
-Path:       /home/linuxbrew/.linuxbrew/Cellar/python@3.12/3.12.5
-Executable: /home/linuxbrew/.linuxbrew/Cellar/python@3.12/3.12.5/bin/python3.12
 ```
 
 Open up your VSCode settings (**Command Palette** > **Python: Select Interpreter**) and enter the path for the Python Virtualenv Executable given above. 
