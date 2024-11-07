@@ -10,15 +10,6 @@
       "cwd": "${workspaceFolder}/backend",
       "jinja": true,
       "envFile": "${workspaceFolder}/.env",
-      "osx": {
-        "python": "${workspaceFolder}/backend/.venv/bin/python"
-      },
-      "linux": {
-        "python": "${workspaceFolder}/backend/.venv/bin/python"
-      },
-      "windows": {
-        "python": "${workspaceFolder}/backend/.venv/Scripts/python.exe"
-      }
     },
     {
       "name": "Debug Frontend: Launch Chrome against http://localhost:5173",
