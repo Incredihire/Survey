@@ -1,24 +1,49 @@
 import { Flex, Spinner } from "@chakra-ui/react"
-import { Outlet, createFileRoute, redirect } from "@tanstack/react-router"
+import { Outlet, createFileRoute } from "@tanstack/react-router"
 
+import { useEffect } from "react"
 import Sidebar from "../components/Common/Sidebar"
 import UserMenu from "../components/Common/UserMenu"
-import useAuth, { isLoggedIn } from "../hooks/useAuth"
+import useAuth from "../hooks/useAuth"
+import { isLoggedIn } from "../utils/cookies"
 
 export const Route = createFileRoute("/_layout")({
   component: Layout,
-  beforeLoad: async () => {
-    if (!isLoggedIn()) {
-      throw redirect({
-        to: "/login",
-      })
-    }
-  },
 })
 
 function Layout() {
-  const { isLoading } = useAuth()
+  useEffect(() => {
+    const openLoginPage = () => {
+      window.location.href = `/api/v1/auth/login?state=${encodeURI(window.location.href)}`
+    }
+    const handleCookieChange = (event: any) => {
+      if (
+        event.deleted.some((cookie: any) => cookie.name === "access_token") &&
+        !isLoggedIn()
+      ) {
+        openLoginPage()
+      }
+    }
+    if ("cookieStore" in window) {
+      ;(window as any).cookieStore.addEventListener(
+        "change",
+        handleCookieChange,
+      )
+    }
+    if (!isLoggedIn()) {
+      openLoginPage()
+    }
+    return () => {
+      if ("cookieStore" in window) {
+        ;(window as any).cookieStore.removeEventListener(
+          "change",
+          handleCookieChange,
+        )
+      }
+    }
+  }, [])
 
+  const { isLoading } = useAuth()
   return (
     <Flex maxW="large" h="auto" position="relative">
       <Sidebar />

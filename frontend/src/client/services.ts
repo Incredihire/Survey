@@ -112,19 +112,6 @@ formData,
 		});
 	}
 
-	/**
-	 * Test Token
-	 * Test access token
-	 * @returns UserPublic Successful Response
-	 * @throws ApiError
-	 */
-	public static testToken(): CancelablePromise<UserPublic> {
-				return __request(OpenAPI, {
-			method: 'POST',
-			url: '/api/v1/login/test-token',
-		});
-	}
-
 }
 
 export class InquiriesService {

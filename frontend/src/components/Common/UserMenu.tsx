@@ -8,17 +8,9 @@ import {
 } from "@chakra-ui/react"
 import { Link } from "@tanstack/react-router"
 import { FaUserAstronaut } from "react-icons/fa"
-import { FiLogOut, FiUser } from "react-icons/fi"
-
-import useAuth from "../../hooks/useAuth"
+import { FiUser } from "react-icons/fi"
 
 const UserMenu = () => {
-  const { logout } = useAuth()
-
-  const handleLogout = async () => {
-    logout()
-  }
-
   return (
     <>
       {/* Desktop */}
@@ -40,14 +32,6 @@ const UserMenu = () => {
           <MenuList>
             <MenuItem icon={<FiUser fontSize="18px" />} as={Link} to="settings">
               My profile
-            </MenuItem>
-            <MenuItem
-              icon={<FiLogOut fontSize="18px" />}
-              onClick={handleLogout}
-              color="ui.danger"
-              fontWeight="bold"
-            >
-              Log out
             </MenuItem>
           </MenuList>
         </Menu>
