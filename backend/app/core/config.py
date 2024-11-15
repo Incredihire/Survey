@@ -54,10 +54,10 @@ class Settings(BaseSettings):
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str = ""
     POSTGRES_DB: str = ""
-    GOOGLE_AUTHORIZATION_URL: str | None = (None,)
-    GOOGLE_TOKEN_URL: str | None = (None,)
-    GOOGLE_CLIENT_ID: str | None = (None,)
-    GOOGLE_CLIENT_SECRET: str | None = (None,)
+    GOOGLE_AUTHORIZATION_URL: str = ""
+    GOOGLE_TOKEN_URL: str = ""
+    GOOGLE_CLIENT_ID: str = ""
+    GOOGLE_CLIENT_SECRET: str = ""
 
     @computed_field  # type: ignore[prop-decorator]
     @property
