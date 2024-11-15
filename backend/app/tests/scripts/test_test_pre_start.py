@@ -26,7 +26,7 @@ def test_init_successful_connection() -> None:
         assert (
             connection_successful
         ), "The database connection should be successful and not raise an exception."
-        # TODO:fix this test - Jereme
+        # TODO: fix or remove this test - Jereme
         # assert session_mock.exec.assert_called_once_with(
         #     select(1)
         # ), "The session should execute a select statement once."
