@@ -4,9 +4,9 @@ from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
 import app.services.users as users_service
-from app.core import security
 from app.core.config import settings
 from app.models import User, UserCreate
+from app.tests.utils.user import access_token_from_email
 from app.tests.utils.utils import bad_integer_id, random_email, random_lower_string
 
 
@@ -80,7 +80,7 @@ def test_get_existing_user_current_user(client: TestClient, db: Session) -> None
     user_in = UserCreate(email=username, password=password)
     users_service.create_user(session=db, user_create=user_in)
 
-    access_token = security.create_access_token(username)
+    access_token = access_token_from_email(username, db)
     headers = {"Authorization": f"Bearer {access_token}"}
 
     r = client.get(
@@ -167,7 +167,7 @@ def test_delete_user_me(client: TestClient, db: Session) -> None:
     user = users_service.create_user(session=db, user_create=user_in)
     user_id = user.id
 
-    access_token = security.create_access_token(username)
+    access_token = access_token_from_email(username, db)
     headers = {"Authorization": f"Bearer {access_token}"}
 
     r = client.delete(

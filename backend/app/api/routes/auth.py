@@ -59,7 +59,7 @@ async def auth_callback(
         expires = datetime.now(timezone.utc) + timedelta(
             minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
         )
-        access_token = security.create_access_token(email, expires=expires)
+        access_token = security.create_access_token(user.id, expires=expires)
         referrer_parsed = urlparse(request.headers.get("referrer", "http://localhost"))
         referrer_base = referrer_parsed.scheme + "://" + referrer_parsed.netloc
         if state.startswith(referrer_base):
