@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, create_autospec, patch
+from unittest.mock import MagicMock, patch
 
 from sqlmodel import Session, select
 
@@ -6,8 +6,8 @@ from app.backend_pre_start import init, logger
 from app.core.db import engine
 
 
-@create_autospec(spec=Session)
-def test_init_successful_connection(session_mock) -> None:
+@MagicMock(spec=Session)
+def test_init_successful_connection(session_mock: MagicMock) -> None:
     session_mock.exec = MagicMock(return_value=True)
     with (
         patch("sqlmodel.Session", return_value=session_mock),
@@ -24,6 +24,4 @@ def test_init_successful_connection(session_mock) -> None:
         assert (
             connection_successful
         ), "The database connection should be successful and not raise an exception."
-        assert session_mock.exec.assert_called_once_with(
-            select(1)
-        ), "The session should execute a select statement once."
+        session_mock.exec.assert_called_once_with(select(1))

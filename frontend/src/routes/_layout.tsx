@@ -14,31 +14,35 @@ export const Route = createFileRoute("/_layout")({
 function Layout() {
   useEffect(() => {
     const openLoginPage = () => {
-      window.location.href = `/api/v1/auth/login?state=${encodeURI(window.location.href)}`
+      window.location.href = `/api/v1/auth/login?state=${escape(encodeURI(window.location.href))}`
     }
-    const handleCookieChange = (event: any) => {
+    const handleCookieChange = (event: { deleted: { name: string }[] }) => {
       if (
-        event.deleted.some((cookie: any) => cookie.name === "access_token") &&
+        event.deleted.some((cookie) => cookie.name === "access_token") &&
         !isLoggedIn()
       ) {
         openLoginPage()
       }
     }
     if ("cookieStore" in window) {
-      ;(window as any).cookieStore.addEventListener(
-        "change",
-        handleCookieChange,
-      )
+      ;(
+        window as {
+          cookieStore: { addEventListener: (arg0: string, arg1: any) => void }
+        }
+      ).cookieStore.addEventListener("change", handleCookieChange)
     }
     if (!isLoggedIn()) {
       openLoginPage()
     }
     return () => {
       if ("cookieStore" in window) {
-        ;(window as any).cookieStore.removeEventListener(
-          "change",
-          handleCookieChange,
-        )
+        ;(
+          window as {
+            cookieStore: {
+              removeEventListener: (arg0: string, arg1: any) => void
+            }
+          }
+        ).cookieStore.removeEventListener("change", handleCookieChange)
       }
     }
   }, [])
