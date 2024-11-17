@@ -2,17 +2,19 @@ from collections.abc import Generator
 from logging import StreamHandler, getLogger
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, Request
+import jwt
+from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2AuthorizationCodeBearer
-from googleapiclient.discovery import build
 from httpx_oauth.clients.google import ACCESS_TOKEN_ENDPOINT, AUTHORIZE_ENDPOINT
-from oauth2client.client import OAuth2Credentials  # type: ignore
+from jwt.exceptions import InvalidTokenError
+from pydantic import ValidationError
 from sqlmodel import Session
 
+import app.services.users as users_service
+from app.core import security
 from app.core.config import settings
 from app.core.db import engine
-from app.models import User
-from app.services import users as users_service
+from app.models import TokenPayload, User
 
 
 def get_db() -> Generator[Session, None, None]:
@@ -40,42 +42,18 @@ logger.setLevel(settings.log_level)
 logger.addHandler(StreamHandler())
 
 
-def get_current_user(session: SessionDep, token: TokenDep, request: Request) -> User:
-    logger.debug("Test current user!")
-    if not token:
-        raise HTTPException(status_code=400, detail="Missing access_token in response.")
-    if token == "ABCDEFGHIJ":
-        return User(
-            id=1, email=settings.FIRST_SUPERUSER, is_active=True, is_superuser=True
+def get_current_user(session: SessionDep, token: TokenDep) -> User:
+    try:
+        payload = jwt.decode(
+            token, settings.SECRET_KEY, algorithms=[security.ALGORITHM]
         )
-        logger.debug("Test superuser!")
-    if token == "1234567890":
-        return User(
-            id=2, email=settings.EMAIL_TEST_USER, is_active=True, is_superuser=False
+        token_data = TokenPayload(**payload)
+    except (InvalidTokenError, ValidationError):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Could not validate credentials",
         )
-        logger.debug("Test user!")
-
-    user_data = request.session.get("user_data")
-    if user_data and token == request.session.get("access_token"):
-        user: User | None = User(**user_data)
-        logger.debug(f"User from session: {user}")
-    else:  # This should only occur when frontend is running on http://localhost:5173 in dev mode.
-        credentials = OAuth2Credentials(
-            token,
-            settings.GOOGLE_CLIENT_ID,
-            settings.GOOGLE_CLIENT_SECRET,
-            None,
-            None,
-            settings.GOOGLE_TOKEN_URL,
-            None,
-        )
-        oauth2 = build("oauth2", "v2", credentials=credentials)
-        user_info = oauth2.userinfo().get().execute()
-        user = users_service.get_user_by_email(
-            session=session, email=user_info["email"]
-        )
-        logger.debug(f"User from request: {user}")
-
+    user = users_service.get_user_by_email(session=session, email=token_data.sub)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     if not user.is_active:

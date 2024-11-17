@@ -4,6 +4,7 @@ from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
 import app.services.users as users_service
+from app.core import security
 from app.core.config import settings
 from app.models import User, UserCreate
 from app.tests.utils.utils import bad_integer_id, random_email, random_lower_string
@@ -65,6 +66,26 @@ def test_get_existing_user(
     r = client.get(
         f"{settings.API_V1_STR}/users/{user_id}",
         headers=superuser_token_headers,
+    )
+    assert 200 <= r.status_code < 300
+    api_user = r.json()
+    existing_user = users_service.get_user_by_email(session=db, email=username)
+    assert existing_user
+    assert existing_user.email == api_user["email"]
+
+
+def test_get_existing_user_current_user(client: TestClient, db: Session) -> None:
+    username = random_email()
+    password = random_lower_string()
+    user_in = UserCreate(email=username, password=password)
+    users_service.create_user(session=db, user_create=user_in)
+
+    access_token = security.create_access_token(username)
+    headers = {"Authorization": f"Bearer {access_token}"}
+
+    r = client.get(
+        f"{settings.API_V1_STR}/users/me",
+        headers=headers,
     )
     assert 200 <= r.status_code < 300
     api_user = r.json()
@@ -139,6 +160,43 @@ def test_retrieve_users(
         assert "email" in item
 
 
+def test_delete_user_me(client: TestClient, db: Session) -> None:
+    username = random_email()
+    password = random_lower_string()
+    user_in = UserCreate(email=username, password=password)
+    user = users_service.create_user(session=db, user_create=user_in)
+    user_id = user.id
+
+    access_token = security.create_access_token(username)
+    headers = {"Authorization": f"Bearer {access_token}"}
+
+    r = client.delete(
+        f"{settings.API_V1_STR}/users/me",
+        headers=headers,
+    )
+    assert r.status_code == 200
+    deleted_user = r.json()
+    assert deleted_user["message"] == "User deleted successfully"
+    result = db.exec(select(User).where(User.id == user_id)).first()
+    assert result is None
+
+    user_query = select(User).where(User.id == user_id)
+    user_db = db.execute(user_query).first()
+    assert user_db is None
+
+
+def test_delete_user_me_as_superuser(
+    client: TestClient, superuser_token_headers: dict[str, str]
+) -> None:
+    r = client.delete(
+        f"{settings.API_V1_STR}/users/me",
+        headers=superuser_token_headers,
+    )
+    assert r.status_code == 403
+    response = r.json()
+    assert response["detail"] == "Super users are not allowed to delete themselves"
+
+
 def test_delete_user_super_user(
     client: TestClient, superuser_token_headers: dict[str, str], db: Session
 ) -> None:
@@ -167,6 +225,23 @@ def test_delete_user_not_found(
     )
     assert r.status_code == 404
     assert r.json()["detail"] == "User not found"
+
+
+def test_delete_user_current_super_user_error(
+    client: TestClient, superuser_token_headers: dict[str, str], db: Session
+) -> None:
+    super_user = users_service.get_user_by_email(
+        session=db, email=settings.FIRST_SUPERUSER
+    )
+    assert super_user
+    user_id = super_user.id
+
+    r = client.delete(
+        f"{settings.API_V1_STR}/users/{user_id}",
+        headers=superuser_token_headers,
+    )
+    assert r.status_code == 403
+    assert r.json()["detail"] == "Super users are not allowed to delete themselves"
 
 
 def test_delete_user_without_privileges(

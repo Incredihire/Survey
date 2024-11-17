@@ -6,6 +6,8 @@ from sqlmodel import Session, SQLModel, create_engine, select
 from sqlmodel.pool import StaticPool
 
 from app.api.deps import get_db
+from app.core import security
+from app.core.config import settings
 from app.core.db import init_db
 from app.main import app
 from app.models import Inquiry, Schedule
@@ -48,9 +50,11 @@ def clear_tables_after_tests(db: Session) -> Generator[None, None, None]:
 
 @pytest.fixture(scope="module")
 def superuser_token_headers() -> dict[str, str]:
-    return {"Authorization": "Bearer ABCDEFGHIJ"}
+    access_token = security.create_access_token(settings.FIRST_SUPERUSER)
+    return {"Authorization": f"Bearer {access_token}"}
 
 
 @pytest.fixture(scope="module")
 def normal_user_token_headers() -> dict[str, str]:
-    return {"Authorization": "Bearer 1234567890"}
+    access_token = security.create_access_token(settings.EMAIL_TEST_USER)
+    return {"Authorization": f"Bearer {access_token}"}

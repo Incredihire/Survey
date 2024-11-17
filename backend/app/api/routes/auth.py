@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta, timezone
 from urllib.parse import urlparse
 
 import httpx
@@ -10,6 +11,7 @@ from httpx_oauth.clients.google import ACCESS_TOKEN_ENDPOINT, AUTHORIZE_ENDPOINT
 
 import app.services.users as users_service
 from app.api.deps import SessionDep
+from app.core import security
 from app.core.config import settings
 
 load_dotenv()
@@ -54,10 +56,10 @@ async def auth_callback(
         user = users_service.get_user_by_email(session=session, email=email)
         if not user or not user.is_active:
             raise HTTPException(status_code=400, detail="Inactive user")
-        access_token = token_response.get("access_token")
-        expires_in = token_response.get("expires_in")
-        request.session["access_token"] = access_token
-        request.session["user_data"] = user.dict()
+        expires = datetime.now(timezone.utc) + timedelta(
+            minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
+        )
+        access_token = security.create_access_token(email, expires=expires)
         referrer_parsed = urlparse(request.headers.get("referrer", "http://localhost"))
         referrer_base = referrer_parsed.scheme + "://" + referrer_parsed.netloc
         if state.startswith(referrer_base):
@@ -67,7 +69,7 @@ async def auth_callback(
         response.set_cookie(
             "access_token",
             access_token,
-            expires_in,
+            expires=expires,
             secure=(referrer_base != "http://localhost"),
         )
         return response
