@@ -18,18 +18,6 @@ export default class InquiryPage extends HelperBase {
     await this.assertButtonTextByTestIdAndClick("submit-add-inquiry", "Save")
   }
 
-  async addInquiry_whenValidInquiryIsAdded_shouldShowInquiryInInquiriesList(
-    inputText: string,
-  ) {
-    await this.addInquiry(inputText)
-  }
-
-  async inquiry_whenInvalidInquiryText_shouldShowValidationError(
-    inputText: string,
-  ) {
-    await this.addInquiry(inputText)
-  }
-
   async dismissPopupUsingCancel() {
     await this.page.getByRole("button", { name: "Cancel" }).click()
   }

@@ -19,11 +19,7 @@ test.describe("Inquiry Management Suite", () => {
     await pm.oninquiryPage().openInquiryForm()
 
     const inputText = "How would you rate the work environment in your team?"
-    await pm
-      .oninquiryPage()
-      .addInquiry_whenValidInquiryIsAdded_shouldShowInquiryInInquiriesList(
-        inputText,
-      )
+    await pm.oninquiryPage().addInquiry(inputText)
 
     await expect(page.locator(`text=${inputText}`)).toBeVisible()
   })
@@ -37,9 +33,7 @@ test.describe("Inquiry Management Suite", () => {
     await pm.oninquiryPage().openInquiryForm()
 
     const inputText = ""
-    await pm
-      .oninquiryPage()
-      .inquiry_whenInvalidInquiryText_shouldShowValidationError(inputText)
+    await pm.oninquiryPage().addInquiry(inputText)
 
     await expect(page.getByText("Inquiry text is required.")).toHaveText(
       "Inquiry text is required.",
@@ -56,9 +50,7 @@ test.describe("Inquiry Management Suite", () => {
     await pm.oninquiryPage().navigateToInquiriesPage()
     await pm.oninquiryPage().openInquiryForm()
 
-    await pm
-      .oninquiryPage()
-      .inquiry_whenInvalidInquiryText_shouldShowValidationError(inputText)
+    await pm.oninquiryPage().addInquiry(inputText)
 
     await expect(
       page.getByText("Inquiry can not be greater than 256 characters."),
@@ -74,9 +66,7 @@ test.describe("Inquiry Management Suite", () => {
     await pm.oninquiryPage().navigateToInquiriesPage()
     await pm.oninquiryPage().openInquiryForm()
 
-    await pm
-      .oninquiryPage()
-      .inquiry_whenInvalidInquiryText_shouldShowValidationError(inputText)
+    await pm.oninquiryPage().addInquiry(inputText)
 
     await expect(
       page.getByText("Inquiry must be at least 10 characters."),
