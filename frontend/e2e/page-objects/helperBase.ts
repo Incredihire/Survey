@@ -33,21 +33,21 @@ class HelperBase {
     await textArea.fill(text)
   }
 
-  getRandomQuestion(): string | null {
+  getRandomQuestion(): string {
     if (!questionsData || !Array.isArray(questionsData.questions)) {
       console.error("Invalid questionsData structure.")
-      return null
+      return "How has your work been"
     }
 
     if (questionsData.questions.length === 0) {
       console.warn("No questions available.")
-      return null
+      return "How has your work been"
     }
     const randomIndex = Math.floor(
       Math.random() * questionsData.questions.length,
     )
     const questionText = questionsData.questions[randomIndex]?.questionText
-    return questionText || "No question text available."
+    return questionText || "How has your work been"
   }
 }
 
