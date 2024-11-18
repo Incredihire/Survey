@@ -7,6 +7,7 @@ import type { ApiResult } from './ApiResult';
 import { CancelablePromise } from './CancelablePromise';
 import type { OnCancel } from './CancelablePromise';
 import type { OpenAPIConfig } from './OpenAPI';
+import Cookies from "js-cookie"
 
 export const isString = (value: unknown): value is string => {
 	return typeof value === 'string';
@@ -116,8 +117,8 @@ export const resolve = async <T>(options: ApiRequestOptions, resolver?: T | Reso
 };
 
 export const getHeaders = async (config: OpenAPIConfig, options: ApiRequestOptions): Promise<Record<string, string>> => {
-	const [token, username, password, additionalHeaders] = await Promise.all([
-		resolve(options, config.TOKEN),
+	const [base, username, password, additionalHeaders] = await Promise.all([
+		resolve(options, config.BASE),
 		resolve(options, config.USERNAME),
 		resolve(options, config.PASSWORD),
 		resolve(options, config.HEADERS),
@@ -134,8 +135,8 @@ export const getHeaders = async (config: OpenAPIConfig, options: ApiRequestOptio
 		[key]: String(value),
 	}), {} as Record<string, string>);
 
-	if (isStringWithValue(token)) {
-		headers['Authorization'] = `Bearer ${token}`;
+	if (base && base.startsWith("http://localhost")) {
+		headers['Authorization'] = `Bearer ${Cookies.get("access_token")}`;
 	}
 
 	if (isStringWithValue(username) && isStringWithValue(password)) {

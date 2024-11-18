@@ -4,15 +4,11 @@ import { RouterProvider, createRouter } from "@tanstack/react-router"
 import ReactDOM from "react-dom/client"
 import { routeTree } from "./routeTree.gen"
 
-import Cookies from "js-cookie"
 import { StrictMode } from "react"
 import { OpenAPI } from "./client"
 import theme from "./theme"
 
 OpenAPI.BASE = import.meta.env.VITE_API_URL
-OpenAPI.TOKEN = async () => {
-  return Cookies.get("access_token") || ""
-}
 
 const queryClient = new QueryClient()
 

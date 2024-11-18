@@ -18,7 +18,7 @@ function Layout() {
     }
     const handleCookieChange = (event: { deleted: { name: string }[] }) => {
       if (
-        event.deleted.some((cookie) => cookie.name === "access_token") &&
+        event.deleted.some((cookie) => cookie.name === "access_token_expiry") &&
         !isLoggedIn()
       ) {
         openLoginPage()
