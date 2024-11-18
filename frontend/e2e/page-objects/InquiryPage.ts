@@ -25,7 +25,7 @@ export default class InquiryPage extends HelperBase {
   }
 
   async submitInquiry() {
-    const randomQuestion = await this.getRandomQuestion()
+    const randomQuestion = this.getRandomQuestion() ?? "Default inquiry text"
     await this.navigateToInquiriesPage()
     await this.openInquiryForm()
     await this.fillTextByTestId("add-inquiry-text", randomQuestion)
