@@ -29,10 +29,9 @@ class CookieOAuth2AuthorizationCodeBearer(OAuth2AuthorizationCodeBearer):
     async def __call__(self, request: Request) -> str | None:
         token = request.cookies.get("access_token")
         if not token:
-            if request.headers.get("Authorization") and request.headers.get(
-                "Authorization"
-            ).startswith("Bearer "):
-                token = request.headers.get("Authorization").split("Bearer ")[1]
+            authorization_header = request.headers.get("Authorization")
+            if authorization_header and authorization_header.startswith("Bearer "):
+                token = authorization_header.split("Bearer ")[1]
             else:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,

@@ -89,7 +89,7 @@ async def auth_callback(
     )
     response.set_cookie(
         "access_token_expiry",
-        expires,
+        expires.strftime("%Y-%m-%d %H:%M:%S"),
         secure=(not return_url.startswith("http://localhost")),
         httponly=False,
     )

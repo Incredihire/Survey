@@ -5,7 +5,11 @@ import { useEffect } from "react"
 import Sidebar from "../components/Common/Sidebar"
 import UserMenu from "../components/Common/UserMenu"
 import useAuth from "../hooks/useAuth"
-import { isLoggedIn } from "../utils/cookies"
+import {
+  getAccessTokenExpiry,
+  isLoggedIn,
+  removeAccessTokenExpiry,
+} from "../utils/cookies"
 
 export const Route = createFileRoute("/_layout")({
   component: Layout,
@@ -16,41 +20,27 @@ function Layout() {
     const openLoginPage = () => {
       window.location.href = escape("/api/v1/auth/login")
     }
-    const handleCookieChange = (event: { deleted: { name: string }[] }) => {
-      if (
-        event.deleted.some((cookie) => cookie.name === "access_token_expiry") &&
-        !isLoggedIn()
-      ) {
-        openLoginPage()
-      }
-    }
-    if ("cookieStore" in window) {
-      ;(
-        window as {
-          cookieStore: {
-            addEventListener: (
-              arg0: string,
-              arg1: (event: { deleted: { name: string }[] }) => void,
-            ) => void
-          }
-        }
-      ).cookieStore.addEventListener("change", handleCookieChange)
-    }
+    let accessTokenExpiryTimeout: NodeJS.Timeout | null = null
     if (!isLoggedIn()) {
       openLoginPage()
+    } else {
+      const expiry = getAccessTokenExpiry()
+      if (expiry) {
+        const now = new Date()
+        const delay = expiry.getTime() - now.getTime()
+
+        if (delay > 0) {
+          accessTokenExpiryTimeout = setTimeout(() => {
+            removeAccessTokenExpiry()
+            openLoginPage()
+          }, delay)
+        }
+      }
     }
     return () => {
-      if ("cookieStore" in window) {
-        ;(
-          window as {
-            cookieStore: {
-              removeEventListener: (
-                arg0: string,
-                arg1: (event: { deleted: { name: string }[] }) => void,
-              ) => void
-            }
-          }
-        ).cookieStore.removeEventListener("change", handleCookieChange)
+      if (accessTokenExpiryTimeout) {
+        clearTimeout(accessTokenExpiryTimeout)
+        accessTokenExpiryTimeout = null
       }
     }
   }, [])
