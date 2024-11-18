@@ -46,7 +46,7 @@ class HelperBase {
     const randomIndex = Math.floor(
       Math.random() * questionsData.questions.length,
     )
-    const questionText = questionsData.questions[randomIndex]?.questionText
+    const questionText = questionsData.questions[`${randomIndex}`]?.questionText
     return questionText || "How has your work been"
   }
 }
