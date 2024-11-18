@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta, timezone
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlunparse
 
 import httpx
 from dotenv import load_dotenv
@@ -23,9 +23,19 @@ GOOGLE_CLIENT_SECRET = settings.GOOGLE_CLIENT_SECRET
 
 
 @router.get("/login")
-async def login(state: str, request: Request) -> RedirectResponse:
+async def login(request: Request) -> RedirectResponse:
+    referer_parsed = urlparse(request.headers.get("Referer"))
+    if (
+        not referer_parsed.scheme
+        or not referer_parsed.netloc
+        or referer_parsed.netloc != settings.DOMAIN
+    ):
+        raise HTTPException(status_code=400, detail="Invalid referrer")
+    return_url = urlunparse(components=referer_parsed)
+    if isinstance(return_url, bytes):
+        return_url = return_url.decode()
     redirect_uri = request.url_for("auth_callback")
-    google_auth_url = f"{AUTHORIZE_ENDPOINT}?client_id={GOOGLE_CLIENT_ID}&redirect_uri={redirect_uri}&response_type=code&scope=openid email profile&state={state}&prompt=consent"
+    google_auth_url = f"{AUTHORIZE_ENDPOINT}?client_id={GOOGLE_CLIENT_ID}&redirect_uri={redirect_uri}&response_type=code&scope=openid email profile&state={return_url}&prompt=consent"
     return RedirectResponse(url=google_auth_url)
 
 
@@ -47,31 +57,34 @@ async def auth_callback(
     id_token_value = token_response.get("id_token")
     if not id_token_value:
         raise HTTPException(status_code=400, detail="Missing id_token in response.")
+
     try:
-        try:
-            id_info = verify_oauth2_token(id_token_value, request=requests.Request())  # type: ignore[no-untyped-call]
-        except ValueError as e:
-            raise HTTPException(status_code=400, detail=f"Invalid id_token: {str(e)}")
-        email = id_info.get("email")
-        user = users_service.get_user_by_email(session=session, email=email)
-        if not user or not user.is_active:
-            raise HTTPException(status_code=400, detail="Inactive user")
-        expires = datetime.now(timezone.utc) + timedelta(
-            minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
-        )
-        access_token = security.create_access_token(user.id, expires=expires)
-        referrer_parsed = urlparse(request.headers.get("referrer", "http://localhost"))
-        referrer_base = referrer_parsed.scheme + "://" + referrer_parsed.netloc
-        if state.startswith(referrer_base):
-            response = RedirectResponse(url=state)
-        else:
-            response = RedirectResponse(url=request.headers.get("referer", "/"))
-        response.set_cookie(
-            "access_token",
-            access_token,
-            expires=expires,
-            secure=(referrer_base != "http://localhost"),
-        )
-        return response
-    except Exception:
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+        id_info = verify_oauth2_token(id_token_value, request=requests.Request())  # type: ignore[no-untyped-call]
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=f"Invalid id_token: {str(e)}")
+    email = id_info.get("email")
+    user = users_service.get_user_by_email(session=session, email=email)
+    if not user or not user.is_active:
+        raise HTTPException(status_code=400, detail="Inactive user")
+    expires = datetime.now(timezone.utc) + timedelta(
+        minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
+    )
+    access_token = security.create_access_token(user.id, expires=expires)
+    return_url_parsed = urlparse(state)
+    if (
+        not return_url_parsed.scheme
+        or not return_url_parsed.netloc
+        or return_url_parsed.netloc != settings.DOMAIN
+    ):
+        raise HTTPException(status_code=400, detail="Invalid referrer")
+    return_url = urlunparse(return_url_parsed)
+    if isinstance(return_url, bytes):
+        return_url = return_url.decode()
+    response = RedirectResponse(url=return_url)
+    response.set_cookie(
+        "access_token",
+        access_token,
+        expires=expires,
+        secure=(not return_url.startswith("http://localhost")),
+    )
+    return response

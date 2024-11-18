@@ -2,14 +2,8 @@ import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
 
-import type { Body_login_login_access_token,Token,UserPublic,InquiryCreate,InquiryPublic,InquriesPublic,ThemeCreate,ThemePublic,ThemesPublic,Message,UserCreate,UsersPublic,ScheduledInquiriesPublic,ScheduledInquiryCreate,ScheduledInquiryPublic,ScheduleCreate,SchedulePublic } from './models';
+import type { UserPublic,InquiryCreate,InquiryPublic,InquriesPublic,ThemeCreate,ThemePublic,ThemesPublic,Message,UserCreate,UsersPublic,ScheduledInquiriesPublic,ScheduledInquiryCreate,ScheduledInquiryPublic,ScheduleCreate,SchedulePublic } from './models';
 
-export type LoginData = {
-        LoginAccessToken: {
-                    formData: Body_login_login_access_token
-                    
-                };
-    }
 
 export type InquiriesData = {
         CreateInquiry: {
@@ -89,30 +83,7 @@ export type ScheduleData = {
                 };
     }
 
-export class LoginService {
 
-	/**
-	 * Login Access Token
-	 * OAuth2 compatible token login, get an access token for future requests
-	 * @returns Token Successful Response
-	 * @throws ApiError
-	 */
-	public static loginAccessToken(data: LoginData['LoginAccessToken']): CancelablePromise<Token> {
-		const {
-formData,
-} = data;
-		return __request(OpenAPI, {
-			method: 'POST',
-			url: '/api/v1/login/access-token',
-			formData: formData,
-			mediaType: 'application/x-www-form-urlencoded',
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
-
-}
 
 export class InquiriesService {
 

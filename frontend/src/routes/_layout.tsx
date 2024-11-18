@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_layout")({
 function Layout() {
   useEffect(() => {
     const openLoginPage = () => {
-      window.location.href = `/api/v1/auth/login?state=${escape(encodeURI(window.location.href))}`
+      window.location.href = "/api/v1/auth/login"
     }
     const handleCookieChange = (event: { deleted: { name: string }[] }) => {
       if (
@@ -27,7 +27,12 @@ function Layout() {
     if ("cookieStore" in window) {
       ;(
         window as {
-          cookieStore: { addEventListener: (arg0: string, arg1: any) => void }
+          cookieStore: {
+            addEventListener: (
+              arg0: string,
+              arg1: (event: { deleted: { name: string }[] }) => void,
+            ) => void
+          }
         }
       ).cookieStore.addEventListener("change", handleCookieChange)
     }
@@ -39,7 +44,10 @@ function Layout() {
         ;(
           window as {
             cookieStore: {
-              removeEventListener: (arg0: string, arg1: any) => void
+              removeEventListener: (
+                arg0: string,
+                arg1: (event: { deleted: { name: string }[] }) => void,
+              ) => void
             }
           }
         ).cookieStore.removeEventListener("change", handleCookieChange)
