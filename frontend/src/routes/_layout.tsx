@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_layout")({
 function Layout() {
   useEffect(() => {
     const openLoginPage = () => {
-      window.location.href = encodeURI("/api/v1/auth/login")
+      window.location.href = escape("/api/v1/auth/login")
     }
     const handleCookieChange = (event: { deleted: { name: string }[] }) => {
       if (
