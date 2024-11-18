@@ -24,17 +24,19 @@ export default class InquiryPage extends HelperBase {
     ).toHaveText("Add Inquiry")
   }
 
-  async submitInquiry() {
-    const randomQuestion = this.getRandomQuestion()
+  async addInquiry_whenValidInquiryIsAdded_shouldShowInquiryInInquiriesList(
+    inputText: string,
+  ) {
     await this.navigateToInquiriesPage()
     await this.openInquiryForm()
-    await this.fillTextByTestId("add-inquiry-text", randomQuestion)
+    await this.fillTextByTestId("add-inquiry-text", inputText)
     await this.assertButtonTextByTestIdAndClick("submit-add-inquiry", "Save")
-    await this.waitForNumberOfSeconds(3)
-    await expect(this.page.locator(`text=${randomQuestion}`)).toBeVisible()
+    await expect(this.page.locator(`text=${inputText}`)).toBeVisible()
   }
 
-  async submitInquiryWithValidation(inputText: string) {
+  async inquiry_whenInvalidInquiryText_shouldShowValidationError(
+    inputText: string,
+  ) {
     await this.navigateToInquiriesPage()
     await this.openInquiryForm()
     await this.fillTextByTestId("add-inquiry-text", inputText)
