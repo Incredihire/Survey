@@ -1,0 +1,24 @@
+{
+  "questions": [
+    {
+      "questionId": 1,
+      "questionText": "How satisfied are you with your current role and responsibilities at work?"
+    },
+    {
+      "questionId": 2,
+      "questionText": "How would you rate the work environment in your team?"
+    },
+    {
+      "questionId": 3,
+      "questionText": "How satisfied are you with your current work-life balance?"
+    },
+    {
+      "questionId": 4,
+      "questionText": "On a scale of 1-10, how motivated do you feel to perform your job each day?"
+    },
+    {
+      "questionId": 5,
+      "questionText": "What motivates you the most to perform well at work?"
+    }
+  ]
+}
