@@ -1,4 +1,3 @@
-import logging
 import secrets
 import warnings
 from typing import Annotated, Any, Literal
@@ -88,13 +87,6 @@ class Settings(BaseSettings):
         return self
 
     EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 48
-
-    @computed_field  # type: ignore[prop-decorator]
-    @property
-    def log_level(self) -> int:
-        if self.ENVIRONMENT == "local":
-            return logging.DEBUG
-        return logging.ERROR
 
     @computed_field  # type: ignore[prop-decorator]
     @property

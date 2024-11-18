@@ -1,5 +1,4 @@
 from collections.abc import Generator
-from logging import StreamHandler, getLogger
 from typing import Annotated
 
 import jwt
@@ -14,10 +13,6 @@ from app.core import security
 from app.core.config import settings
 from app.core.db import engine
 from app.models import TokenPayload, User
-
-logger = getLogger(__name__)
-logger.setLevel(settings.log_level)
-logger.addHandler(StreamHandler())
 
 
 def get_db() -> Generator[Session, None, None]:
