@@ -83,6 +83,10 @@ These are URLs hosted by docker container:
 * Interactive Database Manager (Adminer): http://localhost:8080
 * Traefik UI: http://localhost:8090
 
+> Hint: You can whitelist a new email address by running the following command from project root directory:
+```
+./scripts/whitelist-email.sh <email_address> [is_superuser]
+```
 ### Frontend Development
 
 Our docker container doesn't support live-update for frontend. So, you should start a local server to see the changes you make by running the following from frontend directory:

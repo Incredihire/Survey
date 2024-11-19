@@ -6,6 +6,7 @@ from sqlmodel import Session, select
 import app.services.users as users_service
 from app.core.config import settings
 from app.models import User, UserCreate
+from app.tests.utils.user import access_token_from_email
 from app.tests.utils.utils import bad_integer_id, random_email, random_lower_string
 
 
@@ -77,20 +78,13 @@ def test_get_existing_user_current_user(client: TestClient, db: Session) -> None
     username = random_email()
     password = random_lower_string()
     user_in = UserCreate(email=username, password=password)
-    user = users_service.create_user(session=db, user_create=user_in)
-    user_id = user.id
+    users_service.create_user(session=db, user_create=user_in)
 
-    login_data = {
-        "username": username,
-        "password": password,
-    }
-    r = client.post(f"{settings.API_V1_STR}/login/access-token", data=login_data)
-    tokens = r.json()
-    a_token = tokens["access_token"]
-    headers = {"Authorization": f"Bearer {a_token}"}
+    access_token = access_token_from_email(username, db)
+    headers = {"Authorization": f"Bearer {access_token}"}
 
     r = client.get(
-        f"{settings.API_V1_STR}/users/{user_id}",
+        f"{settings.API_V1_STR}/users/me",
         headers=headers,
     )
     assert 200 <= r.status_code < 300
@@ -173,14 +167,8 @@ def test_delete_user_me(client: TestClient, db: Session) -> None:
     user = users_service.create_user(session=db, user_create=user_in)
     user_id = user.id
 
-    login_data = {
-        "username": username,
-        "password": password,
-    }
-    r = client.post(f"{settings.API_V1_STR}/login/access-token", data=login_data)
-    tokens = r.json()
-    a_token = tokens["access_token"]
-    headers = {"Authorization": f"Bearer {a_token}"}
+    access_token = access_token_from_email(username, db)
+    headers = {"Authorization": f"Bearer {access_token}"}
 
     r = client.delete(
         f"{settings.API_V1_STR}/users/me",

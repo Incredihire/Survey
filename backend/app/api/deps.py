@@ -2,8 +2,9 @@ from collections.abc import Generator
 from typing import Annotated
 
 import jwt
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import Depends, HTTPException, Request, status
+from fastapi.security import OAuth2AuthorizationCodeBearer
+from httpx_oauth.clients.google import ACCESS_TOKEN_ENDPOINT, AUTHORIZE_ENDPOINT
 from jwt.exceptions import InvalidTokenError
 from pydantic import ValidationError
 from sqlmodel import Session
@@ -13,14 +14,37 @@ from app.core.config import settings
 from app.core.db import engine
 from app.models import TokenPayload, User
 
-reusable_oauth2 = OAuth2PasswordBearer(
-    tokenUrl=f"{settings.API_V1_STR}/login/access-token"
-)
-
 
 def get_db() -> Generator[Session, None, None]:
     with Session(engine) as session:
         yield session
+
+
+class CookieOAuth2AuthorizationCodeBearer(OAuth2AuthorizationCodeBearer):
+    async def __call__(self, request: Request) -> str | None:
+        token = request.cookies.get("access_token")
+        if not token:
+            authorization_header = request.headers.get("Authorization")
+            if authorization_header and authorization_header.startswith("Bearer "):
+                token = authorization_header.split("Bearer ")[1]
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Could not validate credentials",
+                    headers={"WWW-Authenticate": "Bearer"},
+                )
+        return token
+
+
+reusable_oauth2 = CookieOAuth2AuthorizationCodeBearer(
+    authorizationUrl=AUTHORIZE_ENDPOINT,
+    tokenUrl=ACCESS_TOKEN_ENDPOINT,
+    scopes={
+        "openid": "openid",
+        "email": "email",
+        "profile": "profile",
+    },
+)
 
 
 SessionDep = Annotated[Session, Depends(get_db)]
