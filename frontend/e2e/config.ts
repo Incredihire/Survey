@@ -26,7 +26,7 @@ export const firstSuperuserToken = jwt.sign(
     iat: Math.floor(Date.now() / 1000),
     expires: Math.floor(Date.now() / 1000 + 60 * 60 * 1), // 1 hour
   },
-  SECRET_KEY || "",
+  SECRET_KEY ?? "",
   {
     algorithm: "HS256",
   },
