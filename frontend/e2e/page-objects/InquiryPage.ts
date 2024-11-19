@@ -3,7 +3,7 @@ import HelperBase from "./helperBase"
 export default class InquiryPage extends HelperBase {
   async navigateToInquiriesPage() {
     await this.page.waitForSelector("p.chakra-text.css-0", { timeout: 5000 })
-    await this.page.getByText("Inquiries").click()
+    await this.page.getByRole("link", { name: "Inquiries" }).click()
   }
 
   async openInquiryForm() {

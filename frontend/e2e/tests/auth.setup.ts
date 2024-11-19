@@ -16,5 +16,5 @@ setup("authenticate", async ({ page, context }) => {
       path: "/",
     },
   ])
-  await page.goto("http://localhost:5173/")
+  await page.goto("/")
 })
