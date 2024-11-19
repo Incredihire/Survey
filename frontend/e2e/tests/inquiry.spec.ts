@@ -1,9 +1,24 @@
 import { expect, test } from "@playwright/test"
+import { firstSuperuserToken } from "../config.ts"
 import PageManager from "../page-objects/pageManager"
 
 test.describe("Inquiry Management Suite", () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto("/")
+  test.beforeEach(async ({ context, page }) => {
+    await context.addCookies([
+      {
+        name: "access_token",
+        value: firstSuperuserToken,
+        domain: "localhost",
+        path: "/",
+      },
+      {
+        name: "access_token_expiry",
+        value: `${Math.floor(new Date().getTime() / 1000) + 60 * 60 * 1}`,
+        domain: "localhost",
+        path: "/",
+      },
+    ])
+    await page.goto("http://localhost:5173/")
   })
 
   test.afterEach(async ({ page }) => {

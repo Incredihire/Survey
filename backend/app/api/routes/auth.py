@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+import time
 from urllib.parse import urlparse, urlunparse
 
 import httpx
@@ -66,9 +66,7 @@ async def auth_callback(
     user = users_service.get_user_by_email(session=session, email=email)
     if not user or not user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
-    expires = datetime.now(timezone.utc) + timedelta(
-        minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
-    )
+    expires = int(time.time()) + settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60
     access_token = security.create_access_token(user.id, expires=expires)
     return_url_parsed = urlparse(state)
     if (
@@ -89,7 +87,7 @@ async def auth_callback(
     )
     response.set_cookie(
         "access_token_expiry",
-        expires.isoformat(),
+        str(expires),
         secure=(not return_url.startswith("http://localhost")),
         httponly=False,
     )

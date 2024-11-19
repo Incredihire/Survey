@@ -27,7 +27,7 @@ function Layout() {
       const expiry = getAccessTokenExpiry()
       if (expiry) {
         const now = new Date()
-        const delay = expiry.getTime() - now.getTime()
+        const delay = expiry - now.getTime() / 1000
 
         if (delay > 0) {
           accessTokenExpiryTimeout = setTimeout(() => {

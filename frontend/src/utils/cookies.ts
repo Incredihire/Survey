@@ -5,7 +5,7 @@ export function isLoggedIn() {
 export function getAccessTokenExpiry() {
   const access_token_expiry = Cookies.get("access_token_expiry")
   if (access_token_expiry) {
-    return new Date(access_token_expiry)
+    return Number.parseInt(access_token_expiry)
   }
   return null
 }

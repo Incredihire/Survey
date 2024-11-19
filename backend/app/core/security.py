@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+import time
 from typing import Any
 
 import jwt
@@ -14,10 +14,9 @@ ALGORITHM = "HS256"
 
 def create_access_token(
     subject: str | Any,
-    expires: datetime | str | int | None = datetime.now(timezone.utc)
-    + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
+    expires: int = (int(time.time()) + settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60),
 ) -> str:
-    to_encode = {"exp": expires, "sub": str(subject)}
+    to_encode = {"iat": int(time.time()), "exp": expires, "sub": str(subject)}
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
