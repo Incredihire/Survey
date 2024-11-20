@@ -1,7 +1,7 @@
 import { test as setup } from "@playwright/test"
 import { firstSuperuserToken } from "../config.ts"
-
 setup("authenticate", async ({ page, context }) => {
+  const expiry = Math.floor(new Date().getTime() / 1000) + 60 * 60
   await context.addCookies([
     {
       name: "access_token",
@@ -11,10 +11,10 @@ setup("authenticate", async ({ page, context }) => {
     },
     {
       name: "access_token_expiry",
-      value: `${Math.floor(new Date().getTime() / 1000) + 60 * 60 * 1}`,
+      value: `${expiry}`,
       domain: "localhost",
       path: "/",
     },
   ])
-  await page.goto("/")
+  await page.context().storageState({ path: "playwright/.auth/user.json" })
 })

@@ -1,6 +1,20 @@
 import { defineConfig, devices } from '@playwright/test';
+import jwt from "jsonwebtoken"
+import dotenv from "dotenv"
 
-
+dotenv.config({ path: "../.env" })
+const { SECRET_KEY } = process.env
+const firstSuperuserToken = jwt.sign(
+  {
+    sub: "1",
+    iat: Math.floor(Date.now() / 1000),
+    expires: Math.floor(Date.now() / 1000 + 60 * 60 * 1), // 1 hour
+  },
+  SECRET_KEY ?? "",
+  {
+    algorithm: "HS256",
+  },
+)
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
@@ -33,15 +47,15 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
-    //{ name: 'setup', testMatch: /.*\.setup\.ts/ },
+    { name: 'setup', testMatch: /.*\.setup\.ts/ },
 
     {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        //storageState: 'playwright/.auth/user.json',
+        storageState: 'playwright/.auth/user.json',
       },
-    //dependencies: ['setup'],
+      dependencies: ['setup'],
     },
 
     // {
