@@ -24,8 +24,9 @@ frontend/coverage
 *.njsproj
 *.sln
 *.sw?
-/test-results/
-/playwright-report/
+frontend/test-results/*
+frontend/playwright-report/*
 /blob-report/
-/playwright/.cache/
+frontend/playwright/.cache/*
+frontend/playwright/.auth/*
 .env

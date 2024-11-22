@@ -6,7 +6,6 @@ from sqlmodel import Session, select
 import app.services.users as users_service
 from app.core.config import settings
 from app.models import User, UserCreate
-from app.tests.utils.user import access_token_from_email
 from app.tests.utils.utils import bad_integer_id, random_email, random_lower_string
 
 
@@ -74,24 +73,16 @@ def test_get_existing_user(
     assert existing_user.email == api_user["email"]
 
 
-def test_get_existing_user_current_user(client: TestClient, db: Session) -> None:
-    username = random_email()
-    password = random_lower_string()
-    user_in = UserCreate(email=username, password=password)
-    users_service.create_user(session=db, user_create=user_in)
-
-    access_token = access_token_from_email(username, db)
-    headers = {"Authorization": f"Bearer {access_token}"}
-
+def test_get_existing_user_current_user(
+    client: TestClient, normal_user_token_headers: dict[str, str]
+) -> None:
     r = client.get(
         f"{settings.API_V1_STR}/users/me",
-        headers=headers,
+        headers=normal_user_token_headers,
     )
     assert 200 <= r.status_code < 300
     api_user = r.json()
-    existing_user = users_service.get_user_by_email(session=db, email=username)
-    assert existing_user
-    assert existing_user.email == api_user["email"]
+    assert api_user["email"] == settings.EMAIL_TEST_USER
 
 
 def test_get_existing_user_permissions_error(
@@ -160,29 +151,36 @@ def test_retrieve_users(
         assert "email" in item
 
 
-def test_delete_user_me(client: TestClient, db: Session) -> None:
+def test_delete_user_without_privileges(
+    client: TestClient, normal_user_token_headers: dict[str, str], db: Session
+) -> None:
     username = random_email()
     password = random_lower_string()
     user_in = UserCreate(email=username, password=password)
     user = users_service.create_user(session=db, user_create=user_in)
-    user_id = user.id
-
-    access_token = access_token_from_email(username, db)
-    headers = {"Authorization": f"Bearer {access_token}"}
 
     r = client.delete(
+        f"{settings.API_V1_STR}/users/{user.id}",
+        headers=normal_user_token_headers,
+    )
+    assert r.status_code == 403
+    assert r.json()["detail"] == "The user doesn't have enough privileges"
+
+
+def test_delete_user_me(
+    client: TestClient, normal_user_token_headers: dict[str, str], db: Session
+) -> None:
+    r = client.delete(
         f"{settings.API_V1_STR}/users/me",
-        headers=headers,
+        headers=normal_user_token_headers,
     )
     assert r.status_code == 200
     deleted_user = r.json()
     assert deleted_user["message"] == "User deleted successfully"
-    result = db.exec(select(User).where(User.id == user_id)).first()
+    result = db.execute(
+        select(User).where(User.email == settings.EMAIL_TEST_USER)
+    ).first()
     assert result is None
-
-    user_query = select(User).where(User.id == user_id)
-    user_db = db.execute(user_query).first()
-    assert user_db is None
 
 
 def test_delete_user_me_as_superuser(
@@ -242,19 +240,3 @@ def test_delete_user_current_super_user_error(
     )
     assert r.status_code == 403
     assert r.json()["detail"] == "Super users are not allowed to delete themselves"
-
-
-def test_delete_user_without_privileges(
-    client: TestClient, normal_user_token_headers: dict[str, str], db: Session
-) -> None:
-    username = random_email()
-    password = random_lower_string()
-    user_in = UserCreate(email=username, password=password)
-    user = users_service.create_user(session=db, user_create=user_in)
-
-    r = client.delete(
-        f"{settings.API_V1_STR}/users/{user.id}",
-        headers=normal_user_token_headers,
-    )
-    assert r.status_code == 403
-    assert r.json()["detail"] == "The user doesn't have enough privileges"

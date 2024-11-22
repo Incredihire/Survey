@@ -28,9 +28,11 @@ class Settings(BaseSettings):
         env_file="../.env", env_ignore_empty=True, extra="ignore"
     )
     API_V1_STR: str = "/api/v1"
-    SECRET_KEY: str = secrets.token_urlsafe(32)
+    JWT_SECRET_KEY: str = secrets.token_urlsafe(32)
+    JWT_ALGORITHM: str = "HS256"
+    REFRESH_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 365  # 1 year
     # 60 minutes * 24 hours * 8 days = 8 days
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     DOMAIN: str = "localhost"
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
 
@@ -112,7 +114,8 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def _enforce_non_default_secrets(self) -> Self:
-        self._check_default_secret("SECRET_KEY", self.SECRET_KEY)
+        self._check_default_secret("JWT_SECRET_KEY", self.JWT_SECRET_KEY)
+        self._check_default_secret("GOOGLE_CLIENT_SECRET", self.GOOGLE_CLIENT_SECRET)
         self._check_default_secret("POSTGRES_PASSWORD", self.POSTGRES_PASSWORD)
         self._check_default_secret(
             "FIRST_SUPERUSER_PASSWORD", self.FIRST_SUPERUSER_PASSWORD

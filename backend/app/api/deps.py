@@ -5,14 +5,12 @@ import jwt
 from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import OAuth2AuthorizationCodeBearer
 from httpx_oauth.clients.google import ACCESS_TOKEN_ENDPOINT, AUTHORIZE_ENDPOINT
-from jwt.exceptions import InvalidTokenError
-from pydantic import ValidationError
 from sqlmodel import Session
 
-from app.core import security
+import app.services.users as users_service
 from app.core.config import settings
 from app.core.db import engine
-from app.models import TokenPayload, User
+from app.models import User
 
 
 def get_db() -> Generator[Session, None, None]:
@@ -52,21 +50,22 @@ TokenDep = Annotated[str, Depends(reusable_oauth2)]
 
 
 def get_current_user(session: SessionDep, token: TokenDep) -> User:
-    try:
-        payload = jwt.decode(
-            token, settings.SECRET_KEY, algorithms=[security.ALGORITHM]
-        )
-        token_data = TokenPayload(**payload)
-    except (InvalidTokenError, ValidationError):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Could not validate credentials",
-        )
-    user = session.get(User, token_data.sub)
+    jwt_token = jwt.decode(
+        token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
+    )
+    email = jwt_token.get("email")
+    if not email:
+        raise HTTPException(status_code=400, detail="Invalid access_token")
+
+    user = users_service.get_user_by_email(session=session, email=email)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+        )
     if not user.is_active:
-        raise HTTPException(status_code=400, detail="Inactive user")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Inactive user"
+        )
     return user
 
 

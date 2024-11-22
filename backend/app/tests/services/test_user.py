@@ -2,7 +2,6 @@ from fastapi.encoders import jsonable_encoder
 from sqlmodel import Session
 
 from app.models import User, UserCreate
-from app.services import login as login_service
 from app.services import users as users_service
 from app.tests.utils.utils import random_email, random_lower_string
 
@@ -14,25 +13,6 @@ def test_create_user(db: Session) -> None:
     user = users_service.create_user(session=db, user_create=user_in)
     assert user.email == email
     assert hasattr(user, "hashed_password")
-
-
-def test_authenticate_user(db: Session) -> None:
-    email = random_email()
-    password = random_lower_string()
-    user_in = UserCreate(email=email, password=password)
-    user = users_service.create_user(session=db, user_create=user_in)
-    authenticated_user = login_service.authenticate(
-        session=db, email=email, password=password
-    )
-    assert authenticated_user
-    assert user.email == authenticated_user.email
-
-
-def test_not_authenticate_user(db: Session) -> None:
-    email = random_email()
-    password = random_lower_string()
-    user = login_service.authenticate(session=db, email=email, password=password)
-    assert user is None
 
 
 def test_check_if_user_is_active(db: Session) -> None:

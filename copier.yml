@@ -8,13 +8,20 @@ stack_name:
   help: The name of the stack used for Docker Compose labels (no spaces) (in .env)
   default: fastapi-project
 
-secret_key:
+jwt_secret_key:
   type: str
   help: |
-    'The secret key for the project, used for security,
+    'The test JWT secret key for the project, used for security,
     stored in .env, you can generate one with:
     python -c "import secrets; print(secrets.token_urlsafe(32))"'
   default: changethis
+
+jwt_algorithm:
+  type: str
+  help: |
+    'The test JWT algorithm for the project, used for security,
+    stored in .env'
+  default: HS256
 
 first_superuser:
   type: str
