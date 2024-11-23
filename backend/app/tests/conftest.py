@@ -50,13 +50,15 @@ def clear_tables_after_tests(db: Session) -> Generator[None, None, None]:
 
 @pytest.fixture(scope="module")
 def superuser_token_headers() -> dict[str, str]:
-    return {
-        "Authorization": f"Bearer {jwt.encode({"email": settings.FIRST_SUPERUSER}, settings.JWT_SECRET_KEY, algorithm="HS256")}"
-    }
+    access_token = jwt.encode(
+        {"email": settings.FIRST_SUPERUSER}, settings.JWT_SECRET_KEY, algorithm="HS256"
+    )
+    return {"Authorization": f"Bearer {access_token}"}
 
 
 @pytest.fixture(scope="module")
 def normal_user_token_headers() -> dict[str, str]:
-    return {
-        "Authorization": f"Bearer {jwt.encode({"email": settings.EMAIL_TEST_USER}, settings.JWT_SECRET_KEY, algorithm="HS256")}"
-    }
+    access_token = jwt.encode(
+        {"email": settings.EMAIL_TEST_USER}, settings.JWT_SECRET_KEY, algorithm="HS256"
+    )
+    return {"Authorization": f"Bearer {access_token}"}
