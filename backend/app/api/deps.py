@@ -4,7 +4,6 @@ from typing import Annotated
 import jwt
 from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import OAuth2AuthorizationCodeBearer
-from httpx_oauth.clients.google import ACCESS_TOKEN_ENDPOINT, AUTHORIZE_ENDPOINT
 from sqlmodel import Session
 
 import app.services.users as users_service
@@ -35,8 +34,8 @@ class CookieOAuth2AuthorizationCodeBearer(OAuth2AuthorizationCodeBearer):
 
 
 reusable_oauth2 = CookieOAuth2AuthorizationCodeBearer(
-    authorizationUrl=AUTHORIZE_ENDPOINT,
-    tokenUrl=ACCESS_TOKEN_ENDPOINT,
+    authorizationUrl=settings.GOOGLE_AUTHORIZATION_URL,
+    tokenUrl=settings.GOOGLE_TOKEN_URL,
     scopes={
         "openid": "openid",
         "email": "email",

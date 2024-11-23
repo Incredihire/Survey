@@ -1,6 +1,5 @@
 import base64
 import hashlib
-import logging
 import os
 import time
 from urllib.parse import urlparse, urlunparse
@@ -13,30 +12,24 @@ from fastapi.responses import JSONResponse, RedirectResponse
 from google.auth.transport import requests
 from google.oauth2.credentials import Credentials
 from google.oauth2.id_token import verify_oauth2_token
-from httpx_oauth.clients.google import ACCESS_TOKEN_ENDPOINT
-from oauth2client.client import OAuth2WebServerFlow  # type: ignore [import-untyped]
+from google_auth_oauthlib.flow import Flow  # type: ignore [import-untyped]
 
 import app.services.users as users_service
 from app.api.deps import SessionDep
 from app.core.config import settings
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
 load_dotenv()
 
 router = APIRouter()
 
-GOOGLE_CLIENT_ID = settings.GOOGLE_CLIENT_ID
-GOOGLE_CLIENT_SECRET = settings.GOOGLE_CLIENT_SECRET
 GOOGLE_CLIENT_CONFIG = {
     "web": {
-        "client_id": f"{GOOGLE_CLIENT_ID}",
+        "client_id": f"{settings.GOOGLE_CLIENT_ID}",
         "project_id": "survey-incredihire",
-        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-        "token_uri": "https://oauth2.googleapis.com/token",
+        "auth_uri": f"{settings.GOOGLE_AUTHORIZATION_URL}",
+        "token_uri": f"{settings.GOOGLE_TOKEN_URL}",
         "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-        "client_secret": f"{GOOGLE_CLIENT_SECRET}",
+        "client_secret": f"{settings.GOOGLE_CLIENT_SECRET}",
         "redirect_uris": [
             "https://survey.incredihire.com",
             "https://survey.incredihire.com/api/v1/auth/callback",
@@ -89,17 +82,14 @@ async def login(request: Request) -> RedirectResponse:
     return_url = urlunparse(components=referer_parsed)
     if isinstance(return_url, bytes):
         return_url = return_url.decode()
-    redirect_uri = request.url_for("auth_callback")
-    flow = OAuth2WebServerFlow(
-        GOOGLE_CLIENT_ID,
-        client_secret=GOOGLE_CLIENT_SECRET,
-        scope=SCOPES,
-        redirect_uri=redirect_uri,
-        access_type="offline",
-        pkce=True,
+
+    flow = Flow.from_client_config(
+        GOOGLE_CLIENT_CONFIG,
+        SCOPES,
+        redirect_uri=request.url_for("auth_callback"),
+        pkce="S256",
     )
-    state = hashlib.sha256(os.urandom(1024)).hexdigest()
-    google_auth_url = flow.step1_get_authorize_url(state=state)
+    google_auth_url, state = flow.authorization_url()
     response = RedirectResponse(url=google_auth_url)
     response.set_cookie(
         "auth_return_url",
@@ -114,14 +104,12 @@ async def login(request: Request) -> RedirectResponse:
         secure=(not local_dev_auth),
         httponly=(not local_dev_auth),
     )
-    logger.info(f"code_verifier: {flow.code_verifier}")
-    if isinstance(flow.code_verifier, bytes):
-        response.set_cookie(
-            "auth_code_verifier",
-            flow.code_verifier.decode(),
-            secure=(not local_dev_auth),
-            httponly=(not local_dev_auth),
-        )
+    response.set_cookie(
+        "auth_code_verifier",
+        flow.oauth2session._code_verifier,
+        secure=(not local_dev_auth),
+        httponly=(not local_dev_auth),
+    )
     return response
 
 
@@ -129,20 +117,26 @@ async def login(request: Request) -> RedirectResponse:
 async def auth_callback(
     session: SessionDep, code: str, state: str, request: Request
 ) -> RedirectResponse:
-    logger.info(f"callback code_verifier: {request.cookies.get('auth_code_verifier')}")
     if state != request.cookies.get("auth_state"):
         raise HTTPException(status_code=400, detail="Invalid state")
-    flow = OAuth2WebServerFlow(
-        GOOGLE_CLIENT_ID,
-        client_secret=GOOGLE_CLIENT_SECRET,
-        scope=SCOPES,
+    flow = Flow.from_client_config(
+        GOOGLE_CLIENT_CONFIG,
+        SCOPES,
         redirect_uri=request.url_for("auth_callback"),
-        access_type="offline",
-        pkce=True,
         code_verifier=request.cookies.get("auth_code_verifier"),
     )
-    credentials: Credentials = flow.step2_exchange(code)
-    email = credentials.id_token.get("email")
+
+    token_response = flow.fetch_token(code=code, access_type="offline")
+    refresh_token = token_response.get("refresh_token")
+    credentials: Credentials = flow.credentials
+    if not credentials.id_token:
+        raise HTTPException(status_code=400, detail="Missing id_token in response.")
+    try:
+        id_token = verify_oauth2_token(credentials.id_token, requests.Request())  # type: ignore [no-untyped-call]
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=f"Invalid id_token: {str(e)}")
+
+    email = id_token.get("email")
     user = users_service.get_user_by_email(session=session, email=email)
     if not user or not user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user.")
@@ -171,10 +165,10 @@ async def auth_callback(
         httponly=(not local_dev_auth),
         max_age=max_age,
     )
-    if credentials.refresh_token:
+    if refresh_token:
         response.set_cookie(
             "refresh_token",
-            credentials.refresh_token,
+            refresh_token,
             secure=(not local_dev_auth),
             httponly=(not local_dev_auth),
             max_age=settings.REFRESH_TOKEN_EXPIRE_MINUTES * 60,
@@ -190,15 +184,14 @@ async def refresh(session: SessionDep, request: Request) -> JSONResponse:
         raise HTTPException(status_code=400, detail="Missing refresh_token.")
     data = {
         "refresh_token": refresh_token,
-        "client_id": GOOGLE_CLIENT_ID,
-        "client_secret": GOOGLE_CLIENT_SECRET,
+        "client_id": settings.GOOGLE_CLIENT_ID,
+        "client_secret": settings.GOOGLE_CLIENT_SECRET,
         "grant_type": "refresh_token",
     }
     async with httpx.AsyncClient() as client:
-        client_response = await client.post(ACCESS_TOKEN_ENDPOINT, data=data)
+        client_response = await client.post(settings.GOOGLE_TOKEN_URL, data=data)
         client_response.raise_for_status()
         token_response = client_response.json()
-    logger.info(f"token_response: {token_response}")
     id_token_jwt = token_response.get("id_token")
     if not id_token_jwt:
         raise HTTPException(status_code=400, detail="Missing id_token in response.")
