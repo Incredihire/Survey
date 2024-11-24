@@ -24,15 +24,17 @@ if (typeof JWT_ALGORITHM !== "string") {
   throw new Error("Environment variable JWT_ALGORITHM is undefined")
 }
 
+const IAT = Math.floor(Date.now() / 1000)
+const EXP = IAT + 60 * 30 // 30 minutes
 export const firstSuperuser = FIRST_SUPERUSER as string
 export const testSuperuserToken = jwt.sign(
-  { email: firstSuperuser },
+  { email: firstSuperuser, iat: IAT, exp: EXP },
   JWT_SECRET_KEY,
   { algorithm: JWT_ALGORITHM as jwt.Algorithm },
 )
-export const emailTestUser = EMAIL_TEST_USER as string
+export const emailTestUser = EMAIL_TEST_USER
 export const testUserToken = jwt.sign(
-  { email: emailTestUser },
+  { email: emailTestUser, iat: IAT, exp: EXP },
   JWT_SECRET_KEY,
   { algorithm: JWT_ALGORITHM as jwt.Algorithm },
 )

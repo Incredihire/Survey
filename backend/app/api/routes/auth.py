@@ -1,11 +1,9 @@
 import base64
 import hashlib
 import os
-import time
 from urllib.parse import urlparse, urlunparse
 
 import httpx
-import jwt
 from dotenv import load_dotenv
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse, RedirectResponse
@@ -17,6 +15,7 @@ from google_auth_oauthlib.flow import Flow  # type: ignore [import-untyped]
 import app.services.users as users_service
 from app.api.deps import SessionDep
 from app.core.config import settings
+from app.core.security import create_access_token
 
 load_dotenv()
 
@@ -152,19 +151,19 @@ async def auth_callback(
     ):
         raise HTTPException(status_code=400, detail="Invalid return_url.")
     response = RedirectResponse(url=return_url)
-    iat = int(time.time())
-    max_age = settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60
-    access_token = {"email": email, "exp": iat + max_age, "iat": iat}
-    access_token_jwt = jwt.encode(
-        access_token, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM
-    )
+    access_token_jwt = create_access_token(email=email)
     response.set_cookie(
         "access_token",
         access_token_jwt,
         secure=(not local_dev_auth),
         httponly=(not local_dev_auth),
-        max_age=max_age,
+        max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
     )
+    if not refresh_token:
+        refresh_token = request.cookies.get(
+            "refresh_token"
+        )  # extend refresh_token cookie expiration. google refresh tokens don't expire. you must revoke them.
+
     if refresh_token:
         response.set_cookie(
             "refresh_token",
@@ -215,17 +214,12 @@ async def refresh(session: SessionDep, request: Request) -> JSONResponse:
     if isinstance(return_url, bytes):
         return_url = return_url.decode()
     response = JSONResponse({"status": "success"})
-    iat = int(time.time())
-    max_age = settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60
-    access_token = {"email": email, "exp": iat + max_age, "iat": iat}
-    access_token_jwt = jwt.encode(
-        access_token, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM
-    )
+    access_token_jwt = create_access_token(email)
     response.set_cookie(
         "access_token",
         access_token_jwt,
         secure=(not local_dev_auth),
         httponly=(not local_dev_auth),
-        max_age=max_age,
+        max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
     )
     return response

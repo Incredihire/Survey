@@ -1,6 +1,5 @@
 from collections.abc import Generator
 
-import jwt
 import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session, SQLModel, create_engine, select
@@ -9,6 +8,7 @@ from sqlmodel.pool import StaticPool
 from app.api.deps import get_db
 from app.core.config import settings
 from app.core.db import init_db
+from app.core.security import create_access_token
 from app.main import app
 from app.models import Inquiry, Schedule
 
@@ -50,15 +50,9 @@ def clear_tables_after_tests(db: Session) -> Generator[None, None, None]:
 
 @pytest.fixture(scope="module")
 def superuser_token_headers() -> dict[str, str]:
-    access_token = jwt.encode(
-        {"email": settings.FIRST_SUPERUSER}, settings.JWT_SECRET_KEY, algorithm="HS256"
-    )
-    return {"Authorization": f"Bearer {access_token}"}
+    return {"Authorization": f"Bearer {create_access_token(settings.FIRST_SUPERUSER)}"}
 
 
 @pytest.fixture(scope="module")
 def normal_user_token_headers() -> dict[str, str]:
-    access_token = jwt.encode(
-        {"email": settings.EMAIL_TEST_USER}, settings.JWT_SECRET_KEY, algorithm="HS256"
-    )
-    return {"Authorization": f"Bearer {access_token}"}
+    return {"Authorization": f"Bearer {create_access_token(settings.EMAIL_TEST_USER)}"}
