@@ -4,6 +4,7 @@ from typing import Annotated
 import jwt
 from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import OAuth2AuthorizationCodeBearer
+from jwt.exceptions import DecodeError, ExpiredSignatureError, InvalidSignatureError
 from sqlmodel import Session
 
 import app.services.users as users_service
@@ -49,12 +50,16 @@ TokenDep = Annotated[str, Depends(reusable_oauth2)]
 
 
 def get_current_user(session: SessionDep, token: TokenDep) -> User:
-    jwt_token = jwt.decode(
-        token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
-    )
+    try:
+        jwt_token = jwt.decode(
+            token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
+        )
+    except (DecodeError, ExpiredSignatureError, InvalidSignatureError):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid access_token"
+        )
+
     email = jwt_token.get("email")
-    if not email:
-        raise HTTPException(status_code=400, detail="Invalid access_token")
 
     user = users_service.get_user_by_email(session=session, email=email)
     if not user:

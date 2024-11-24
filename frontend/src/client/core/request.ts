@@ -201,8 +201,23 @@ export const sendRequest = async <T>(
 		return await axiosClient.request(requestConfig);
 	} catch (error) {
 		const axiosError = error as AxiosError<T>;
-		if (axiosError.response) {
-			return axiosError.response;
+		if(axiosError.response?.status === 401) {
+			try {
+				let refreshRequestConfig: AxiosRequestConfig = {
+					headers,
+					method: 'POST',
+					url: config.BASE + '/api/v1/auth/refresh',
+					withCredentials: true,
+				};
+				await axiosClient.request(refreshRequestConfig); // refresh access token
+				return await axiosClient.request(requestConfig); // re-attempt original request
+			} catch (error1) {
+				const axiosError1 = error as AxiosError<T>;
+				if (axiosError1.response) {
+					return axiosError1.response;
+				}
+				throw error1;
+			}
 		}
 		throw error;
 	}

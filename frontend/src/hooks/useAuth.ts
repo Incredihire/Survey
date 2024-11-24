@@ -8,7 +8,6 @@ const useAuth = () => {
   const {
     data: user,
     isLoading,
-    refetch,
     failureReason,
   } = useQuery({
     queryKey: ["currentUser"],
@@ -17,18 +16,7 @@ const useAuth = () => {
     enabled: true,
   })
   if (failureReason) {
-    const gotoLogin = () => {
-      window.location.href = escape("/api/v1/auth/login")
-    }
-    fetch("/api/v1/auth/refresh", { method: "POST" })
-      .then((response) => {
-        if (response.ok) {
-          refetch().catch(gotoLogin)
-        } else {
-          gotoLogin()
-        }
-      })
-      .catch(gotoLogin)
+    window.location.href = escape("/api/v1/auth/login")
   }
   return {
     user,
