@@ -1,4 +1,5 @@
 import os
+from html import escape
 from urllib.parse import urlparse, urlunparse
 
 import httpx
@@ -61,7 +62,7 @@ def get_root_domain(domain: str) -> str:
     if LOCAL_DEV_AUTH:
         return "localhost"
     extracted = tldextract.extract(domain)
-    root_domain = f"{extracted.domain}.{extracted.suffix}"
+    root_domain = f"{escape(extracted.domain)}.{escape(extracted.suffix)}"
     return root_domain
 
 
