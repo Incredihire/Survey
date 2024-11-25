@@ -61,7 +61,8 @@ def get_root_domain(domain: str) -> str:
     if LOCAL_DEV_AUTH:
         return "localhost"
     extracted = tldextract.extract(domain)
-    return f"{extracted.domain}.{extracted.suffix}"
+    root_domain = f"{extracted.domain}.{extracted.suffix}"
+    return root_domain
 
 
 COOKIE_DOMAIN = get_root_domain(settings.DOMAIN)
