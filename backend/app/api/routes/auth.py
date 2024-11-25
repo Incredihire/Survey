@@ -15,40 +15,10 @@ from google_auth_oauthlib.flow import Flow  # type: ignore [import-untyped]
 import app.services.users as users_service
 from app.api.deps import SessionDep
 from app.core.config import settings
-from app.core.security import create_access_token
+from app.core.security import GOOGLE_CLIENT_CONFIG, SCOPES, create_access_token
 
 load_dotenv()
-
 router = APIRouter()
-
-GOOGLE_CLIENT_CONFIG = {
-    "web": {
-        "client_id": f"{settings.GOOGLE_CLIENT_ID}",
-        "project_id": "survey-incredihire",
-        "auth_uri": f"{settings.GOOGLE_AUTHORIZATION_URL}",
-        "token_uri": f"{settings.GOOGLE_TOKEN_URL}",
-        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-        "client_secret": f"{settings.GOOGLE_CLIENT_SECRET}",
-        "redirect_uris": [
-            "https://survey.incredihire.com",
-            "https://survey.incredihire.com/api/v1/auth/callback",
-            "https://survey.incredihire.com/docs/oauth2-redirect",
-            "http://localhost/",
-            "http://localhost/api/v1/auth/callback",
-            "http://localhost/docs/oauth2-redirect",
-        ],
-        "javascript_origins": [
-            "https://localhost:8000",
-            "https://survey.incredihire.com",
-            "https://localhost",
-        ],
-    }
-}
-SCOPES = [
-    "openid",
-    "https://www.googleapis.com/auth/userinfo.email",
-    "https://www.googleapis.com/auth/userinfo.profile",
-]
 
 LOCAL_DEV_AUTH = settings.DOMAIN == "localhost" and settings.ENVIRONMENT == "local"
 if LOCAL_DEV_AUTH:
