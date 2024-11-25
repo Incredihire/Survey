@@ -74,7 +74,8 @@ def check_return_url(url: str | None) -> str | None:
         if (
             return_url_parsed.scheme
             and return_url_parsed.netloc
-            and return_url_parsed.netloc.split(":")[0].split(".")[-1] == settings.DOMAIN
+            and get_root_domain(return_url_parsed.netloc)
+            == get_root_domain(settings.DOMAIN)
         ):
             return_url = urlunparse(components=return_url_parsed)
             if isinstance(return_url, bytes):
