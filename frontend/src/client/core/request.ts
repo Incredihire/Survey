@@ -117,10 +117,7 @@ export const resolve = async <T>(options: ApiRequestOptions, resolver?: T | Reso
 };
 
 export const getHeaders = async (config: OpenAPIConfig, options: ApiRequestOptions): Promise<Record<string, string>> => {
-	const [base, username, password, additionalHeaders] = await Promise.all([
-		resolve(options, config.BASE),
-		resolve(options, config.USERNAME),
-		resolve(options, config.PASSWORD),
+	const [additionalHeaders] = await Promise.all([
 		resolve(options, config.HEADERS),
 	]);
 
@@ -135,13 +132,9 @@ export const getHeaders = async (config: OpenAPIConfig, options: ApiRequestOptio
 		[key]: String(value),
 	}), {} as Record<string, string>);
 
-	if (base && base.startsWith("http://localhost")) {
+	// This is necessary for local development running on specific port other than port 80
+	if (window.location.href.startsWith("http://localhost:") && Cookies.get("access_token")) {
 		headers['Authorization'] = `Bearer ${Cookies.get("access_token")}`;
-	}
-
-	if (isStringWithValue(username) && isStringWithValue(password)) {
-		const credentials = base64(`${username}:${password}`);
-		headers['Authorization'] = `Basic ${credentials}`;
 	}
 
 	if (options.body !== undefined) {
@@ -210,6 +203,10 @@ export const sendRequest = async <T>(
 					withCredentials: true,
 				};
 				await axiosClient.request(refreshRequestConfig); // refresh access token
+				// This is necessary for local development running on specific port other than port 80
+				if (window.location.href.startsWith("http://localhost:") && Cookies.get("access_token")) {
+					headers['Authorization'] = `Bearer ${Cookies.get("access_token")}`;
+				}
 				return await axiosClient.request(requestConfig); // re-attempt original request
 			} catch (error1) {
 				const axiosError1 = error as AxiosError<T>;

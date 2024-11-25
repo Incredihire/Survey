@@ -1,9 +1,8 @@
-import base64
-import hashlib
 import os
 from urllib.parse import urlparse, urlunparse
 
 import httpx
+import tldextract
 from dotenv import load_dotenv
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse, RedirectResponse
@@ -50,65 +49,77 @@ SCOPES = [
     "https://www.googleapis.com/auth/userinfo.profile",
 ]
 
-local_dev_auth = settings.DOMAIN == "localhost" and settings.ENVIRONMENT == "local"
-if local_dev_auth:
+LOCAL_DEV_AUTH = settings.DOMAIN == "localhost" and settings.ENVIRONMENT == "local"
+if LOCAL_DEV_AUTH:
     os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
-
-def generate_code_verifier() -> str:
-    """Generates a random code verifier for PKCE."""
-    verifier = base64.urlsafe_b64encode(os.urandom(30)).decode("utf-8").rstrip("=")
-    return verifier
+COOKIE_SECURE = not LOCAL_DEV_AUTH
+COOKIE_HTTPONLY = not LOCAL_DEV_AUTH
 
 
-def generate_code_challenge(code_verifier: str) -> str:
-    """Creates the code challenge by hashing the code verifier using SHA-256."""
-    encoded_verifier = code_verifier.encode("utf-8")
-    digest = hashlib.sha256(encoded_verifier).digest()
-    code_challenge = base64.urlsafe_b64encode(digest).decode("utf-8").rstrip("=")
-    return code_challenge
+def get_root_domain(domain: str) -> str:
+    if LOCAL_DEV_AUTH:
+        return "localhost"
+    extracted = tldextract.extract(domain)
+    return f"{extracted.domain}.{extracted.suffix}"
+
+
+COOKIE_DOMAIN = get_root_domain(settings.DOMAIN)
+
+
+def check_return_url(url: str | None) -> str | None:
+    return_url = None
+    if url:
+        return_url_parsed = urlparse(url)
+        if (
+            return_url_parsed.scheme
+            and return_url_parsed.netloc
+            and return_url_parsed.netloc.split(":")[0].split(".")[-1] == settings.DOMAIN
+        ):
+            return_url = urlunparse(components=return_url_parsed)
+            if isinstance(return_url, bytes):
+                return_url = return_url.decode()
+    return return_url
 
 
 @router.get("/login")
 async def login(request: Request) -> RedirectResponse:
-    referer_parsed = urlparse(request.headers.get("Referer"))
-    if (
-        not referer_parsed.scheme
-        or not referer_parsed.netloc
-        or referer_parsed.netloc != settings.DOMAIN
-    ):
-        raise HTTPException(status_code=400, detail="Invalid referrer")
-    return_url = urlunparse(components=referer_parsed)
-    if isinstance(return_url, bytes):
-        return_url = return_url.decode()
-
     flow = Flow.from_client_config(
         GOOGLE_CLIENT_CONFIG,
         SCOPES,
         redirect_uri=request.url_for("auth_callback"),
-        pkce="S256",
+        autogenerate_code_verifier=True,
     )
     google_auth_url, state = flow.authorization_url()
-    response = RedirectResponse(url=google_auth_url)
-    response.set_cookie(
-        "auth_return_url",
-        return_url,
-        secure=(not local_dev_auth),
-        httponly=(not local_dev_auth),
-    )
-
+    response = RedirectResponse(google_auth_url)
+    return_url = check_return_url(request.headers.get("Referer"))
+    callback_path = "/api/v1/auth/callback"
+    if return_url:
+        response.set_cookie(
+            "auth_return_url",
+            return_url,
+            secure=COOKIE_SECURE,
+            httponly=COOKIE_HTTPONLY,
+            domain=COOKIE_DOMAIN,
+            path=callback_path,
+        )
     response.set_cookie(
         "auth_state",
         state,
-        secure=(not local_dev_auth),
-        httponly=(not local_dev_auth),
+        secure=COOKIE_SECURE,
+        httponly=COOKIE_HTTPONLY,
+        domain=COOKIE_DOMAIN,
+        path=callback_path,
     )
-    response.set_cookie(
-        "auth_code_verifier",
-        flow.oauth2session._code_verifier,
-        secure=(not local_dev_auth),
-        httponly=(not local_dev_auth),
-    )
+    if flow.code_verifier:
+        response.set_cookie(
+            "auth_code_verifier",
+            flow.code_verifier,
+            secure=COOKIE_SECURE,
+            httponly=COOKIE_HTTPONLY,
+            domain=COOKIE_DOMAIN,
+            path=callback_path,
+        )
     return response
 
 
@@ -131,7 +142,9 @@ async def auth_callback(
     if not credentials.id_token:
         raise HTTPException(status_code=400, detail="Missing id_token in response.")
     try:
-        id_token = verify_oauth2_token(credentials.id_token, requests.Request())  # type: ignore [no-untyped-call]
+        id_token = verify_oauth2_token(
+            credentials.id_token, requests.Request(), clock_skew_in_seconds=10
+        )  # type: ignore [no-untyped-call]
     except ValueError as e:
         raise HTTPException(status_code=400, detail=f"Invalid id_token: {str(e)}")
 
@@ -140,36 +153,27 @@ async def auth_callback(
     if not user or not user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user.")
 
-    return_url = request.cookies.get("auth_return_url")
+    return_url = check_return_url(request.cookies.get("auth_return_url"))
     if not return_url:
-        raise HTTPException(status_code=400, detail="Missing return_url.")
-    return_url_parsed = urlparse(return_url)
-    if (
-        not return_url_parsed.scheme
-        or not return_url_parsed.netloc
-        or return_url_parsed.netloc != settings.DOMAIN
-    ):
-        raise HTTPException(status_code=400, detail="Invalid return_url.")
-    response = RedirectResponse(url=return_url)
+        return_url = "/"
+    response = RedirectResponse(return_url)
     access_token_jwt = create_access_token(email=email)
     response.set_cookie(
         "access_token",
         access_token_jwt,
-        secure=(not local_dev_auth),
-        httponly=(not local_dev_auth),
+        secure=COOKIE_SECURE,
+        httponly=COOKIE_HTTPONLY,
+        domain=COOKIE_DOMAIN,
         max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        path="/",
     )
-    if not refresh_token:
-        refresh_token = request.cookies.get(
-            "refresh_token"
-        )  # extend refresh_token cookie expiration. google refresh tokens don't expire. you must revoke them.
-
     if refresh_token:
         response.set_cookie(
             "refresh_token",
             refresh_token,
-            secure=(not local_dev_auth),
-            httponly=(not local_dev_auth),
+            secure=COOKIE_SECURE,
+            httponly=COOKIE_HTTPONLY,
+            domain=COOKIE_DOMAIN,
             max_age=settings.REFRESH_TOKEN_EXPIRE_MINUTES * 60,
             path="/api/v1/auth/refresh",
         )
@@ -195,7 +199,11 @@ async def refresh(session: SessionDep, request: Request) -> JSONResponse:
     if not id_token_jwt:
         raise HTTPException(status_code=400, detail="Missing id_token in response.")
     try:
-        id_token = verify_oauth2_token(id_token_jwt, request=requests.Request())  # type: ignore [no-untyped-call]
+        id_token = verify_oauth2_token(
+            id_token_jwt,
+            request=requests.Request(),  # type: ignore [no-untyped-call]
+            clock_skew_in_seconds=10,
+        )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=f"Invalid id_token: {str(e)}")
 
@@ -203,23 +211,25 @@ async def refresh(session: SessionDep, request: Request) -> JSONResponse:
     user = users_service.get_user_by_email(session=session, email=email)
     if not user or not user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
-    referer_parsed = urlparse(request.headers.get("Referer"))
-    if (
-        not referer_parsed.scheme
-        or not referer_parsed.netloc
-        or referer_parsed.netloc != settings.DOMAIN
-    ):
-        raise HTTPException(status_code=400, detail="Invalid referrer")
-    return_url = urlunparse(components=referer_parsed)
-    if isinstance(return_url, bytes):
-        return_url = return_url.decode()
     response = JSONResponse({"status": "success"})
     access_token_jwt = create_access_token(email)
     response.set_cookie(
         "access_token",
         access_token_jwt,
-        secure=(not local_dev_auth),
-        httponly=(not local_dev_auth),
+        secure=COOKIE_SECURE,
+        httponly=COOKIE_HTTPONLY,
+        domain=COOKIE_DOMAIN,
         max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        path="/",
+    )
+    # extend refresh_token cookie expiration. google refresh tokens don't expire. you must revoke them.
+    response.set_cookie(
+        "refresh_token",
+        refresh_token,
+        secure=COOKIE_SECURE,
+        httponly=COOKIE_HTTPONLY,
+        domain=COOKIE_DOMAIN,
+        max_age=settings.REFRESH_TOKEN_EXPIRE_MINUTES * 60,
+        path="/api/v1/auth/refresh",
     )
     return response
