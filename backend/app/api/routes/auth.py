@@ -141,9 +141,12 @@ async def auth_callback(
     credentials: Credentials = flow.credentials
     if not credentials.id_token:
         raise HTTPException(status_code=400, detail="Missing id_token in response.")
+    verify_oauth2_token_request = requests.Request()  # type: ignore [no-untyped-call]
     try:
         id_token = verify_oauth2_token(
-            credentials.id_token, requests.Request(), clock_skew_in_seconds=10
+            credentials.id_token,
+            verify_oauth2_token_request,
+            clock_skew_in_seconds=10,
         )  # type: ignore [no-untyped-call]
     except ValueError as e:
         raise HTTPException(status_code=400, detail=f"Invalid id_token: {str(e)}")
