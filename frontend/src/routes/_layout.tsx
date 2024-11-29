@@ -1,6 +1,8 @@
 import { Flex, Spinner } from "@chakra-ui/react"
 import { Outlet, createFileRoute } from "@tanstack/react-router"
 
+import Cookies from "js-cookie"
+import { OpenAPI } from "../client"
 import Sidebar from "../components/Common/Sidebar"
 import UserMenu from "../components/Common/UserMenu"
 import useAuth from "../hooks/useAuth"
@@ -11,6 +13,13 @@ export const Route = createFileRoute("/_layout")({
 
 function Layout() {
   const { isLoading } = useAuth()
+  if (
+    !OpenAPI.TOKEN &&
+    Cookies.get("access_token") &&
+    window.location.host.startsWith("localhost:")
+  ) {
+    OpenAPI.TOKEN = Cookies.get("access_token")
+  }
   return (
     <Flex maxW="large" h="auto" position="relative">
       <Sidebar />

@@ -3,6 +3,7 @@ from fastapi import APIRouter, HTTPException
 import app.services.inquiries as inquiries_service
 from app.api.deps import SessionDep
 from app.models import Inquiry, InquiryCreate, InquiryPublic, InquriesPublic
+from app.models.inquiry import InquiryDelete, InquiryUpdate
 
 router = APIRouter()
 
@@ -22,6 +23,28 @@ def create_inquiry(*, session: SessionDep, inquiry_in: InquiryCreate) -> Inquiry
         )
 
     return inquiries_service.create_inquiry(session=session, inquiry_in=inquiry_in)
+
+
+@router.patch("/", response_model=InquiryPublic)
+def update_inquiry(*, session: SessionDep, inquiry_in: InquiryUpdate) -> Inquiry:
+    """
+    Update inquiry.
+    """
+    try:
+        return inquiries_service.update_inquiry(session=session, inquiry_in=inquiry_in)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.delete("/", response_model=InquiryDelete)
+def delete_inquiry(*, session: SessionDep, inquiry_in: InquiryDelete) -> InquiryDelete:
+    """
+    Delete inquiry.
+    """
+    try:
+        return inquiries_service.delete_inquiry(session=session, inquiry_in=inquiry_in)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.get("/", response_model=InquriesPublic)

@@ -13,7 +13,14 @@ Important:
 """
 
 from .auth import Message, Token, TokenPayload
-from .inquiry import Inquiry, InquiryCreate, InquiryPublic, InquriesPublic
+from .inquiry import (
+    Inquiry,
+    InquiryCreate,
+    InquiryDelete,
+    InquiryPublic,
+    InquiryUpdate,
+    InquriesPublic,
+)
 from .response import Response, ResponseCreate, ResponsePublic, ResponsesPublic
 from .schedule import Schedule, ScheduleCreate, ScheduleInfo, SchedulePublic
 from .scheduled_inquiry import (
@@ -22,6 +29,7 @@ from .scheduled_inquiry import (
     ScheduledInquiryBase,
     ScheduledInquiryCreate,
     ScheduledInquiryPublic,
+    ScheduledInquiryUpdate,
 )
 from .theme import Theme, ThemeCreate, ThemePublic, ThemesPublic
 from .user import (
@@ -41,8 +49,9 @@ __all__ = [
     "Inquiry",
     "InquiryCreate",
     "InquiryPublic",
-    "InquiryPublic",
     "InquriesPublic",
+    "InquiryUpdate",
+    "InquiryDelete",
     # theme model
     "Theme",
     "ThemeCreate",
@@ -64,6 +73,7 @@ __all__ = [
     "ScheduledInquiryCreate",
     "ScheduledInquiryPublic",
     "ScheduledInquiriesPublic",
+    "ScheduledInquiryUpdate",
     # schedule model
     "Schedule",
     "ScheduleCreate",

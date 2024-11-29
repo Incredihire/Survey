@@ -1,6 +1,11 @@
-from sqlmodel import Field, SQLModel
+from typing import TYPE_CHECKING
+
+from sqlmodel import Field, Relationship, SQLModel
 
 from .mixins import IdMixin
+
+if TYPE_CHECKING:
+    from app.models.inquiry import Inquiry
 
 MIN_NAME_LENGTH = 1
 MAX_NAME_LENGTH = 255
@@ -22,6 +27,9 @@ class ThemeCreate(ThemeBase):
 class Theme(ThemeBase, IdMixin, table=True):
     name: str = Field(
         min_length=MIN_NAME_LENGTH, max_length=MAX_NAME_LENGTH, unique=True
+    )
+    inquiries: list["Inquiry"] = Relationship(
+        back_populates="theme", cascade_delete=True
     )
 
 

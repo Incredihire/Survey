@@ -117,7 +117,10 @@ export const resolve = async <T>(options: ApiRequestOptions, resolver?: T | Reso
 };
 
 export const getHeaders = async (config: OpenAPIConfig, options: ApiRequestOptions): Promise<Record<string, string>> => {
-	const [additionalHeaders] = await Promise.all([
+	const [token, username, password, additionalHeaders] = await Promise.all([
+		resolve(options, config.TOKEN),
+		resolve(options, config.USERNAME),
+		resolve(options, config.PASSWORD),
 		resolve(options, config.HEADERS),
 	]);
 
@@ -132,11 +135,18 @@ export const getHeaders = async (config: OpenAPIConfig, options: ApiRequestOptio
 		[key]: String(value),
 	}), {} as Record<string, string>);
 
+	if (isStringWithValue(token)) {
+		headers['Authorization'] = `Bearer ${token}`;
+	}
+
+	if (isStringWithValue(username) && isStringWithValue(password)) {
+		const credentials = base64(`${username}:${password}`);
+		headers['Authorization'] = `Basic ${credentials}`;
+	}
 	// This is necessary for local development running on specific port other than port 80
 	if (window.location.href.startsWith("http://localhost:") && Cookies.get("access_token")) {
 		headers['Authorization'] = `Bearer ${Cookies.get("access_token")}`;
 	}
-
 	if (options.body !== undefined) {
 		if (options.mediaType) {
 			headers['Content-Type'] = options.mediaType;

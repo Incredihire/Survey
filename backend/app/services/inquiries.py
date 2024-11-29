@@ -1,6 +1,6 @@
 from sqlmodel import Session, func, select
 
-from app.models import Inquiry, InquiryCreate
+from app.models import Inquiry, InquiryCreate, InquiryDelete, InquiryUpdate
 
 
 def create_inquiry(*, session: Session, inquiry_in: InquiryCreate) -> Inquiry:
@@ -9,6 +9,34 @@ def create_inquiry(*, session: Session, inquiry_in: InquiryCreate) -> Inquiry:
     session.commit()
     session.refresh(db_inquiry)
     return db_inquiry
+
+
+def update_inquiry(*, session: Session, inquiry_in: InquiryUpdate) -> Inquiry:
+    Inquiry.model_validate(inquiry_in)
+    inquiry = get_inquiry_by_id(session=session, inquiry_id=inquiry_in.id)
+    if not inquiry:
+        raise ValueError("Invalid inquiry id for update")
+    inquiry_data = inquiry_in.model_dump(exclude_unset=True)
+    try:
+        inquiry.sqlmodel_update(inquiry_data)
+        session.commit()
+    except Exception:
+        raise ValueError("Invalid inquiry update request")
+    session.refresh(inquiry)
+    return inquiry
+
+
+def delete_inquiry(*, session: Session, inquiry_in: InquiryDelete) -> InquiryDelete:
+    Inquiry.model_validate(inquiry_in)
+    inquiry = get_inquiry_by_id(session=session, inquiry_id=inquiry_in.id)
+    if not inquiry:
+        raise ValueError("Invalid inquiry id for delete")
+    try:
+        session.delete(inquiry)
+        session.commit()
+    except Exception:
+        raise ValueError("Invalid inquiry delete request")
+    return inquiry_in
 
 
 def get_inquiry_by_text(*, session: Session, text: str) -> Inquiry | None:

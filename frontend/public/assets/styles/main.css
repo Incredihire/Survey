@@ -1,0 +1,16 @@
+table tr button.btn-rank-up,
+table tr button.btn-rank-down {
+  height: 24px;
+  width: 24px;
+}
+table tr button.btn-rank-up:disabled,
+table tr:last-of-type button.btn-rank-down {
+  pointer-events: none; /* Disable an element interaction, so it will not respond any event */
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.inactive-text {
+  opacity: 0.4;
+}

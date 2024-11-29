@@ -14,7 +14,7 @@ const items: SidebarItem[] = [
   // These are coming from our dependencies untyped, so we'll disable the linting for these lines
   /* eslint-disable */
   { icon: FiHelpCircle, title: "Inquiries", path: "/inquiries" },
-  { icon: FiFolder, title: "Themes", path: "/themes" },
+  { icon: FiFolder, title: "Categories", path: "/themes" },
   /* eslint-enable */
 ]
 

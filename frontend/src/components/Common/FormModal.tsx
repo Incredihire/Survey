@@ -2,6 +2,7 @@ import {
   Button,
   type ButtonProps,
   type InputProps as ChakraInputProps,
+  type SelectProps as ChakraSelectProps,
   type TextareaProps as ChakraTextareaProps,
   FormControl,
   FormErrorMessage,
@@ -14,6 +15,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Select,
   Textarea,
 } from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -35,10 +37,10 @@ type WithDataTestId<P> = P & { "data-testid"?: string }
 
 type ExtendedInputProps = WithDataTestId<ChakraInputProps>
 type ExtendedTextareaProps = WithDataTestId<ChakraTextareaProps>
-
+type ExtendedSelectProps = WithDataTestId<ChakraSelectProps>
 interface BaseFieldDefinition<
   T extends FieldValues,
-  K extends "input" | "textarea",
+  K extends "input" | "textarea" | "select",
 > {
   name: Path<T>
   label: string
@@ -46,12 +48,18 @@ interface BaseFieldDefinition<
   type: K
   validation?: RegisterOptions
   defaultValue?: T[Path<T>]
-  inputProps?: K extends "input" ? ExtendedInputProps : ExtendedTextareaProps
+  inputProps?: K extends "select"
+    ? ExtendedSelectProps
+    : K extends "textarea"
+      ? ExtendedTextareaProps
+      : ExtendedInputProps
+  options?: [string, string][]
 }
 
 type FieldDefinition<T extends FieldValues> =
   | BaseFieldDefinition<T, "input">
   | BaseFieldDefinition<T, "textarea">
+  | BaseFieldDefinition<T, "select">
 
 interface ExtendedButtonProps extends ButtonProps {
   "data-testid"?: string
@@ -160,6 +168,38 @@ const FormModal = <T extends FieldValues>({
                     {...register(field.name, field.validation)}
                     {...field.inputProps}
                   />
+                  {isError && (
+                    <FormErrorMessage>
+                      {(errors[field.name]?.message as string) ||
+                        "Invalid input"}
+                    </FormErrorMessage>
+                  )}
+                </FormControl>
+              )
+            }
+            if (field.type === "select") {
+              // For Select
+              return (
+                <FormControl
+                  isInvalid={isError}
+                  mb={4}
+                  key={String(field.name)}
+                >
+                  <FormLabel htmlFor={String(field.name)}>
+                    {field.label}
+                  </FormLabel>
+                  <Select
+                    id={String(field.name)}
+                    placeholder={field.placeholder}
+                    {...register(field.name, field.validation)}
+                    {...field.inputProps}
+                  >
+                    {(field.options || []).map((v) => (
+                      <option key={v[0]} value={v[0]}>
+                        {v[1]}
+                      </option>
+                    ))}
+                  </Select>
                   {isError && (
                     <FormErrorMessage>
                       {(errors[field.name]?.message as string) ||

@@ -28,7 +28,7 @@ def test_get_scheduled_inquiries_when_scheduled_inquiries_exist_should_return_al
     initial_count = json["count"]
 
     scheduled_inquiry_1 = ScheduledInquiry(inquiry_id=inquiry_1.id, rank=1)
-    scheduled_inquiry_2 = ScheduledInquiry(inquiry_id=inquiry_1.id, rank=2)
+    scheduled_inquiry_2 = ScheduledInquiry(inquiry_id=inquiry_2.id, rank=2)
 
     db.add(scheduled_inquiry_1)
     db.add(scheduled_inquiry_2)

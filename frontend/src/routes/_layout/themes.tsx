@@ -25,10 +25,10 @@ export function Themes() {
   return (
     <Container maxW="full">
       <Heading size="lg" textAlign={{ base: "center", md: "left" }} pt={12}>
-        Themes Management
+        Categories Management
       </Heading>
 
-      <Navbar type={"Theme"} addModalAs={AddTheme} />
+      <Navbar type={"Category"} addModalAs={AddTheme} />
       <ThemesTable />
     </Container>
   )

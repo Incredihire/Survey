@@ -1,14 +1,3 @@
-export type Body_login_login_access_token = {
-	grant_type?: string | null;
-	username: string;
-	password: string;
-	scope?: string;
-	client_id?: string | null;
-	client_secret?: string | null;
-};
-
-
-
 export type HTTPValidationError = {
 	detail?: Array<ValidationError>;
 };
@@ -17,14 +6,34 @@ export type HTTPValidationError = {
 
 export type InquiryCreate = {
 	text: string;
+	theme_id: number | null;
+};
+
+
+
+export type InquiryDelete = {
+	text: string;
+	theme_id: number | null;
+	id: number;
 };
 
 
 
 export type InquiryPublic = {
 	text: string;
+	theme_id: number | null;
 	id: number;
 	created_at: string;
+	theme?: ThemePublic | null;
+	scheduled_inquiry?: ScheduledInquiryPublic | null;
+};
+
+
+
+export type InquiryUpdate = {
+	text: string;
+	theme_id: number | null;
+	id: number;
 };
 
 
@@ -96,6 +105,14 @@ export type ScheduledInquiryPublicWithInquiryText = {
 
 
 
+export type ScheduledInquiryUpdate = {
+	inquiry_id: number;
+	rank: number;
+	id: number;
+};
+
+
+
 export type ThemeCreate = {
 	name: string;
 	description?: string | null;
@@ -114,13 +131,6 @@ export type ThemePublic = {
 export type ThemesPublic = {
 	data: Array<ThemePublic>;
 	count: number;
-};
-
-
-
-export type Token = {
-	access_token: string;
-	token_type?: string;
 };
 
 

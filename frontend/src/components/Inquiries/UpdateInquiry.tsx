@@ -1,4 +1,4 @@
-import type { InquiryCreate } from "../../client/models"
+import type { InquiryPublic, InquiryUpdate } from "../../client/models"
 import { InquiriesService } from "../../client/services"
 import { useThemes } from "../../hooks/useThemes.js"
 import { isValidUnicode } from "../../utils/validation"
@@ -6,15 +6,28 @@ import FormModal, { type FieldDefinition } from "../Common/FormModal"
 export const MIN_INQUIRY_LENGTH = 10
 export const MAX_INQUIRY_LENGTH = 256
 
-interface AddInquiryProps {
+interface UpdateInquiryProps {
   isOpen: boolean
   onClose: () => void
+  inquiry: InquiryPublic
 }
 
-const AddInquiry = ({ isOpen, onClose }: AddInquiryProps) => {
+const UpdateInquiry = ({ isOpen, onClose, inquiry }: UpdateInquiryProps) => {
   const { data: themes, isLoading } = useThemes()
 
-  const fields: FieldDefinition<InquiryCreate>[] = [
+  const fields: FieldDefinition<InquiryUpdate>[] = [
+    {
+      name: "id",
+      label: "",
+      type: "input",
+      validation: {
+        required: "ID required.",
+      },
+      inputProps: {
+        hidden: true,
+        defaultValue: inquiry.id.toString(),
+      },
+    },
     {
       name: "text",
       label: "Inquiry Text",
@@ -34,7 +47,8 @@ const AddInquiry = ({ isOpen, onClose }: AddInquiryProps) => {
           isValidUnicode(value) || "Inquiry must be a valid unicode string.",
       },
       inputProps: {
-        "data-testid": "add-inquiry-text",
+        "data-testid": "update-inquiry-text",
+        defaultValue: inquiry.text,
       },
     },
     {
@@ -46,28 +60,29 @@ const AddInquiry = ({ isOpen, onClose }: AddInquiryProps) => {
         ? []
         : (themes?.data || []).map((t) => [t.id.toString(), t.name]),
       inputProps: {
-        "data-testid": "add-inquiry-theme-id",
+        "data-testid": "update-inquiry-theme-id",
+        defaultValue: inquiry.theme_id?.toString(),
       },
     },
   ]
 
-  const mutationFn = async (data: InquiryCreate): Promise<void> => {
+  const mutationFn = async (data: InquiryUpdate): Promise<void> => {
     if (!data.theme_id) data.theme_id = null
-    await InquiriesService.createInquiry({ requestBody: data })
+    await InquiriesService.updateInquiry({ requestBody: data })
   }
 
   return (
-    <FormModal<InquiryCreate>
+    <FormModal<InquiryUpdate>
       isOpen={isOpen}
       onClose={onClose}
-      title="Add Inquiry"
+      title="Update Inquiry"
       fields={fields}
       mutationFn={mutationFn}
-      successMessage="Inquiry created successfully."
+      successMessage="Inquiry updated successfully."
       queryKeyToInvalidate={["inquiries"]}
-      submitButtonProps={{ "data-testid": "submit-add-inquiry" }}
+      submitButtonProps={{ "data-testid": "submit-update-inquiry" }}
     />
   )
 }
 
-export default AddInquiry
+export default UpdateInquiry

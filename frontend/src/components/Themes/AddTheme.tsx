@@ -16,11 +16,11 @@ const AddTheme = ({ isOpen, onClose }: AddThemeProps) => {
   const fields: FieldDefinition<ThemeCreate>[] = [
     {
       name: "name",
-      label: "Theme Name",
-      placeholder: "Enter theme name.",
+      label: "Category Name",
+      placeholder: "Enter category name.",
       type: "input",
       validation: {
-        required: "Theme name is required.",
+        required: "Category name is required.",
         minLength: {
           value: MIN_NAME_LENGTH,
           message: `Name must be at least ${MIN_NAME_LENGTH} characters.`,
@@ -34,7 +34,7 @@ const AddTheme = ({ isOpen, onClose }: AddThemeProps) => {
     {
       name: "description",
       label: "Description",
-      placeholder: "Enter theme description (optional).",
+      placeholder: "Enter category description (optional).",
       type: "textarea",
       validation: {
         validate: (value: string | null | undefined) => {
@@ -58,7 +58,7 @@ const AddTheme = ({ isOpen, onClose }: AddThemeProps) => {
     <FormModal<ThemeCreate>
       isOpen={isOpen}
       onClose={onClose}
-      title="Add Theme"
+      title="Add Category"
       fields={fields}
       mutationFn={mutationFn}
       successMessage="Theme created successfully."
