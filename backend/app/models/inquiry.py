@@ -10,7 +10,7 @@ from app.models.theme import ThemePublic
 from .mixins import IdMixin
 
 if TYPE_CHECKING:
-    from app.models.scheduled_inquiry import ScheduledInquiry, ScheduledInquiryPublic
+    from app.models.scheduled_inquiry import ScheduledInquiry
     from app.models.theme import Theme
 
 MIN_LENGTH = 10

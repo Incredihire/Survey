@@ -194,7 +194,7 @@ const FormModal = <T extends FieldValues>({
                     {...register(field.name, field.validation)}
                     {...field.inputProps}
                   >
-                    {(field.options || []).map((v) => (
+                    {(field.options ?? []).map((v) => (
                       <option key={v[0]} value={v[0]}>
                         {v[1]}
                       </option>

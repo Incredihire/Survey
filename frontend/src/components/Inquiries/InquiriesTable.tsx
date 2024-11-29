@@ -13,8 +13,8 @@ const InquiriesTable = () => {
     if (!inquiries?.data) return []
     return inquiries.data.sort((a: InquiryPublic, b: InquiryPublic) => {
       return (
-        (a.scheduled_inquiry ? a.scheduled_inquiry?.rank : -1) -
-        (b.scheduled_inquiry ? b.scheduled_inquiry?.rank : -1)
+        (a.scheduled_inquiry ? a.scheduled_inquiry.rank : -1) -
+        (b.scheduled_inquiry ? b.scheduled_inquiry.rank : -1)
       )
     })
   }, [inquiries])

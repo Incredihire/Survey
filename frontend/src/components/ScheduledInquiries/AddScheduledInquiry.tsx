@@ -65,7 +65,7 @@ const AddScheduledInquiry = ({
     mutationFn: (rank: number) => {
       return ScheduledInquiriesService.updateScheduledInquiry({
         requestBody: {
-          id: inquiry.scheduled_inquiry?.id || 0,
+          id: inquiry.scheduled_inquiry?.id ?? 0,
           rank,
           inquiry_id: inquiry.id,
         },
@@ -88,7 +88,7 @@ const AddScheduledInquiry = ({
   const disableMutation = useMutation({
     mutationFn: () => {
       return ScheduledInquiriesService.disableScheduledInquiry({
-        scheduledInquiryId: inquiry.scheduled_inquiry?.id || 0,
+        scheduledInquiryId: inquiry.scheduled_inquiry?.id ?? 0,
       })
     },
     onSuccess: async () => {
@@ -140,7 +140,11 @@ const AddScheduledInquiry = ({
   return (
     <Flex flexDirection={"row"} alignItems={"center"} gap={1}>
       {!inquiry.scheduled_inquiry && (
-        <Button onClick={() => deleteInquiryMutation.mutate()}>
+        <Button
+          onClick={() => {
+            deleteInquiryMutation.mutate()
+          }}
+        >
           <FiTrash />
         </Button>
       )}
@@ -154,16 +158,16 @@ const AddScheduledInquiry = ({
           <FiEdit2 />
         </Button>
       )}
-      {(inquiry.scheduled_inquiry?.rank || 0) !== 0 && (
+      {(inquiry.scheduled_inquiry?.rank ?? 0) !== 0 && (
         <Flex flexDirection={"column"} flexWrap={"nowrap"}>
           <Button
             className={"btn-rank-up"}
-            isDisabled={(inquiry.scheduled_inquiry?.rank || 1) === 1}
-            onClick={() =>
+            isDisabled={(inquiry.scheduled_inquiry?.rank ?? 1) === 1}
+            onClick={() => {
               moveRankMutation.mutate(
-                (inquiry.scheduled_inquiry?.rank || 2) - 1,
+                (inquiry.scheduled_inquiry?.rank ?? 2) - 1,
               )
-            }
+            }}
           >
             <FiChevronUp />
           </Button>
@@ -171,7 +175,7 @@ const AddScheduledInquiry = ({
             className={"btn-rank-down"}
             onClick={() =>
               moveRankMutation.mutate(
-                (inquiry.scheduled_inquiry?.rank || 1) + 1,
+                (inquiry.scheduled_inquiry?.rank ?? 1) + 1,
               )
             }
           >
@@ -181,12 +185,14 @@ const AddScheduledInquiry = ({
       )}
       {inquiry.scheduled_inquiry && (
         <Switch
-          defaultChecked={!!inquiry.scheduled_inquiry?.rank}
-          onChange={(event) =>
-            event.target.checked
-              ? enableMutation.mutate()
-              : disableMutation.mutate()
-          }
+          defaultChecked={!!inquiry.scheduled_inquiry.rank}
+          onChange={(event) => {
+            if (event.target.checked) {
+              enableMutation.mutate()
+            } else {
+              disableMutation.mutate()
+            }
+          }}
         />
       )}
       <Button onClick={openModal} isDisabled={!!inquiry.scheduled_inquiry}>
