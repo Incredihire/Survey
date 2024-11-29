@@ -108,7 +108,7 @@ const AddScheduledInquiry = ({
   const enableMutation = useMutation({
     mutationFn: () => {
       return ScheduledInquiriesService.enableScheduledInquiry({
-        scheduledInquiryId: inquiry.scheduled_inquiry?.id || 0,
+        scheduledInquiryId: inquiry.scheduled_inquiry?.id ?? 0,
       })
     },
     onSuccess: async () => {
@@ -173,11 +173,11 @@ const AddScheduledInquiry = ({
           </Button>
           <Button
             className={"btn-rank-down"}
-            onClick={() =>
+            onClick={() => {
               moveRankMutation.mutate(
                 (inquiry.scheduled_inquiry?.rank ?? 1) + 1,
               )
-            }
+            }}
           >
             <FiChevronDown />
           </Button>

@@ -44,7 +44,7 @@ const AddInquiry = ({ isOpen, onClose }: AddInquiryProps) => {
       type: "select",
       options: isLoading
         ? []
-        : (themes?.data || []).map((t) => [t.id.toString(), t.name]),
+        : (themes?.data ?? []).map((t) => [t.id.toString(), t.name]),
       inputProps: {
         "data-testid": "add-inquiry-theme-id",
       },
