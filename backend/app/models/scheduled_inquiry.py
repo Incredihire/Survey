@@ -14,6 +14,7 @@ class ScheduledInquiryBase(SQLModel):
     rank: int = Field(ge=0)  # rank starts at 0 = Disabled
     __table_args__ = (UniqueConstraint("inquiry_id"),)
 
+
 # Properties to receive on ScheduledInquiry creation
 class ScheduledInquiryCreate(SQLModel):
     inquiry_id: int = Field(foreign_key="inquiry.id")
