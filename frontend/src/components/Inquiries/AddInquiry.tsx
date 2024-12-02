@@ -1,9 +1,5 @@
-import type {
-  InquiryCreate,
-  InquiryPublic,
-  ThemePublic,
-} from "../../client/models"
-import { InquiriesService } from "../../client/services"
+import type { InquiryCreate, ThemePublic } from "../../client"
+import { InquiriesService } from "../../client"
 import { isValidUnicode } from "../../utils/validation"
 import FormModal, { type FieldDefinition } from "../Common/FormModal"
 export const MIN_INQUIRY_LENGTH = 10
@@ -15,11 +11,8 @@ interface AddInquiryProps {
 }
 
 const AddInquiry =
-  (
-    themes: ThemePublic[],
-    inquiries: InquiryPublic[],
-    setInquiries: React.Dispatch<React.SetStateAction<InquiryPublic[]>>,
-  ) =>
+  (themes: ThemePublic[]) =>
+  // eslint-disable-next-line react/display-name
   ({ isOpen, onClose }: AddInquiryProps) => {
     const fields: FieldDefinition<InquiryCreate>[] = [
       {
@@ -59,10 +52,9 @@ const AddInquiry =
     const mutationFn = async (data: InquiryCreate): Promise<void> => {
       if (!data.theme_id) data.theme_id = null
       if (!data.first_scheduled) data.first_scheduled = null
-      const inquiry = await InquiriesService.createInquiry({
+      await InquiriesService.createInquiry({
         requestBody: data,
       })
-      setInquiries([inquiry, ...inquiries])
     }
 
     return (
@@ -78,5 +70,5 @@ const AddInquiry =
       />
     )
   }
-
+AddInquiry.displayName = "AddInquiry"
 export default AddInquiry

@@ -1,14 +1,9 @@
 import { Box } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
-import { InquiriesService, ScheduleService } from "../../client"
-import type {
-  InquiryPublic,
-  SchedulePublic,
-  ThemePublic,
-} from "../../client/models.ts"
-import Navbar from "../Common/Navbar.tsx"
+import { ScheduleService } from "../../client"
+import type { InquiryPublic, SchedulePublic, ThemePublic } from "../../client"
+import { useInquiries } from "../../hooks/useInquiries.ts"
 import { DataTable } from "../Common/Table.tsx"
-import AddInquiry from "./AddInquiry.tsx"
 import { columns } from "./InquiriesTable.columns.tsx"
 type InquiriesTableProps = {
   themes: ThemePublic[]
@@ -31,34 +26,21 @@ const InquiriesTable = ({ themes }: InquiriesTableProps) => {
     }
   }, [])
 
-  const [inquiries, setInquiries] = useState<InquiryPublic[]>([])
-
-  useEffect(() => {
-    async function startGetInquiries() {
-      const inquiriesUpdated = await InquiriesService.getInquries()
-      //setInquiries(null)
-      if (!ignore) {
-        setInquiries(inquiriesUpdated.data)
-      }
-    }
-    let ignore = false
-    void startGetInquiries()
-    return () => {
-      ignore = true
-    }
-  }, [])
+  const { data: inquiries } = useInquiries()
 
   const [sortedInquiries, setSortedInquiries] = useState<InquiryPublic[]>([])
   useEffect(() => {
     setSortedInquiries([])
-    inquiries.sort((a: InquiryPublic, b: InquiryPublic) => {
-      return (
-        (schedule?.scheduled_inquiries?.indexOf(a.id) ?? -1) -
-        (schedule?.scheduled_inquiries?.indexOf(b.id) ?? -1)
-      )
-    })
-    setSortedInquiries([...inquiries])
-  }, [schedule, inquiries])
+    if (inquiries?.data) {
+      inquiries?.data.sort((a: InquiryPublic, b: InquiryPublic) => {
+        return (
+          (schedule?.scheduled_inquiries?.indexOf(a.id) ?? -1) -
+          (schedule?.scheduled_inquiries?.indexOf(b.id) ?? -1)
+        )
+      })
+      setSortedInquiries([...inquiries.data])
+    }
+  }, [schedule, inquiries?.data])
 
   const handleRowClick = (inquiry: InquiryPublic) => {
     console.log("Row clicked:", inquiry)
@@ -66,17 +48,13 @@ const InquiriesTable = ({ themes }: InquiriesTableProps) => {
 
   return (
     <>
-      <Navbar
-        type={"Inquiry"}
-        addModalAs={AddInquiry(themes, inquiries ?? [], setInquiries)}
-      />
       <Box>
         <DataTable
           data={sortedInquiries}
           columns={columns(
             themes,
-            inquiries ?? [],
-            setInquiries,
+            sortedInquiries ?? [],
+            setSortedInquiries,
             schedule,
             setSchedule,
           )}

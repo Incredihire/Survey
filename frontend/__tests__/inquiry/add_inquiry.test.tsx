@@ -7,6 +7,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { fireEvent, render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { Inquiries } from "../../src/routes/_layout/inquiries"
@@ -34,9 +35,14 @@ jest.mock("@tanstack/react-query", () => ({
   }),
 }))
 
+const queryClient = new QueryClient()
 describe("Add Inquiry", () => {
   beforeEach(async () => {
-    render(<Inquiries />)
+    render(
+      <QueryClientProvider client={queryClient}>
+        <Inquiries />
+      </QueryClientProvider>,
+    )
     await userEvent.click(screen.getByText("Add Inquiry"))
   })
 
