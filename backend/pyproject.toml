@@ -25,7 +25,7 @@ sqlmodel = "^0.0.22"
 bcrypt = "4.2.0"
 pydantic-settings = "^2.6.1"
 sentry-sdk = {extras = ["fastapi"], version = "^2.16.0"}
-pyjwt = "^2.8.0"
+pyjwt = "^2.10.1"
 google-auth = "^2.36.0"
 google-auth-stubs = "^0.3.0"
 itsdangerous = "^2.2.0"
