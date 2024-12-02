@@ -9,7 +9,7 @@ def test_post_request_to_inquiry_route_should_create_inquiry_when_inquiry_does_n
 ) -> None:
     inquiry_text = "Why do birds suddenly appear every time you are near?"
 
-    data = {"text": inquiry_text, "theme_id": None}
+    data = {"text": inquiry_text, "theme_id": None, "first_scheduled": None}
     response = client.post(
         f"{settings.API_V1_STR}/inquiries/",
         headers=superuser_token_headers,
@@ -27,7 +27,7 @@ def test_post_request_to_inquiry_route_should_return_400_new_inquiry_when_inquir
 ) -> None:
     inquiry_text = "Do they -- just like me -- long to be close to you?"
 
-    data = {"text": inquiry_text, "theme_id": None}
+    data = {"text": inquiry_text, "theme_id": None, "first_scheduled": None}
     response = client.post(
         f"{settings.API_V1_STR}/inquiries/",
         headers=superuser_token_headers,
@@ -40,7 +40,7 @@ def test_post_request_to_inquiry_route_should_return_400_new_inquiry_when_inquir
     assert "created_at" in content
 
     # same request
-    data = {"text": inquiry_text, "theme_id": None}
+    data = {"text": inquiry_text, "theme_id": None, "first_scheduled": None}
     response = client.post(
         f"{settings.API_V1_STR}/inquiries/",
         headers=superuser_token_headers,

@@ -2,7 +2,7 @@ import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
 
-import type { InquiryCreate,InquiryDelete,InquiryPublic,InquiryUpdate,InquriesPublic,ThemeCreate,ThemePublic,ThemesPublic,Message,UserCreate,UserPublic,UsersPublic,ScheduledInquiriesPublic,ScheduledInquiryCreate,ScheduledInquiryPublic,ScheduledInquiryUpdate,ScheduleCreate,SchedulePublic } from './models';
+import type { InquiryCreate,InquiryDelete,InquiryPublic,InquiryUpdate,InquriesPublic,ThemeCreate,ThemePublic,ThemesPublic,Message,UserCreate,UserPublic,UsersPublic,ScheduleCreate,SchedulePublic } from './models';
 
 export type AuthData = {
         AuthCallback: {
@@ -79,33 +79,13 @@ export type UtilsData = {
                 };
     }
 
-export type ScheduledInquiriesData = {
-        AddToSchedule: {
-                    requestBody: ScheduledInquiryCreate
-                    
-                };
-UpdateScheduledInquiry: {
-                    requestBody: ScheduledInquiryUpdate
-                    
-                };
-GetScheduledInquries: {
-                    limit?: number
-skip?: number
-                    
-                };
-DisableScheduledInquiry: {
-                    scheduledInquiryId: number
-                    
-                };
-EnableScheduledInquiry: {
-                    scheduledInquiryId: number
-                    
-                };
-    }
-
 export type ScheduleData = {
         CreateSchedule: {
                     requestBody: ScheduleCreate
+                    
+                };
+UpdateScheduledInquiries: {
+                    requestBody: Array<number>
                     
                 };
     }
@@ -486,117 +466,6 @@ emailTo,
 
 }
 
-export class ScheduledInquiriesService {
-
-	/**
-	 * Add To Schedule
-	 * @returns ScheduledInquiryPublic Successful Response
-	 * @throws ApiError
-	 */
-	public static addToSchedule(data: ScheduledInquiriesData['AddToSchedule']): CancelablePromise<ScheduledInquiryPublic> {
-		const {
-requestBody,
-} = data;
-		return __request(OpenAPI, {
-			method: 'POST',
-			url: '/api/v1/scheduledinquiries/',
-			body: requestBody,
-			mediaType: 'application/json',
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
-
-	/**
-	 * Update Scheduled Inquiry
-	 * Update scheduled inquiry.
-	 * @returns ScheduledInquiryPublic Successful Response
-	 * @throws ApiError
-	 */
-	public static updateScheduledInquiry(data: ScheduledInquiriesData['UpdateScheduledInquiry']): CancelablePromise<ScheduledInquiryPublic> {
-		const {
-requestBody,
-} = data;
-		return __request(OpenAPI, {
-			method: 'PATCH',
-			url: '/api/v1/scheduledinquiries/',
-			body: requestBody,
-			mediaType: 'application/json',
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
-
-	/**
-	 * Get Scheduled Inquries
-	 * @returns ScheduledInquiriesPublic Successful Response
-	 * @throws ApiError
-	 */
-	public static getScheduledInquries(data: ScheduledInquiriesData['GetScheduledInquries'] = {}): CancelablePromise<ScheduledInquiriesPublic> {
-		const {
-skip = 0,
-limit = 100,
-} = data;
-		return __request(OpenAPI, {
-			method: 'GET',
-			url: '/api/v1/scheduledinquiries/',
-			query: {
-				skip, limit
-			},
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
-
-	/**
-	 * Disable Scheduled Inquiry
-	 * Disable scheduled inquiry.
-	 * @returns ScheduledInquiryPublic Successful Response
-	 * @throws ApiError
-	 */
-	public static disableScheduledInquiry(data: ScheduledInquiriesData['DisableScheduledInquiry']): CancelablePromise<ScheduledInquiryPublic> {
-		const {
-scheduledInquiryId,
-} = data;
-		return __request(OpenAPI, {
-			method: 'PATCH',
-			url: '/api/v1/scheduledinquiries/disable',
-			query: {
-				scheduled_inquiry_id: scheduledInquiryId
-			},
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
-
-	/**
-	 * Enable Scheduled Inquiry
-	 * Enable scheduled inquiry.
-	 * @returns ScheduledInquiryPublic Successful Response
-	 * @throws ApiError
-	 */
-	public static enableScheduledInquiry(data: ScheduledInquiriesData['EnableScheduledInquiry']): CancelablePromise<ScheduledInquiryPublic> {
-		const {
-scheduledInquiryId,
-} = data;
-		return __request(OpenAPI, {
-			method: 'PATCH',
-			url: '/api/v1/scheduledinquiries/enable',
-			query: {
-				scheduled_inquiry_id: scheduledInquiryId
-			},
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
-
-}
-
 export class ScheduleService {
 
 	/**
@@ -623,6 +492,26 @@ requestBody,
 		return __request(OpenAPI, {
 			method: 'POST',
 			url: '/api/v1/schedule/',
+			body: requestBody,
+			mediaType: 'application/json',
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * Update Scheduled Inquiries
+	 * @returns SchedulePublic Successful Response
+	 * @throws ApiError
+	 */
+	public static updateScheduledInquiries(data: ScheduleData['UpdateScheduledInquiries']): CancelablePromise<SchedulePublic> {
+		const {
+requestBody,
+} = data;
+		return __request(OpenAPI, {
+			method: 'PATCH',
+			url: '/api/v1/schedule/update_scheduled_inquiries',
 			body: requestBody,
 			mediaType: 'application/json',
 			errors: {

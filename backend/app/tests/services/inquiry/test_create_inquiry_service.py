@@ -11,7 +11,7 @@ def test_inquiry_service_create_should_create_inquiry_when_inquiry_does_not_exis
     db: Session,
 ) -> None:
     text = "Test Inquiry"
-    inquiry_data = InquiryCreate(text=text, theme_id=None)
+    inquiry_data = InquiryCreate(text=text, theme_id=None, first_scheduled=None)
     result = create_inquiry(session=db, inquiry_in=inquiry_data)
     assert result.text == text
     assert result.id is not None
@@ -58,7 +58,7 @@ def test_inquiry_service_create_should_not_create_inquiry_when_inquiry_already_e
     db: Session,
 ) -> None:
     text = "Repeated Inquiry"
-    inquiry_data = InquiryCreate(text=text, theme_id=None)
+    inquiry_data = InquiryCreate(text=text, theme_id=None, first_scheduled=None)
     result = create_inquiry(session=db, inquiry_in=inquiry_data)
     assert result.text == text
     assert result.id is not None

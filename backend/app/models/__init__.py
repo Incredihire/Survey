@@ -23,14 +23,6 @@ from .inquiry import (
 )
 from .response import Response, ResponseCreate, ResponsePublic, ResponsesPublic
 from .schedule import Schedule, ScheduleCreate, ScheduleInfo, SchedulePublic
-from .scheduled_inquiry import (
-    ScheduledInquiriesPublic,
-    ScheduledInquiry,
-    ScheduledInquiryBase,
-    ScheduledInquiryCreate,
-    ScheduledInquiryPublic,
-    ScheduledInquiryUpdate,
-)
 from .theme import Theme, ThemeCreate, ThemePublic, ThemesPublic
 from .user import (
     User,
@@ -67,13 +59,6 @@ __all__ = [
     "ResponseCreate",
     "ResponsePublic",
     "ResponsesPublic",
-    # scheduled_inquiry model
-    "ScheduledInquiry",
-    "ScheduledInquiryBase",
-    "ScheduledInquiryCreate",
-    "ScheduledInquiryPublic",
-    "ScheduledInquiriesPublic",
-    "ScheduledInquiryUpdate",
     # schedule model
     "Schedule",
     "ScheduleCreate",

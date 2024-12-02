@@ -4,7 +4,6 @@ from app.api.routes import (
     auth,
     inquiries,
     schedule,
-    scheduled_inquiries,
     themes,
     users,
     utils,
@@ -16,9 +15,4 @@ api_router.include_router(inquiries.router, prefix="/inquiries", tags=["inquirie
 api_router.include_router(themes.router, prefix="/themes", tags=["themes"])
 api_router.include_router(users.router, prefix="/users", tags=["users"])
 api_router.include_router(utils.router, prefix="/utils", tags=["utils"])
-api_router.include_router(
-    scheduled_inquiries.router,
-    prefix="/scheduledinquiries",
-    tags=["scheduled_inquiries"],
-)
 api_router.include_router(schedule.router, prefix="/schedule", tags=["schedule"])

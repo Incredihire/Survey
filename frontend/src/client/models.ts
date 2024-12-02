@@ -7,6 +7,7 @@ export type HTTPValidationError = {
 export type InquiryCreate = {
 	text: string;
 	theme_id: number | null;
+	first_scheduled: string | null;
 };
 
 
@@ -14,6 +15,7 @@ export type InquiryCreate = {
 export type InquiryDelete = {
 	text: string;
 	theme_id: number | null;
+	first_scheduled: string | null;
 	id: number;
 };
 
@@ -22,10 +24,10 @@ export type InquiryDelete = {
 export type InquiryPublic = {
 	text: string;
 	theme_id: number | null;
+	first_scheduled: string | null;
 	id: number;
 	created_at: string;
 	theme?: ThemePublic | null;
-	scheduled_inquiry?: ScheduledInquiryPublic | null;
 };
 
 
@@ -33,6 +35,7 @@ export type InquiryPublic = {
 export type InquiryUpdate = {
 	text: string;
 	theme_id: number | null;
+	first_scheduled: string | null;
 	id: number;
 };
 
@@ -71,44 +74,7 @@ export type ScheduleInfo = {
 export type SchedulePublic = {
 	schedule: ScheduleInfo;
 	id: number;
-};
-
-
-
-export type ScheduledInquiriesPublic = {
-	data: Array<ScheduledInquiryPublicWithInquiryText>;
-	count: number;
-};
-
-
-
-export type ScheduledInquiryCreate = {
-	inquiry_id: number;
-};
-
-
-
-export type ScheduledInquiryPublic = {
-	inquiry_id: number;
-	rank: number;
-	id: number;
-};
-
-
-
-export type ScheduledInquiryPublicWithInquiryText = {
-	inquiry_id: number;
-	rank: number;
-	id: number;
-	text: string;
-};
-
-
-
-export type ScheduledInquiryUpdate = {
-	inquiry_id: number;
-	rank: number;
-	id: number;
+	scheduled_inquiries: Array<number>;
 };
 
 

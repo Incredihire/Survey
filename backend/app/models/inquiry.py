@@ -4,13 +4,11 @@ from typing import TYPE_CHECKING
 from sqlmodel import Field, Relationship, SQLModel
 
 from app.models.response import Response
-from app.models.scheduled_inquiry import ScheduledInquiryPublic
 from app.models.theme import ThemePublic
 
 from .mixins import IdMixin
 
 if TYPE_CHECKING:
-    from app.models.scheduled_inquiry import ScheduledInquiry
     from app.models.theme import Theme
 
 MIN_LENGTH = 10
@@ -23,6 +21,7 @@ class InquiryBase(SQLModel):
     theme_id: int | None = Field(
         foreign_key="theme.id", ondelete="CASCADE", nullable=True
     )
+    first_scheduled: datetime | None = Field()
 
 
 # Properties to receive on inquiry creation
@@ -44,9 +43,6 @@ class InquiryDelete(InquiryBase):
 class Inquiry(InquiryBase, IdMixin, table=True):
     text: str = Field(min_length=MIN_LENGTH, max_length=MAX_LENGTH, unique=True)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    scheduled_inquiry: "ScheduledInquiry" = Relationship(
-        back_populates="inquiry", cascade_delete=True
-    )
     responses: list["Response"] = Relationship(back_populates="inquiry")
     theme: "Theme" = Relationship(back_populates="inquiries")
 
@@ -56,8 +52,8 @@ class InquiryPublic(InquiryBase):
     id: int
     text: str
     created_at: datetime
+    first_scheduled: datetime | None
     theme: ThemePublic | None = None
-    scheduled_inquiry: ScheduledInquiryPublic | None = None
 
 
 class InquriesPublic(SQLModel):

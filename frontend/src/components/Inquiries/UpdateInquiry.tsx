@@ -1,6 +1,9 @@
-import type { InquiryPublic, InquiryUpdate } from "../../client/models"
+import type {
+  InquiryPublic,
+  InquiryUpdate,
+  ThemePublic,
+} from "../../client/models"
 import { InquiriesService } from "../../client/services"
-import { useThemes } from "../../hooks/useThemes.js"
 import { isValidUnicode } from "../../utils/validation"
 import FormModal, { type FieldDefinition } from "../Common/FormModal"
 export const MIN_INQUIRY_LENGTH = 10
@@ -10,11 +13,19 @@ interface UpdateInquiryProps {
   isOpen: boolean
   onClose: () => void
   inquiry: InquiryPublic
+  themes: ThemePublic[]
+  inquiries: InquiryPublic[]
+  setInquiries: React.Dispatch<React.SetStateAction<InquiryPublic[]>>
 }
 
-const UpdateInquiry = ({ isOpen, onClose, inquiry }: UpdateInquiryProps) => {
-  const { data: themes, isLoading } = useThemes()
-
+const UpdateInquiry = ({
+  isOpen,
+  onClose,
+  inquiry,
+  themes,
+  inquiries,
+  setInquiries,
+}: UpdateInquiryProps) => {
   const fields: FieldDefinition<InquiryUpdate>[] = [
     {
       name: "id",
@@ -26,6 +37,15 @@ const UpdateInquiry = ({ isOpen, onClose, inquiry }: UpdateInquiryProps) => {
       inputProps: {
         hidden: true,
         defaultValue: inquiry.id.toString(),
+      },
+    },
+    {
+      name: "first_scheduled",
+      label: "",
+      type: "input",
+      inputProps: {
+        hidden: true,
+        defaultValue: inquiry.first_scheduled ?? undefined,
       },
     },
     {
@@ -56,9 +76,7 @@ const UpdateInquiry = ({ isOpen, onClose, inquiry }: UpdateInquiryProps) => {
       label: "Category",
       placeholder: "Choose a category",
       type: "select",
-      options: isLoading
-        ? []
-        : (themes?.data ?? []).map((t) => [t.id.toString(), t.name]),
+      options: themes.map((t) => [t.id.toString(), t.name]),
       inputProps: {
         "data-testid": "update-inquiry-theme-id",
         defaultValue: inquiry.theme_id?.toString(),
@@ -68,7 +86,13 @@ const UpdateInquiry = ({ isOpen, onClose, inquiry }: UpdateInquiryProps) => {
 
   const mutationFn = async (data: InquiryUpdate): Promise<void> => {
     if (!data.theme_id) data.theme_id = null
-    await InquiriesService.updateInquiry({ requestBody: data })
+    if (!data.first_scheduled) data.first_scheduled = null
+    const inquiry = await InquiriesService.updateInquiry({ requestBody: data })
+    const inquires_updated = [...inquiries]
+    const index = inquires_updated.findIndex((i) => i.id === inquiry.id)
+    console.log({ index })
+    inquires_updated[index] = inquiry
+    setInquiries(inquires_updated)
   }
 
   return (

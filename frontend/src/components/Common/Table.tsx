@@ -10,6 +10,7 @@ import {
 import {
   type ColumnDef,
   type Table as ReactTableType,
+  type Row,
   flexRender,
   getCoreRowModel,
   useReactTable,
@@ -19,17 +20,20 @@ export type DataTableProps<Data extends object> = {
   data: Data[]
   columns: ColumnDef<Data, string>[]
   onRowClick?: (row: Data) => void
+  getRowId: (originalRow: Data, index: number, parent?: Row<Data>) => string
 }
 
 export function DataTable<Data extends object>({
   data,
   columns,
   onRowClick,
+  getRowId,
 }: DataTableProps<Data>) {
   const table: ReactTableType<Data> = useReactTable<Data>({
     columns,
     data,
     getCoreRowModel: getCoreRowModel(),
+    getRowId,
   })
 
   return (

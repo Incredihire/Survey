@@ -29,7 +29,7 @@ class Theme(ThemeBase, IdMixin, table=True):
         min_length=MIN_NAME_LENGTH, max_length=MAX_NAME_LENGTH, unique=True
     )
     inquiries: list["Inquiry"] = Relationship(
-        back_populates="theme", cascade_delete=True
+        back_populates="theme", cascade_delete=False
     )
 
 

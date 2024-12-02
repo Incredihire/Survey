@@ -1,53 +1,90 @@
-import { Box, Flex, Spinner } from "@chakra-ui/react"
-import { useMemo } from "react"
-import type { InquiryPublic } from "../../client/models.ts"
-import { useInquiries } from "../../hooks/useInquiries.ts"
+import { Box } from "@chakra-ui/react"
+import { useEffect, useState } from "react"
+import { InquiriesService, ScheduleService } from "../../client"
+import type {
+  InquiryPublic,
+  SchedulePublic,
+  ThemePublic,
+} from "../../client/models.ts"
+import Navbar from "../Common/Navbar.tsx"
 import { DataTable } from "../Common/Table.tsx"
+import AddInquiry from "./AddInquiry.tsx"
 import { columns } from "./InquiriesTable.columns.tsx"
+type InquiriesTableProps = {
+  themes: ThemePublic[]
+}
 
-const InquiriesTable = () => {
-  const { data: inquiries, isLoading, refetch } = useInquiries()
+const InquiriesTable = ({ themes }: InquiriesTableProps) => {
+  const [schedule, setSchedule] = useState<SchedulePublic | null>(null)
+  useEffect(() => {
+    async function startGetSchedule() {
+      setSchedule(null)
+      const s = await ScheduleService.getSchedule()
+      if (!ignore) {
+        setSchedule(s)
+      }
+    }
+    let ignore = false
+    void startGetSchedule()
+    return () => {
+      ignore = true
+    }
+  }, [])
 
-  // Sort inquiries from Newest to oldest
-  const sortedInquiries = useMemo(() => {
-    if (!inquiries?.data) return []
-    return inquiries.data.sort((a: InquiryPublic, b: InquiryPublic) => {
+  const [inquiries, setInquiries] = useState<InquiryPublic[]>([])
+
+  useEffect(() => {
+    async function startGetInquiries() {
+      const inquiriesUpdated = await InquiriesService.getInquries()
+      //setInquiries(null)
+      if (!ignore) {
+        setInquiries(inquiriesUpdated.data)
+      }
+    }
+    let ignore = false
+    void startGetInquiries()
+    return () => {
+      ignore = true
+    }
+  }, [])
+
+  const [sortedInquiries, setSortedInquiries] = useState<InquiryPublic[]>([])
+  useEffect(() => {
+    setSortedInquiries([])
+    inquiries.sort((a: InquiryPublic, b: InquiryPublic) => {
       return (
-        (a.scheduled_inquiry ? a.scheduled_inquiry.rank : -1) -
-        (b.scheduled_inquiry ? b.scheduled_inquiry.rank : -1)
+        (schedule?.scheduled_inquiries?.indexOf(a.id) ?? -1) -
+        (schedule?.scheduled_inquiries?.indexOf(b.id) ?? -1)
       )
     })
-  }, [inquiries])
+    setSortedInquiries([...inquiries])
+  }, [schedule, inquiries])
 
   const handleRowClick = (inquiry: InquiryPublic) => {
     console.log("Row clicked:", inquiry)
   }
 
-  const refetchInquiries = async () => {
-    await refetch()
-    // const target = inquiries?.data?.find(i => i.id == inquiry.id)
-    // if(target) {
-    //   target.rank = inquiry.rank
-    //   target.theme_id = inquiry.theme_id
-    // }
-  }
-
   return (
-    <Box>
-      {isLoading ? (
-        <Flex align="center" justify="center" height={200}>
-          <Spinner size="xl" />
-        </Flex>
-      ) : (
-        <>
-          <DataTable
-            data={sortedInquiries}
-            columns={columns(refetchInquiries)}
-            onRowClick={handleRowClick}
-          />
-        </>
-      )}
-    </Box>
+    <>
+      <Navbar
+        type={"Inquiry"}
+        addModalAs={AddInquiry(themes, inquiries ?? [], setInquiries)}
+      />
+      <Box>
+        <DataTable
+          data={sortedInquiries}
+          getRowId={(r) => r.id.toString()}
+          columns={columns(
+            themes,
+            inquiries ?? [],
+            setInquiries,
+            schedule,
+            setSchedule,
+          )}
+          onRowClick={handleRowClick}
+        />
+      </Box>
+    </>
   )
 }
 

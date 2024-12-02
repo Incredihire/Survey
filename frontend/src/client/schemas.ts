@@ -26,6 +26,16 @@ export const $InquiryCreate = {
 }],
 	isRequired: true,
 },
+		first_scheduled: {
+	type: 'any-of',
+	contains: [{
+	type: 'string',
+	format: 'date-time',
+}, {
+	type: 'null',
+}],
+	isRequired: true,
+},
 	},
 } as const;
 
@@ -41,6 +51,16 @@ export const $InquiryDelete = {
 	type: 'any-of',
 	contains: [{
 	type: 'number',
+}, {
+	type: 'null',
+}],
+	isRequired: true,
+},
+		first_scheduled: {
+	type: 'any-of',
+	contains: [{
+	type: 'string',
+	format: 'date-time',
 }, {
 	type: 'null',
 }],
@@ -68,6 +88,16 @@ export const $InquiryPublic = {
 }],
 	isRequired: true,
 },
+		first_scheduled: {
+	type: 'any-of',
+	contains: [{
+	type: 'string',
+	format: 'date-time',
+}, {
+	type: 'null',
+}],
+	isRequired: true,
+},
 		id: {
 	type: 'number',
 	isRequired: true,
@@ -81,14 +111,6 @@ export const $InquiryPublic = {
 	type: 'any-of',
 	contains: [{
 	type: 'ThemePublic',
-}, {
-	type: 'null',
-}],
-},
-		scheduled_inquiry: {
-	type: 'any-of',
-	contains: [{
-	type: 'ScheduledInquiryPublic',
 }, {
 	type: 'null',
 }],
@@ -108,6 +130,16 @@ export const $InquiryUpdate = {
 	type: 'any-of',
 	contains: [{
 	type: 'number',
+}, {
+	type: 'null',
+}],
+	isRequired: true,
+},
+		first_scheduled: {
+	type: 'any-of',
+	contains: [{
+	type: 'string',
+	format: 'date-time',
 }, {
 	type: 'null',
 }],
@@ -201,84 +233,11 @@ export const $SchedulePublic = {
 	type: 'number',
 	isRequired: true,
 },
-	},
-} as const;
-
-export const $ScheduledInquiriesPublic = {
-	properties: {
-		data: {
+		scheduled_inquiries: {
 	type: 'array',
 	contains: {
-		type: 'ScheduledInquiryPublicWithInquiryText',
-	},
-	isRequired: true,
-},
-		count: {
 	type: 'number',
-	isRequired: true,
 },
-	},
-} as const;
-
-export const $ScheduledInquiryCreate = {
-	properties: {
-		inquiry_id: {
-	type: 'number',
-	isRequired: true,
-},
-	},
-} as const;
-
-export const $ScheduledInquiryPublic = {
-	properties: {
-		inquiry_id: {
-	type: 'number',
-	isRequired: true,
-},
-		rank: {
-	type: 'number',
-	isRequired: true,
-},
-		id: {
-	type: 'number',
-	isRequired: true,
-},
-	},
-} as const;
-
-export const $ScheduledInquiryPublicWithInquiryText = {
-	properties: {
-		inquiry_id: {
-	type: 'number',
-	isRequired: true,
-},
-		rank: {
-	type: 'number',
-	isRequired: true,
-},
-		id: {
-	type: 'number',
-	isRequired: true,
-},
-		text: {
-	type: 'string',
-	isRequired: true,
-},
-	},
-} as const;
-
-export const $ScheduledInquiryUpdate = {
-	properties: {
-		inquiry_id: {
-	type: 'number',
-	isRequired: true,
-},
-		rank: {
-	type: 'number',
-	isRequired: true,
-},
-		id: {
-	type: 'number',
 	isRequired: true,
 },
 	},

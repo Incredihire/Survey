@@ -1,3 +1,5 @@
+import json
+
 from sqlmodel import select
 
 from app.api.deps import SessionDep
@@ -13,7 +15,24 @@ def create_schedule(*, session: SessionDep, schedule_in: ScheduleCreate) -> Sche
     if db_item:
         db_item.schedule = schedule_as_string
     else:
-        db_item = Schedule(schedule=schedule_as_string)
+        db_item = Schedule(schedule=schedule_as_string, scheduled_inquiries="[]")
+    session.add(db_item)
+    session.commit()
+    session.refresh(db_item)
+    return db_item
+
+
+def update_scheduled_inquiries(
+    *, session: SessionDep, scheduled_inquiries: list[int]
+) -> Schedule:
+    """
+    Update scheduled_inquiries.
+    """
+    scheduled_inquiries_as_string = json.dumps(scheduled_inquiries)
+    db_item = session.exec(select(Schedule)).first()
+    if not db_item:
+        raise ValueError("Invalid schedule for update")
+    db_item.scheduled_inquiries = scheduled_inquiries_as_string
     session.add(db_item)
     session.commit()
     session.refresh(db_item)

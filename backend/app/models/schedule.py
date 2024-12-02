@@ -23,9 +23,11 @@ class ScheduleCreate(SQLModel):
 # Database model
 class Schedule(SQLModel, IdMixin, table=True):
     schedule: str
+    scheduled_inquiries: str
 
 
 # Properties to return via API for a single Schedule
 class SchedulePublic(BaseModel):
     schedule: ScheduleInfo
-    id: int
+    id: int | None
+    scheduled_inquiries: list[int]
