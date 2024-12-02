@@ -19,7 +19,7 @@ type AddScheduledInquiryProps = {
   themes: ThemePublic[]
   inquiry: InquiryPublic
   inquiries: InquiryPublic[]
-  setInquiries: React.Dispatch<React.SetStateAction<InquiryPublic[] | null>>
+  setInquiries: React.Dispatch<React.SetStateAction<InquiryPublic[]>>
   setSchedule: React.Dispatch<React.SetStateAction<SchedulePublic | null>>
   schedule: SchedulePublic | null | undefined
 }

@@ -73,7 +73,6 @@ const InquiriesTable = ({ themes }: InquiriesTableProps) => {
       <Box>
         <DataTable
           data={sortedInquiries}
-          getRowId={(r) => r.id.toString()}
           columns={columns(
             themes,
             inquiries ?? [],

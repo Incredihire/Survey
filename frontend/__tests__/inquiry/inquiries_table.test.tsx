@@ -58,7 +58,7 @@ describe("Inquiries Table", () => {
   const renderComponent = () =>
     render(
       <QueryClientProvider client={queryClient}>
-        <InquiriesTable />
+        <InquiriesTable themes={[]} />
       </QueryClientProvider>,
     )
 
