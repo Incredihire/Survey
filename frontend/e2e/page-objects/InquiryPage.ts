@@ -7,7 +7,7 @@ export default class InquiryPage extends HelperBase {
   }
 
   async openInquiryForm() {
-    await this.page.getByRole("button", { name: "Inquiry" }).click()
+    await this.page.getByRole("button", { name: "Add Scheduled" }).click()
     await this.page.waitForSelector(".chakra-modal__footer", {
       state: "visible",
     })

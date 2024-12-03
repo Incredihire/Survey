@@ -2,47 +2,69 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { fireEvent, render, screen /*, within*/ } from "@testing-library/react"
 import InquiriesTable from "../../src/components/Inquiries/InquiriesTable"
 import "@testing-library/jest-dom"
-//import dayjs from "dayjs"
 import { useInquiries } from "../../src/hooks/useInquiries"
+//import dayjs from "dayjs"
+import { useSchedule } from "../../src/hooks/useSchedule"
 
+jest.mock("../../src/hooks/useSchedule")
 jest.mock("../../src/hooks/useInquiries")
 
 describe("Inquiries Table", () => {
+  const mockUseSchedule = useSchedule as jest.Mock
+  const singleSchedule = {
+    schedule: {
+      startDate: "2024-12-03",
+      endDate: "2025-01-02",
+      daysBetween: 1,
+      skipWeekends: false,
+      skipHolidays: false,
+      timesOfDay: ["08:00"],
+    },
+    id: 1,
+    scheduled_inquiries: [1, 2, 3, 4, 5, 6],
+  }
+
   const mockUseInquiries = useInquiries as jest.Mock
 
   const multipleInquiries = [
     {
-      id: "92bc71bf-f42c-4b56-b55d-fddaf4633550",
+      id: 1,
       text: "How is your work-life balance?",
       created_at: "2024-09-22T18:20:53.734830",
+      first_scheduled: "2024-09-22T18:20:53.734830",
     },
     {
-      id: "736381f5-becf-4783-8f04-98250e69c0b3",
+      id: 2,
       text: "Is communication effective?",
       created_at: "2024-09-22T12:30:53.734830",
+      first_scheduled: "2024-09-22T12:30:53.734830",
     },
     {
-      id: "df1e0d27-4f77-4d6b-b997-2b07d892db17",
+      id: 3,
       text: "How satisfied are you with the work environment?",
       created_at: "2024-09-21T09:20:53.734830",
+      first_scheduled: "2024-09-21T09:20:53.734830",
     },
     {
-      id: "13f29f63-2793-49b5-a6a9-c26acda6651f",
+      id: 4,
       text: "How do you feel about your current role?",
       created_at: "2024-09-19T09:20:53.734830",
+      first_scheduled: "2024-09-19T09:20:53.734830",
     },
     {
-      id: "f919b688-f9c6-49cb-87c0-4dab68a4a04c",
+      id: 5,
       text: "How is feedback typically given and received within the team?",
       created_at: "2024-09-22T09:20:53.734830",
+      first_scheduled: "2024-09-22T09:20:53.734830",
     },
   ]
 
   const singleInquiry = [
     {
-      id: "92bc71bf-f42c-4b56-b55d-fddaf4633550",
+      id: 6,
       text: "How is your work-life balance?",
       created_at: "2024-09-22T18:20:53.734830",
+      first_scheduled: "2024-09-22T18:20:53.734830",
     },
   ]
 
@@ -59,12 +81,13 @@ describe("Inquiries Table", () => {
   const renderComponent = () =>
     render(
       <QueryClientProvider client={queryClient}>
-        <InquiriesTable themes={[]} schedule={null} scheduledFilter={false} />
+        <InquiriesTable />
       </QueryClientProvider>,
     )
 
   beforeEach(() => {
     jest.clearAllMocks()
+    mockUseSchedule.mockReturnValue({ data: singleSchedule, isLoading: false })
   })
 
   it("should display empty table when there's no inquiries.", () => {
