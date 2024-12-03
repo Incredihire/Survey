@@ -59,7 +59,7 @@ describe("Inquiries Table", () => {
   const renderComponent = () =>
     render(
       <QueryClientProvider client={queryClient}>
-        <InquiriesTable themes={[]} />
+        <InquiriesTable themes={[]} schedule={null} scheduledFilter={false} />
       </QueryClientProvider>,
     )
 

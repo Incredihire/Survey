@@ -1,3 +1,4 @@
+import type { CancelablePromise } from "../../client"
 import type {
   InquiryPublic,
   InquiryUpdate,
@@ -14,8 +15,6 @@ interface UpdateInquiryProps {
   onClose: () => void
   inquiry: InquiryPublic
   themes: ThemePublic[]
-  inquiries: InquiryPublic[]
-  setInquiries: React.Dispatch<React.SetStateAction<InquiryPublic[]>>
 }
 
 const UpdateInquiry = ({
@@ -23,8 +22,6 @@ const UpdateInquiry = ({
   onClose,
   inquiry,
   themes,
-  inquiries,
-  setInquiries,
 }: UpdateInquiryProps) => {
   const fields: FieldDefinition<InquiryUpdate>[] = [
     {
@@ -84,15 +81,12 @@ const UpdateInquiry = ({
     },
   ]
 
-  const mutationFn = async (data: InquiryUpdate): Promise<void> => {
+  const mutationFn = (
+    data: InquiryUpdate,
+  ): CancelablePromise<InquiryPublic> => {
     if (!data.theme_id) data.theme_id = null
     if (!data.first_scheduled) data.first_scheduled = null
-    const inquiry = await InquiriesService.updateInquiry({ requestBody: data })
-    const inquires_updated = [...inquiries]
-    const index = inquires_updated.findIndex((i) => i.id === inquiry.id)
-    console.log({ index })
-    inquires_updated[index] = inquiry
-    setInquiries(inquires_updated)
+    return InquiriesService.updateInquiry({ requestBody: data })
   }
 
   return (

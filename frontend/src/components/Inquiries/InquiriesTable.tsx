@@ -1,67 +1,53 @@
 import { Box } from "@chakra-ui/react"
-import { useEffect, useState } from "react"
-import { ScheduleService } from "../../client"
-import type { InquiryPublic, SchedulePublic, ThemePublic } from "../../client"
+import { useMemo } from "react"
+import type {
+  InquiryPublic,
+  SchedulePublic,
+  ThemePublic,
+} from "../../client/models.ts"
 import { useInquiries } from "../../hooks/useInquiries.ts"
 import { DataTable } from "../Common/Table.tsx"
 import { columns } from "./InquiriesTable.columns.tsx"
 type InquiriesTableProps = {
   themes: ThemePublic[]
+  schedule: SchedulePublic | null | undefined
+  scheduledFilter: boolean
 }
 
-const InquiriesTable = ({ themes }: InquiriesTableProps) => {
-  const [schedule, setSchedule] = useState<SchedulePublic | null>(null)
-  useEffect(() => {
-    async function startGetSchedule() {
-      setSchedule(null)
-      const s = await ScheduleService.getSchedule()
-      if (!ignore) {
-        setSchedule(s)
-      }
-    }
-    let ignore = false
-    void startGetSchedule()
-    return () => {
-      ignore = true
-    }
-  }, [])
-
+const InquiriesTable = ({
+  themes,
+  schedule,
+  scheduledFilter,
+}: InquiriesTableProps) => {
   const { data: inquiries } = useInquiries()
-
-  const [sortedInquiries, setSortedInquiries] = useState<InquiryPublic[]>([])
-  useEffect(() => {
-    setSortedInquiries([])
-    if (inquiries?.data) {
-      inquiries?.data.sort((a: InquiryPublic, b: InquiryPublic) => {
+  const sortedInquiries = useMemo(() => {
+    return (inquiries?.data ?? [])
+      .sort((a: InquiryPublic, b: InquiryPublic) =>
+        (a.first_scheduled ?? "").localeCompare(b.first_scheduled ?? ""),
+      )
+      .sort((a: InquiryPublic, b: InquiryPublic) => {
         return (
           (schedule?.scheduled_inquiries?.indexOf(a.id) ?? -1) -
           (schedule?.scheduled_inquiries?.indexOf(b.id) ?? -1)
         )
       })
-      setSortedInquiries([...inquiries.data])
-    }
-  }, [schedule, inquiries?.data])
-
+      .filter(
+        (i) =>
+          (schedule?.scheduled_inquiries?.indexOf(i.id) ?? -1) >= 0 ===
+          scheduledFilter,
+      )
+  }, [schedule?.scheduled_inquiries, inquiries?.data, scheduledFilter])
   const handleRowClick = (inquiry: InquiryPublic) => {
     console.log("Row clicked:", inquiry)
   }
-
   return (
-    <>
-      <Box>
-        <DataTable
-          data={sortedInquiries}
-          columns={columns(
-            themes,
-            sortedInquiries ?? [],
-            setSortedInquiries,
-            schedule,
-            setSchedule,
-          )}
-          onRowClick={handleRowClick}
-        />
-      </Box>
-    </>
+    <Box>
+      <DataTable
+        data={sortedInquiries}
+        columns={columns(themes, schedule)}
+        onRowClick={handleRowClick}
+      />
+    </Box>
   )
 }
 

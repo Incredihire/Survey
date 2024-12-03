@@ -1,5 +1,11 @@
-import type { InquiryCreate, ThemePublic } from "../../client"
-import { InquiriesService } from "../../client"
+import { useQueryClient } from "@tanstack/react-query"
+import {
+  InquiriesService,
+  type InquiryCreate,
+  type SchedulePublic,
+  ScheduleService,
+  type ThemePublic,
+} from "../../client"
 import { isValidUnicode } from "../../utils/validation"
 import FormModal, { type FieldDefinition } from "../Common/FormModal"
 export const MIN_INQUIRY_LENGTH = 10
@@ -11,10 +17,24 @@ interface AddInquiryProps {
 }
 
 const AddInquiry =
-  (themes: ThemePublic[]) =>
+  (
+    themes: ThemePublic[],
+    schedule: SchedulePublic | null | undefined,
+    scheduledFilter: boolean,
+  ) =>
   // eslint-disable-next-line react/display-name
   ({ isOpen, onClose }: AddInquiryProps) => {
+    const queryClient = useQueryClient()
     const fields: FieldDefinition<InquiryCreate>[] = [
+      {
+        name: "first_scheduled",
+        label: "",
+        type: "input",
+        inputProps: {
+          hidden: true,
+          defaultValue: scheduledFilter ? new Date().toISOString() : undefined,
+        },
+      },
       {
         name: "text",
         label: "Inquiry Text",
@@ -52,11 +72,16 @@ const AddInquiry =
     const mutationFn = async (data: InquiryCreate): Promise<void> => {
       if (!data.theme_id) data.theme_id = null
       if (!data.first_scheduled) data.first_scheduled = null
-      await InquiriesService.createInquiry({
+      const inquiry = await InquiriesService.createInquiry({
         requestBody: data,
       })
+      if (scheduledFilter && schedule) {
+        await ScheduleService.updateScheduledInquiries({
+          requestBody: [...schedule.scheduled_inquiries, inquiry.id],
+        })
+        void queryClient.invalidateQueries({ queryKey: ["schedule"] })
+      }
     }
-
     return (
       <FormModal<InquiryCreate>
         isOpen={isOpen}

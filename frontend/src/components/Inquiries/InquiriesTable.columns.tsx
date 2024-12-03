@@ -14,10 +14,7 @@ const columnHelper: ColumnHelperType<InquiryPublic> =
 
 export function columns(
   themes: ThemePublic[],
-  inquiries: InquiryPublic[],
-  setInquiries: React.Dispatch<React.SetStateAction<InquiryPublic[]>>,
   schedule: SchedulePublic | null | undefined,
-  setSchedule: React.Dispatch<React.SetStateAction<SchedulePublic | null>>,
 ): ColumnDef<InquiryPublic, string>[] {
   return [
     columnHelper.display({
@@ -25,10 +22,7 @@ export function columns(
       cell: ({ row }) => (
         <>
           <AddScheduledInquiry
-            inquiries={inquiries}
-            setInquiries={setInquiries}
             schedule={schedule}
-            setSchedule={setSchedule}
             inquiry={row.original}
             themes={themes}
           />
