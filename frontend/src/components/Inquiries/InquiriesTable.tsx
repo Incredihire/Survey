@@ -40,10 +40,10 @@ const InquiriesTable = () => {
   }, [schedule?.scheduled_inquiries, inquiries])
 
   const scheduledInquiries = sortedInquiries.filter(
-    (i) => (schedule?.scheduled_inquiries?.indexOf(i.id) ?? -1) >= 0,
+    (i) => (schedule?.scheduled_inquiries.indexOf(i.id) ?? -1) >= 0,
   )
   const unscheduledInquiries = sortedInquiries.filter(
-    (i) => (schedule?.scheduled_inquiries?.indexOf(i.id) ?? -1) < 0,
+    (i) => (schedule?.scheduled_inquiries.indexOf(i.id) ?? -1) < 0,
   )
 
   const handleRowClick = (inquiry: InquiryPublic) => {
