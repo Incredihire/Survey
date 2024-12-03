@@ -37,15 +37,15 @@ const AddScheduledInquiry = ({
     await ScheduleService.updateScheduledInquiries({
       requestBody: [...scheduled_inquiries, inquiry.id],
     })
-    void queryClient.invalidateQueries({ queryKey: ["schedule"] })
-    return InquiriesService.updateInquiry({
+    await queryClient.invalidateQueries({ queryKey: ["schedule"] })
+    await InquiriesService.updateInquiry({
       requestBody: { ...inquiry, first_scheduled: new Date().toISOString() },
     })
   }
 
   const deleteInquiryMutation = useMutation({
-    mutationFn: () => {
-      return InquiriesService.deleteInquiry({
+    mutationFn: async () => {
+      await InquiriesService.deleteInquiry({
         requestBody: {
           id: inquiry.id,
           text: inquiry.text,
@@ -53,9 +53,7 @@ const AddScheduledInquiry = ({
           first_scheduled: inquiry.first_scheduled,
         },
       })
-    },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["inquiries"] })
+      await queryClient.invalidateQueries({ queryKey: ["inquiries"] })
       showToast("Success!", "Inquiry deleted", "success")
     },
     onError: (err: ApiError) => {
@@ -64,18 +62,16 @@ const AddScheduledInquiry = ({
   })
 
   const rankUpMutation = useMutation({
-    mutationFn: () => {
+    mutationFn: async () => {
       const scheduled_inquiries = schedule?.scheduled_inquiries ?? []
       const index = scheduled_inquiries.indexOf(inquiry.id)
       const scheduled_inquiry_id = scheduled_inquiries.splice(index, 1)[0]
       scheduled_inquiries.splice(index - 1, 0, scheduled_inquiry_id)
-      return ScheduleService.updateScheduledInquiries({
+      const data = await ScheduleService.updateScheduledInquiries({
         requestBody: scheduled_inquiries,
       })
-    },
-    onSuccess: (data) => {
-      void queryClient.setQueryData(["schedule"], data)
-      void queryClient.invalidateQueries({ queryKey: ["inquiries"] })
+      queryClient.setQueryData(["schedule"], data)
+      await queryClient.invalidateQueries({ queryKey: ["inquiries"] })
       showToast(
         "Success!",
         `"${inquiry.text}" moved to ${(data.scheduled_inquiries ?? []).indexOf(inquiry.id) + 1}`,
@@ -88,18 +84,16 @@ const AddScheduledInquiry = ({
   })
 
   const rankDownMutation = useMutation({
-    mutationFn: () => {
+    mutationFn: async () => {
       const scheduled_inquiries = schedule?.scheduled_inquiries ?? []
       const index = scheduled_inquiries.indexOf(inquiry.id)
       const scheduled_inquiry_id = scheduled_inquiries.splice(index, 1)[0]
       scheduled_inquiries.splice(index + 1, 0, scheduled_inquiry_id)
-      return ScheduleService.updateScheduledInquiries({
+      const data = await ScheduleService.updateScheduledInquiries({
         requestBody: scheduled_inquiries,
       })
-    },
-    onSuccess: (data) => {
-      void queryClient.setQueryData(["schedule"], data)
-      void queryClient.invalidateQueries({ queryKey: ["inquiries"] })
+      queryClient.setQueryData(["schedule"], data)
+      await queryClient.invalidateQueries({ queryKey: ["inquiries"] })
       showToast(
         "Success!",
         `"${inquiry.text}" moved to rank ${(data.scheduled_inquiries ?? []).indexOf(inquiry.id) + 1}`,
@@ -112,17 +106,15 @@ const AddScheduledInquiry = ({
   })
 
   const disableMutation = useMutation({
-    mutationFn: () => {
+    mutationFn: async () => {
       const scheduled_inquiries = schedule?.scheduled_inquiries ?? []
       const index = scheduled_inquiries.indexOf(inquiry.id)
       scheduled_inquiries.splice(index, 1)
-      return ScheduleService.updateScheduledInquiries({
+      const scheduled = await ScheduleService.updateScheduledInquiries({
         requestBody: scheduled_inquiries,
       })
-    },
-    onSuccess: (data) => {
-      void queryClient.setQueryData(["schedule"], data)
-      void queryClient.invalidateQueries({ queryKey: ["inquiries"] })
+      queryClient.setQueryData(["schedule"], scheduled)
+      await queryClient.invalidateQueries({ queryKey: ["inquiries"] })
       showToast("Success!", `"${inquiry.text}" disabled`, "success")
     },
     onError: (err: ApiError) => {
@@ -131,15 +123,13 @@ const AddScheduledInquiry = ({
   })
 
   const enableMutation = useMutation({
-    mutationFn: () => {
+    mutationFn: async () => {
       const scheduled_inquiries = schedule?.scheduled_inquiries ?? []
-      return ScheduleService.updateScheduledInquiries({
+      const data = await ScheduleService.updateScheduledInquiries({
         requestBody: scheduled_inquiries.concat(inquiry.id),
       })
-    },
-    onSuccess: (data) => {
-      void queryClient.setQueryData(["schedule"], data)
-      void queryClient.invalidateQueries({ queryKey: ["inquiries"] })
+      queryClient.setQueryData(["schedule"], data)
+      await queryClient.invalidateQueries({ queryKey: ["inquiries"] })
       showToast("Success!", `"${inquiry.text}" enabled`, "success")
     },
     onError: (err: ApiError) => {
