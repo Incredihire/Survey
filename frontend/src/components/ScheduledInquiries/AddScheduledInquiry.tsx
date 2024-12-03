@@ -141,13 +141,16 @@ const AddScheduledInquiry = ({
       const scheduled_inquiries = schedule?.scheduled_inquiries ?? []
       const index = scheduled_inquiries.indexOf(inquiry.id)
       scheduled_inquiries.splice(index, 1)
+      InquiriesService.updateInquiry({
+        requestBody: { ...inquiry, first_scheduled: null },
+      })
       return ScheduleService.updateScheduledInquiries({
         requestBody: scheduled_inquiries,
       })
     },
     onSuccess: (data) => {
       setSchedule(data)
-      showToast("Success!", `"${inquiry.text}" disabled`, "success")
+      showToast("Success!", `"${inquiry.text}" is unscheduled`, "success")
     },
     onError: (err: ApiError) => {
       handleError(err, showToast)
