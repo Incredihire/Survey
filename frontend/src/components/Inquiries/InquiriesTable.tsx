@@ -1,16 +1,18 @@
-import { Box } from "@chakra-ui/react"
+import { Box, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 import { ScheduleService } from "../../client"
 import type { InquiryPublic, SchedulePublic, ThemePublic } from "../../client"
 import { useInquiries } from "../../hooks/useInquiries.ts"
 import { DataTable } from "../Common/Table.tsx"
 import { columns } from "./InquiriesTable.columns.tsx"
+
 type InquiriesTableProps = {
   themes: ThemePublic[]
 }
 
 const InquiriesTable = ({ themes }: InquiriesTableProps) => {
   const [schedule, setSchedule] = useState<SchedulePublic | null>(null)
+
   useEffect(() => {
     async function startGetSchedule() {
       setSchedule(null)
@@ -29,38 +31,76 @@ const InquiriesTable = ({ themes }: InquiriesTableProps) => {
   const { data: inquiries } = useInquiries()
 
   const [sortedInquiries, setSortedInquiries] = useState<InquiryPublic[]>([])
+
   useEffect(() => {
-    setSortedInquiries([])
-    if (inquiries?.data) {
-      inquiries?.data.sort((a: InquiryPublic, b: InquiryPublic) => {
-        return (
-          (schedule?.scheduled_inquiries?.indexOf(a.id) ?? -1) -
-          (schedule?.scheduled_inquiries?.indexOf(b.id) ?? -1)
+    if (inquiries) {
+      const inquiriesList = inquiries.data
+        .filter(
+          (i) => (schedule?.scheduled_inquiries?.indexOf(i.id) ?? -1) >= -1,
         )
-      })
-      setSortedInquiries([...inquiries.data])
+        .sort((a: InquiryPublic, b: InquiryPublic) => {
+          return (
+            (schedule?.scheduled_inquiries?.indexOf(a.id) ?? -1) -
+            (schedule?.scheduled_inquiries?.indexOf(b.id) ?? -1)
+          )
+        })
+      setSortedInquiries([...inquiriesList])
     }
-  }, [schedule, inquiries?.data])
+  }, [schedule, inquiries])
 
   const handleRowClick = (inquiry: InquiryPublic) => {
     console.log("Row clicked:", inquiry)
   }
 
+  const scheduledInquiries = sortedInquiries.filter(
+    (i) => (schedule?.scheduled_inquiries?.indexOf(i.id) ?? -1) >= 0,
+  )
+  const unscheduledInquiries = sortedInquiries.filter(
+    (i) => (schedule?.scheduled_inquiries?.indexOf(i.id) ?? -1) < 0,
+  )
+
   return (
     <>
-      <Box>
-        <DataTable
-          data={sortedInquiries}
-          columns={columns(
-            themes,
-            sortedInquiries ?? [],
-            setSortedInquiries,
-            schedule,
-            setSchedule,
-          )}
-          onRowClick={handleRowClick}
-        />
-      </Box>
+      <Tabs>
+        <TabList>
+          <Tab>Scheduled</Tab>
+          <Tab>Unscheduled</Tab>
+        </TabList>
+
+        <TabPanels>
+          <TabPanel>
+            <Box>
+              <DataTable
+                data={scheduledInquiries}
+                columns={columns(
+                  themes,
+                  scheduledInquiries,
+                  setSortedInquiries,
+                  schedule,
+                  setSchedule,
+                )}
+                onRowClick={handleRowClick}
+              />
+            </Box>
+          </TabPanel>
+
+          <TabPanel>
+            <Box>
+              <DataTable
+                data={unscheduledInquiries}
+                columns={columns(
+                  themes,
+                  unscheduledInquiries,
+                  setSortedInquiries,
+                  schedule,
+                  setSchedule,
+                )}
+                onRowClick={handleRowClick}
+              />
+            </Box>
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
     </>
   )
 }
