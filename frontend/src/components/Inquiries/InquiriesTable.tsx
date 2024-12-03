@@ -27,13 +27,13 @@ const InquiriesTable = ({
       )
       .sort((a: InquiryPublic, b: InquiryPublic) => {
         return (
-          (schedule?.scheduled_inquiries?.indexOf(a.id) ?? -1) -
-          (schedule?.scheduled_inquiries?.indexOf(b.id) ?? -1)
+          (schedule?.scheduled_inquiries.indexOf(a.id) ?? -1) -
+          (schedule?.scheduled_inquiries.indexOf(b.id) ?? -1)
         )
       })
       .filter(
         (i) =>
-          (schedule?.scheduled_inquiries?.indexOf(i.id) ?? -1) >= 0 ===
+          (schedule?.scheduled_inquiries.indexOf(i.id) ?? -1) >= 0 ===
           scheduledFilter,
       )
   }, [schedule?.scheduled_inquiries, inquiries?.data, scheduledFilter])

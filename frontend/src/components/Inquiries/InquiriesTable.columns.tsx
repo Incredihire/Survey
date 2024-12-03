@@ -65,7 +65,7 @@ export function columns(
         const { original } = row
         let scheduled_at: Date | null = null
         const rank =
-          (schedule?.scheduled_inquiries?.indexOf(original.id) ?? -1) + 1
+          (schedule?.scheduled_inquiries.indexOf(original.id) ?? -1) + 1
         if (rank) {
           scheduled_at = parseDate(
             `${schedule?.schedule.startDate}·${schedule?.schedule.timesOfDay[0]}:${schedule?.schedule.timesOfDay[1]}·${schedule?.schedule.timesOfDay[2]}`,

@@ -61,9 +61,6 @@ const AddScheduledInquiry = ({
     onError: (err: ApiError) => {
       handleError(err, showToast)
     },
-    onSettled: () => {
-      void queryClient.invalidateQueries({ queryKey: ["inquiries"] })
-    },
   })
 
   const rankUpMutation = useMutation({

@@ -1,4 +1,3 @@
-import type { CancelablePromise } from "../../client"
 import type {
   InquiryPublic,
   InquiryUpdate,
@@ -81,12 +80,10 @@ const UpdateInquiry = ({
     },
   ]
 
-  const mutationFn = (
-    data: InquiryUpdate,
-  ): CancelablePromise<InquiryPublic> => {
+  const mutationFn = async (data: InquiryUpdate): Promise<void> => {
     if (!data.theme_id) data.theme_id = null
     if (!data.first_scheduled) data.first_scheduled = null
-    return InquiriesService.updateInquiry({ requestBody: data })
+    await InquiriesService.updateInquiry({ requestBody: data })
   }
 
   return (

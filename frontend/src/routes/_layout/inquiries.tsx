@@ -28,7 +28,7 @@ export const Route = createFileRoute("/_layout/inquiries")({
 export function Inquiries() {
   const { data: themes } = useThemes()
   const { data: schedule } = useSchedule()
-  const [scheduledFilter, setscheduledFilter] = useState(true)
+  const [scheduledFilter, setScheduledFilter] = useState(true)
   return (
     <Container maxW="full">
       <Heading size="lg" textAlign={{ base: "center", md: "left" }} pt={12}>
@@ -40,7 +40,9 @@ export function Inquiries() {
       />
       <Select
         defaultValue={scheduledFilter.toString()}
-        onChange={(event) => setscheduledFilter(event.target.value === "true")}
+        onChange={(event) => {
+          setScheduledFilter(event.target.value === "true")
+        }}
       >
         <option value={"true"}>Scheduled inquiries</option>
         <option value={"false"}>Unscheduled inquiries</option>
