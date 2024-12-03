@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react"
+import { Box, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react"
 import { useMemo } from "react"
 import type {
   InquiryPublic,
@@ -8,6 +8,7 @@ import type {
 import { useInquiries } from "../../hooks/useInquiries.ts"
 import { DataTable } from "../Common/Table.tsx"
 import { columns } from "./InquiriesTable.columns.tsx"
+
 type InquiriesTableProps = {
   themes: ThemePublic[]
   schedule: SchedulePublic | null | undefined
@@ -40,14 +41,45 @@ const InquiriesTable = ({
   const handleRowClick = (inquiry: InquiryPublic) => {
     console.log("Row clicked:", inquiry)
   }
+
+  const scheduledInquiries = sortedInquiries.filter(
+    (i) => (schedule?.scheduled_inquiries?.indexOf(i.id) ?? -1) >= 0,
+  )
+  const unscheduledInquiries = sortedInquiries.filter(
+    (i) => (schedule?.scheduled_inquiries?.indexOf(i.id) ?? -1) < 0,
+  )
+
   return (
-    <Box>
-      <DataTable
-        data={sortedInquiries}
-        columns={columns(themes, schedule)}
-        onRowClick={handleRowClick}
-      />
-    </Box>
+    <>
+      <Tabs>
+        <TabList>
+          <Tab>Scheduled</Tab>
+          <Tab>Unscheduled</Tab>
+        </TabList>
+
+        <TabPanels>
+          <TabPanel>
+            <Box>
+              <DataTable
+                data={scheduledInquiries}
+                columns={columns(themes, schedule)}
+                onRowClick={handleRowClick}
+              />
+            </Box>
+          </TabPanel>
+
+          <TabPanel>
+            <Box>
+              <DataTable
+                data={unscheduledInquiries}
+                columns={columns(themes, schedule)}
+                onRowClick={handleRowClick}
+              />
+            </Box>
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
+    </>
   )
 }
 
