@@ -40,7 +40,7 @@ resource "aws_subnet" "private_app" {
   vpc_id                  = aws_vpc.this.id
   cidr_block              = each.value.private_app_subnet_cidr
   availability_zone       = each.value.az_name
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
 
   tags = {
     Name = "private-app-subnet-${each.value.az_name}"
