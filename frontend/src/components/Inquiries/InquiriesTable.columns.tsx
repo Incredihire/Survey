@@ -14,10 +14,7 @@ const columnHelper: ColumnHelperType<InquiryPublic> =
 
 export function columns(
   themes: ThemePublic[],
-  inquiries: InquiryPublic[],
-  setInquiries: React.Dispatch<React.SetStateAction<InquiryPublic[]>>,
   schedule: SchedulePublic | null | undefined,
-  setSchedule: React.Dispatch<React.SetStateAction<SchedulePublic | null>>,
 ): ColumnDef<InquiryPublic, string>[] {
   return [
     columnHelper.display({
@@ -25,10 +22,7 @@ export function columns(
       cell: ({ row }) => (
         <>
           <AddScheduledInquiry
-            inquiries={inquiries}
-            setInquiries={setInquiries}
             schedule={schedule}
-            setSchedule={setSchedule}
             inquiry={row.original}
             themes={themes}
           />
@@ -71,7 +65,7 @@ export function columns(
         const { original } = row
         let scheduled_at: Date | null = null
         const rank =
-          (schedule?.scheduled_inquiries?.indexOf(original.id) ?? -1) + 1
+          (schedule?.scheduled_inquiries.indexOf(original.id) ?? -1) + 1
         if (rank) {
           scheduled_at = parseDate(
             `${schedule?.schedule.startDate}·${schedule?.schedule.timesOfDay[0]}:${schedule?.schedule.timesOfDay[1]}·${schedule?.schedule.timesOfDay[2]}`,

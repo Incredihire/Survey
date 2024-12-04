@@ -16,16 +16,35 @@ import {
   MAX_INQUIRY_LENGTH,
   MIN_INQUIRY_LENGTH,
 } from "../../src/components/Inquiries/AddInquiry"
+import { useInquiries } from "../../src/hooks/useInquiries.ts"
+import { useSchedule } from "../../src/hooks/useSchedule.ts"
+import { useThemes } from "../../src/hooks/useThemes.ts"
+jest.mock("../../src/hooks/useThemes")
+jest.mock("../../src/hooks/useSchedule")
+jest.mock("../../src/hooks/useInquiries")
+const mockUseThemes = useThemes as jest.Mock
+const mockUseSchedule = useSchedule as jest.Mock
+const mockUseInquiries = useInquiries as jest.Mock
+
+const singleSchedule = {
+  schedule: {
+    startDate: "2024-12-03",
+    endDate: "2025-01-02",
+    daysBetween: 1,
+    skipWeekends: false,
+    skipHolidays: false,
+    timesOfDay: ["08:00"],
+  },
+  id: 1,
+  scheduled_inquiries: [],
+}
+
+const emptyDataList = { data: [], count: 0 }
 
 const unicodeText =
   "Тенденция к взаимопомощи у человека имеет столь отдаленное происхождение и так глубоко переплетена со всей прошлой эволюцией человеческого рода, что она сохранилась у человечества вплоть до настоящего времени, несмотря на все превратности истории."
 const nonUnicodeText =
   "\uD800-\uDBFF\uD800-\uDBFF\uD800-\uDBFF\uD800-\uDBFF\uD800-\uDBFF\uD800-\uDBFF\uD800-\uDBFF\uD800-\uDBFF\uD800-\uDBFF"
-
-jest.mock("../../src/components/Inquiries/InquiriesTable", () => ({
-  __esModule: true,
-  default: () => <div />,
-}))
 
 jest.mock("@tanstack/react-query", () => ({
   ...jest.requireActual("@tanstack/react-query"),
@@ -36,14 +55,17 @@ jest.mock("@tanstack/react-query", () => ({
 }))
 
 const queryClient = new QueryClient()
-describe("Add Inquiry", () => {
+describe("Add Scheduled", () => {
   beforeEach(async () => {
+    mockUseThemes.mockReturnValue({ data: emptyDataList, isLoading: false })
+    mockUseSchedule.mockReturnValue({ data: singleSchedule, isLoading: false })
+    mockUseInquiries.mockReturnValue({ data: emptyDataList, isLoading: false })
     render(
       <QueryClientProvider client={queryClient}>
         <Inquiries />
       </QueryClientProvider>,
     )
-    await userEvent.click(screen.getByText("Add Inquiry"))
+    await userEvent.click(await screen.getByText("Add Scheduled"))
   })
 
   it("should display add modal when user presses Add Inquiry button", async () => {

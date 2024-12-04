@@ -1,67 +1,119 @@
-import { Box } from "@chakra-ui/react"
-import { useEffect, useState } from "react"
-import { ScheduleService } from "../../client"
-import type { InquiryPublic, SchedulePublic, ThemePublic } from "../../client"
+import {
+  Box,
+  Button,
+  Icon,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  useDisclosure,
+} from "@chakra-ui/react"
+import { useMemo } from "react"
+import { FaPlus } from "react-icons/fa"
+import type { InquiryPublic } from "../../client"
 import { useInquiries } from "../../hooks/useInquiries.ts"
+import { useSchedule } from "../../hooks/useSchedule.ts"
+import { useThemes } from "../../hooks/useThemes.ts"
 import { DataTable } from "../Common/Table.tsx"
+import AddInquiry from "./AddInquiry.tsx"
 import { columns } from "./InquiriesTable.columns.tsx"
-type InquiriesTableProps = {
-  themes: ThemePublic[]
-}
 
-const InquiriesTable = ({ themes }: InquiriesTableProps) => {
-  const [schedule, setSchedule] = useState<SchedulePublic | null>(null)
-  useEffect(() => {
-    async function startGetSchedule() {
-      setSchedule(null)
-      const s = await ScheduleService.getSchedule()
-      if (!ignore) {
-        setSchedule(s)
-      }
-    }
-    let ignore = false
-    void startGetSchedule()
-    return () => {
-      ignore = true
-    }
-  }, [])
+const InquiriesTable = () => {
+  const { data: themesData } = useThemes()
+  const themes = themesData?.data ?? []
+  const { data: schedule } = useSchedule()
+  const { data: inquiriesData } = useInquiries()
+  const inquiries = inquiriesData?.data ?? []
 
-  const { data: inquiries } = useInquiries()
-
-  const [sortedInquiries, setSortedInquiries] = useState<InquiryPublic[]>([])
-  useEffect(() => {
-    setSortedInquiries([])
-    if (inquiries?.data) {
-      inquiries?.data.sort((a: InquiryPublic, b: InquiryPublic) => {
+  const sortedInquiries: InquiryPublic[] = useMemo(() => {
+    return inquiries
+      .sort((a: InquiryPublic, b: InquiryPublic) =>
+        (a.first_scheduled ?? "").localeCompare(b.first_scheduled ?? ""),
+      )
+      .sort((a: InquiryPublic, b: InquiryPublic) => {
         return (
-          (schedule?.scheduled_inquiries?.indexOf(a.id) ?? -1) -
-          (schedule?.scheduled_inquiries?.indexOf(b.id) ?? -1)
+          (schedule?.scheduled_inquiries.indexOf(a.id) ?? -1) -
+          (schedule?.scheduled_inquiries.indexOf(b.id) ?? -1)
         )
       })
-      setSortedInquiries([...inquiries.data])
-    }
-  }, [schedule, inquiries?.data])
+  }, [schedule?.scheduled_inquiries, inquiries])
+
+  const scheduledInquiries = sortedInquiries.filter(
+    (i) => (schedule?.scheduled_inquiries.indexOf(i.id) ?? -1) >= 0,
+  )
+  const unscheduledInquiries = sortedInquiries.filter(
+    (i) => (schedule?.scheduled_inquiries.indexOf(i.id) ?? -1) < 0,
+  )
 
   const handleRowClick = (inquiry: InquiryPublic) => {
     console.log("Row clicked:", inquiry)
   }
 
+  const addScheduledModal = useDisclosure()
+  const addUnscheduledModal = useDisclosure()
+  //const addInquiry = AddInquiry(themes, schedule, true)()
   return (
-    <>
-      <Box>
-        <DataTable
-          data={sortedInquiries}
-          columns={columns(
-            themes,
-            sortedInquiries ?? [],
-            setSortedInquiries,
-            schedule,
-            setSchedule,
-          )}
-          onRowClick={handleRowClick}
-        />
-      </Box>
-    </>
+    <Tabs>
+      <TabList>
+        <Tab defaultChecked={true}>Scheduled</Tab>
+        <Tab>Unscheduled</Tab>
+      </TabList>
+
+      <TabPanels>
+        <TabPanel>
+          <AddInquiry
+            isOpen={addScheduledModal.isOpen}
+            onClose={addScheduledModal.onClose}
+            schedule={schedule}
+            themes={themes}
+            scheduledFilter={true}
+          />
+          <Button
+            variant="primary"
+            gap={1}
+            fontSize={{ base: "sm", md: "inherit" }}
+            onClick={addScheduledModal.onOpen}
+            data-testid={"add-scheduled-button"}
+          >
+            <Icon as={FaPlus} /> Add Scheduled
+          </Button>
+          <Box>
+            <DataTable
+              data={scheduledInquiries}
+              columns={columns(themes, schedule)}
+              onRowClick={handleRowClick}
+            />
+          </Box>
+        </TabPanel>
+
+        <TabPanel>
+          <AddInquiry
+            isOpen={addUnscheduledModal.isOpen}
+            onClose={addUnscheduledModal.onClose}
+            schedule={schedule}
+            themes={themes}
+            scheduledFilter={false}
+          />
+          <Button
+            variant="primary"
+            gap={1}
+            fontSize={{ base: "sm", md: "inherit" }}
+            onClick={addUnscheduledModal.onOpen}
+            data-testid={"add-unscheduled-button"}
+          >
+            <Icon as={FaPlus} /> Add Unscheduled
+          </Button>
+          <Box>
+            <DataTable
+              data={unscheduledInquiries}
+              columns={columns(themes, schedule)}
+              onRowClick={handleRowClick}
+            />
+          </Box>
+        </TabPanel>
+      </TabPanels>
+    </Tabs>
   )
 }
 
