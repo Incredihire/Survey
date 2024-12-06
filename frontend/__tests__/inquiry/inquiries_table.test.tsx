@@ -306,7 +306,9 @@ describe("Inquiries Table", () => {
       text: "Why do birds suddenly appear every time you are near?",
     })
     fireEvent.click(screen.getByTestId("submit-update-inquiry"))
-    await waitFor(() => expect(updateInquiry).toHaveBeenCalled())
+    await waitFor(() => {
+      expect(updateInquiry).toHaveBeenCalled()
+    })
   })
 
   it("should show modal when add to schedule clicked and update scheduled inquiries when continue button clicked", async () => {
@@ -335,7 +337,9 @@ describe("Inquiries Table", () => {
       })
     const continueButton = screen.getByText("Continue")
     fireEvent.click(continueButton)
-    await waitFor(() => expect(updateScheduledInquiries).toHaveBeenCalled())
+    await waitFor(() => {
+      expect(updateScheduledInquiries).toHaveBeenCalled()
+    })
   })
 
   it("should update scheduled inquiries when remove from schedule clicked", async () => {
@@ -372,7 +376,9 @@ describe("Inquiries Table", () => {
     expect(deleteInquiryButton).toBeVisible()
     fireEvent.click(deleteInquiryButton)
 
-    await waitFor(() => expect(deleteInquiry).toHaveBeenCalled())
+    await waitFor(() => {
+      expect(deleteInquiry).toHaveBeenCalled()
+    })
   })
 
   it("should fail inquiry when delete button clicked", async () => {
@@ -393,7 +399,9 @@ describe("Inquiries Table", () => {
     expect(deleteInquiryButton).toBeVisible()
     fireEvent.click(deleteInquiryButton)
 
-    await waitFor(() => expect(deleteInquiryRejected).toHaveBeenCalled())
+    await waitFor(() => {
+      expect(deleteInquiryRejected).toHaveBeenCalled()
+    })
   })
 
   it("should update scheduled inquiries when rank up button clicked", async () => {

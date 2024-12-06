@@ -83,7 +83,9 @@ describe("Add Inquiry", () => {
       theme: null,
     })
     await userEvent.click(screen.getByTestId("submit-add-inquiry"))
-    await waitFor(() => expect(createInquiry).toHaveBeenCalled())
+    await waitFor(() => {
+      expect(createInquiry).toHaveBeenCalled()
+    })
   })
 
   it("should display required error when no string is entered", async () => {

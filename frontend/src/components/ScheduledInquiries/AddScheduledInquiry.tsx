@@ -189,7 +189,11 @@ const AddScheduledInquiry = ({
         </Flex>
       )}
       {rank > 0 && (
-        <Button onClick={() => void disableMutation.mutate()}>
+        <Button
+          onClick={() => {
+            disableMutation.mutate()
+          }}
+        >
           Remove from Schedule
         </Button>
       )}
