@@ -254,9 +254,9 @@ describe("Inquiries Table", () => {
 
     // Validate that each date is greater than the previous date (oldest to newest)
     for (let i = 1; i < inquiryDates.length; i++) {
-      expect(inquiryDates[i].getTime()).toBeGreaterThan(
-        inquiryDates[i - 1].getTime(),
-      )
+      const a = inquiryDates[i]
+      const b = inquiryDates[i - 1]
+      expect(a.toBeGreaterThan(b))
     }
   })
 
@@ -356,7 +356,9 @@ describe("Inquiries Table", () => {
       })
     const removeFromScheduleButton = screen.getByText("Remove from Schedule")
     fireEvent.click(removeFromScheduleButton)
-    await waitFor(() => expect(updateScheduledInquiries).toHaveBeenCalled())
+    await waitFor(() => {
+      expect(updateScheduledInquiries).toHaveBeenCalled()
+    })
   })
 
   it("should remove inquiry when delete button clicked", async () => {
