@@ -1,4 +1,4 @@
-import { Button, Flex, Switch, Text } from "@chakra-ui/react"
+import { Button, Flex } from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
 import { FiChevronDown, FiChevronUp, FiEdit2, FiTrash } from "react-icons/fi"
@@ -46,12 +46,7 @@ const AddScheduledInquiry = ({
   const deleteInquiryMutation = useMutation({
     mutationFn: async () => {
       await InquiriesService.deleteInquiry({
-        requestBody: {
-          id: inquiry.id,
-          text: inquiry.text,
-          theme_id: inquiry.theme_id,
-          first_scheduled: inquiry.first_scheduled,
-        },
+        inquiryId: inquiry.id,
       })
       await queryClient.invalidateQueries({ queryKey: ["inquiries"] })
       showToast("Success!", "Inquiry deleted", "success")
@@ -115,22 +110,11 @@ const AddScheduledInquiry = ({
       })
       queryClient.setQueryData(["schedule"], scheduled)
       await queryClient.invalidateQueries({ queryKey: ["inquiries"] })
-      showToast("Success!", `"${inquiry.text}" disabled`, "success")
-    },
-    onError: (err: ApiError) => {
-      handleError(err, showToast)
-    },
-  })
-
-  const enableMutation = useMutation({
-    mutationFn: async () => {
-      const scheduled_inquiries = schedule?.scheduled_inquiries ?? []
-      const data = await ScheduleService.updateScheduledInquiries({
-        requestBody: scheduled_inquiries.concat(inquiry.id),
-      })
-      queryClient.setQueryData(["schedule"], data)
-      await queryClient.invalidateQueries({ queryKey: ["inquiries"] })
-      showToast("Success!", `"${inquiry.text}" enabled`, "success")
+      showToast(
+        "Success!",
+        `Removed "${inquiry.text}" from schedule`,
+        "success",
+      )
     },
     onError: (err: ApiError) => {
       handleError(err, showToast)
@@ -153,6 +137,7 @@ const AddScheduledInquiry = ({
     <Flex flexDirection={"row"} alignItems={"center"} gap={1}>
       {!inquiry.first_scheduled && (
         <Button
+          data-testid={"delete-inquiry-button"}
           onClick={() => {
             deleteInquiryMutation.mutate()
           }}
@@ -167,51 +152,48 @@ const AddScheduledInquiry = ({
         themes={themes}
       />
       {!inquiry.first_scheduled && (
-        <Button onClick={openUpdateModal}>
+        <Button data-testid={"edit-inquiry-button"} onClick={openUpdateModal}>
           <FiEdit2 />
         </Button>
       )}
       {inquiry.first_scheduled && rank > 0 && (
         <Flex flexDirection={"column"} flexWrap={"nowrap"}>
-          <Button
-            className={"btn-rank-up"}
-            isDisabled={rank <= 1}
-            onClick={() => {
-              rankUpMutation.mutate()
-            }}
-          >
-            <FiChevronUp />
-          </Button>
-          <Button
-            className={"btn-rank-down"}
-            isDisabled={rank >= scheduled_inquiries.length}
-            onClick={() => {
-              rankDownMutation.mutate()
-            }}
-          >
-            <FiChevronDown />
-          </Button>
+          {rank > 1 ? (
+            <Button
+              data-testid={"rank-up-inquiry-button"}
+              className={"btn-rank-up"}
+              isDisabled={rank <= 1}
+              onClick={() => {
+                rankUpMutation.mutate()
+              }}
+            >
+              <FiChevronUp />
+            </Button>
+          ) : (
+            <div />
+          )}
+          {rank < scheduled_inquiries.length ? (
+            <Button
+              className={"btn-rank-down"}
+              data-testid={"rank-down-inquiry-button"}
+              isDisabled={rank >= scheduled_inquiries.length}
+              onClick={() => {
+                rankDownMutation.mutate()
+              }}
+            >
+              <FiChevronDown />
+            </Button>
+          ) : (
+            <div />
+          )}
         </Flex>
       )}
-      {inquiry.first_scheduled && (
-        <>
-          <Switch
-            defaultChecked={!!rank}
-            onChange={(event) => {
-              if (event.target.checked) {
-                enableMutation.mutate()
-              } else {
-                disableMutation.mutate()
-              }
-            }}
-          />
-          {!!rank && <Text>Scheduled</Text>}
-          {!rank && <Text className="inactive-text">Scheduled</Text>}
-        </>
+      {rank > 0 && (
+        <Button onClick={() => void disableMutation.mutate()}>
+          Remove from Schedule
+        </Button>
       )}
-      {!inquiry.first_scheduled && (
-        <Button onClick={openModal}>Add to Schedule</Button>
-      )}
+      {rank === 0 && <Button onClick={openModal}>Add to Schedule</Button>}
 
       <FormModal
         isOpen={isModalOpen}
