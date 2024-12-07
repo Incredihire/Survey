@@ -9,7 +9,6 @@ import {
 import InquiriesTable from "../../src/components/Inquiries/InquiriesTable"
 import "@testing-library/jest-dom"
 import dayjs from "dayjs"
-import { escapeUTF8 } from "entities"
 import type { InquiryPublic } from "../../src/client"
 import {
   InquiriesService,
@@ -248,16 +247,17 @@ describe("Inquiries Table", () => {
       }
 
       const dateCell = cells[scheduledIndex]
-      const dateText = escapeUTF8(dateCell.textContent?.trim() ?? "")
+      const dateText = dateCell.textContent?.trim() ?? ""
       return new Date(dateText)
     })
 
     // Validate that each date is greater than the previous date (oldest to newest)
-    for (let i = 1; i < inquiryDates.length; i++) {
-      const a = inquiryDates[i].getTime()
-      const b = inquiryDates[i - 1].getTime()
-      expect(a).toBeGreaterThan(b)
-    }
+    expect(
+      inquiryDates.every(
+        (value, index) =>
+          index === 0 || value.getTime() > inquiryDates[index - 1].getTime(),
+      ),
+    ).toEqual(true)
   })
 
   it("should log the inquiry details on console when clicked.", () => {
