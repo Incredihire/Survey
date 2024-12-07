@@ -9,6 +9,7 @@ import {
 import InquiriesTable from "../../src/components/Inquiries/InquiriesTable"
 import "@testing-library/jest-dom"
 import dayjs from "dayjs"
+import { escapeUTF8 } from "entities"
 import type { InquiryPublic } from "../../src/client"
 import {
   InquiriesService,
@@ -248,7 +249,7 @@ describe("Inquiries Table", () => {
 
       // eslint-disable-next-line security/detect-object-injection
       const dateCell = cells[scheduledIndex]
-      const dateText = dateCell.textContent?.trim() ?? ""
+      const dateText = escapeUTF8(dateCell.textContent?.trim() ?? "")
       return new Date(dateText)
     })
 
@@ -423,7 +424,9 @@ describe("Inquiries Table", () => {
     expect(rankUpInquiryButton).toBeVisible()
     fireEvent.click(rankUpInquiryButton)
 
-    await waitFor(() => expect(updateScheduledInquiries).toHaveBeenCalled())
+    await waitFor(() => {
+      expect(updateScheduledInquiries).toHaveBeenCalled()
+    })
   })
 
   it("should update scheduled inquiries when rank down button clicked", async () => {
