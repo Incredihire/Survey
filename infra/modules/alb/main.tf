@@ -1,4 +1,4 @@
-## create security group for alb
+# create security group for alb
 resource "aws_security_group" "load_balancer" {
   vpc_id = var.vpc_id
   name   = "${var.project_name}-${var.app_name}-alb-sg"
