@@ -12,50 +12,52 @@
         ],
         "essential": true,
         "environment": [
-                {
-                    "name": "FIRST_SUPERUSER_PASSWORD",
-                    "value": "changethis"
-                },
-                {
-                    "name": "POSTGRES_USER",
-                    "value": "root_user"
-                },
-                {
-                    "name": "DOMAIN",
-                    "value": "backend.survey"
-                },
-                {
-                    "name": "ENVIRONMENT",
-                    "value": "staging"
-                },
-                {
-                    "name": "POSTGRES_PASSWORD",
-                    "valueFrom": " arn:aws:secretsmanager:us-west-2:913524926070:secret:staging/survey/rds-6cId0d:password"
-                },
-                {
-                    "name": "POSTGRES_PORT",
-                    "value": "5432"
-                },
-                {
-                    "name": "SECRET_KEY",
-                    "value": "d41d8cd98f00b204e9800998ecf8427e"
-                },
-                {
-                    "name": "POSTGRES_DB",
-                    "value": "postgres"
-                },
-                {
-                    "name": "FIRST_SUPERUSER",
-                    "value": "admin@example.com"
-                },
-                {
-                    "name": "POSTGRES_SERVER",
-                    "value": "survey-aws-database.cd00w0smo1rb.us-west-2.rds.amazonaws.com"
-                },
-                {
-                    "name": "PROJECT_NAME",
-                    "value": "Survey"
-                }
+            {
+                "name": "FIRST_SUPERUSER_PASSWORD",
+                "value": "changethis"
+            },
+            {
+                "name": "POSTGRES_USER",
+                "value": "root_user"
+            },
+            {
+                "name": "DOMAIN",
+                "value": "backend.survey"
+            },
+            {
+                "name": "ENVIRONMENT",
+                "value": "staging"
+            },
+            {
+                "name": "POSTGRES_PORT",
+                "value": "5432"
+            },
+            {
+                "name": "SECRET_KEY",
+                "value": "d41d8cd98f00b204e9800998ecf8427e"
+            },
+            {
+                "name": "POSTGRES_DB",
+                "value": "postgres"
+            },
+            {
+                "name": "FIRST_SUPERUSER",
+                "value": "admin@example.com"
+            },
+            {
+                "name": "POSTGRES_SERVER",
+                "value": "survey-aws-database.cd00w0smo1rb.us-west-2.rds.amazonaws.com"
+            },
+            {
+                "name": "PROJECT_NAME",
+                "value": "Survey"
+            }
+        ],
+        "secrets": [
+            {
+                "name": "POSTGRES_PASSWORD",
+                "valueFrom": "arn:aws:secretsmanager:us-west-2:913524926070:secret:staging/survey/rds-6cId0d:password"
+            }
         ],
         "logConfiguration": {
             "logDriver": "awslogs",
