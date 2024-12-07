@@ -11,6 +11,7 @@ resource "aws_security_group" "load_balancer" {
     ipv6_cidr_blocks = ["::/0"]
   }
 
+
   ingress {
     from_port        = 443
     to_port          = 443
@@ -18,6 +19,7 @@ resource "aws_security_group" "load_balancer" {
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
+
 
   egress {
     from_port        = 0
@@ -34,6 +36,7 @@ resource "aws_security_group" "load_balancer" {
 
 # Create alb
 resource "aws_lb" "alb" {
+
   name               = "${var.project_name}-${var.app_name}-alb"
   internal           = false
   load_balancer_type = "application"
@@ -49,6 +52,7 @@ resource "aws_alb_listener" "http" {
   load_balancer_arn = aws_lb.alb.arn
   port              = "80"
   protocol          = "HTTP"
+
 default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.this.arn
@@ -58,6 +62,22 @@ default_action {
 
 resource "aws_lb_target_group" "this" {
   name        = "${var.project_name}-${var.app_name}-tg"
+
+  default_action {
+    type = "redirect"
+
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+}
+
+
+resource "aws_lb_target_group" "this" {
+  name        = "${var.project_name}-tg"
+
   port        = 80
   protocol    = "HTTP"
   target_type = "ip"
@@ -66,6 +86,7 @@ resource "aws_lb_target_group" "this" {
   health_check {
     healthy_threshold   = "3"
     unhealthy_threshold = "3"
+
     port                = "80"
     interval            = "10"
     protocol            = "HTTP"
@@ -80,6 +101,7 @@ resource "aws_lb_target_group" "this" {
 
   tags = {
     Name = "${var.project_name}-${var.app_name}-tg"
+
   }
 }
 
@@ -94,5 +116,6 @@ resource "aws_lb_listener_rule" "this" {
     }
   }
   listener_arn = aws_alb_listener.http.arn
+
   priority     = "100"
 }

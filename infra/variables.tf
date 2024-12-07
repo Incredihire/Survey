@@ -45,7 +45,9 @@ variable "vpc_data" {
 variable "root_domain" {
   description = "Root domain for the application"
   type        = string
-  default     = "surveyihire.com"
+
+  default     = "survey.com"
+
 }
 
 variable "app_subdomain" {
@@ -67,10 +69,9 @@ variable "app_hosted_zone_name" {
 }
 
 
+
 variable "image_tag" {
   description = "The tag to fetch for the image from the repository"
   type        = string
   default     = "latest"
 }
-
-

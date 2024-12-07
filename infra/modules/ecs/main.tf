@@ -1,8 +1,10 @@
 resource "aws_ecs_cluster" "this" {
+
   name = "ecs-${var.project_name}"
 
   tags = {
     Name = "ecs-${var.project_name}"
+
   }
 }
 
@@ -17,24 +19,27 @@ resource "aws_ecs_cluster_capacity_providers" "this" {
 }
 
 resource "aws_ecs_task_definition" "this" {
+
   family = "${var.project_name}-${var.app_name}-ecs-task_definition"
   container_definitions    = file("${path.module}/${var.project_name}-${var.app_name}-task-definition.json")
   task_role_arn            = var.ecs_task_execution_role_arn
   execution_role_arn       = var.ecs_task_execution_role_arn
-
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = "512"
   memory                   = "1024"
- 
 
   tags = {
     Name = "${var.project_name}-${var.app_name}-ecs-task_definition"
+
   }
 }
 
 resource "aws_cloudwatch_log_group" "this" {
   name = "${var.project_name}-${var.app_name}-logs"
+
+  retention_in_days = 30
+
 
   tags = {
     Name = "${var.project_name}-${var.app_name}-logs"
@@ -46,7 +51,10 @@ data "aws_ecs_task_definition" "main" {
 }
 
 resource "aws_ecs_service" "this" {
+
   name                 = "${var.project_name}-${var.app_name}-ecs-service"
+
+
   cluster              = aws_ecs_cluster.this.id
   task_definition      = "${aws_ecs_task_definition.this.family}:${max(aws_ecs_task_definition.this.revision, data.aws_ecs_task_definition.main.revision)}"
   scheduling_strategy  = "REPLICA"
@@ -63,8 +71,10 @@ resource "aws_ecs_service" "this" {
 
   load_balancer {
     target_group_arn = var.target_group_arn
+
     container_name   = "${var.project_name}-${var.app_name}-container"
     container_port   = 80
+
   }
 
   capacity_provider_strategy {
