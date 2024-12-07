@@ -67,7 +67,7 @@ resource "aws_lb_target_group" "this" {
   health_check {
     healthy_threshold   = "3"
     unhealthy_threshold = "3"
-    port                = "80"
+    port                = "traffic-port"
     interval            = "10"
     protocol            = "HTTP"
     matcher             = "200"
