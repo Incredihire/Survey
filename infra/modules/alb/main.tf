@@ -12,6 +12,15 @@ resource "aws_security_group" "load_balancer" {
   }
 
 
+  ingress {
+    from_port        = 443
+    to_port          = 443
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+
   egress {
     from_port        = 0
     to_port          = 0
@@ -27,14 +36,15 @@ resource "aws_security_group" "load_balancer" {
 
 # Create alb
 resource "aws_lb" "alb" {
-  name               = "${var.app_name}-alb"
+
+  name               = "${var.project_name}-${var.app_name}-alb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.load_balancer.id]
   subnets            = [for subnet in var.public_subnets : subnet.id]
 
   tags = {
-    Name = "${var.app_name}-alb"
+    Name = "${var.project_name}-${var.app_name}-alb"
   }
 }
 
@@ -42,6 +52,17 @@ resource "aws_alb_listener" "http" {
   load_balancer_arn = aws_lb.alb.arn
   port              = "80"
   protocol          = "HTTP"
+
+default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.this.arn
+  }
+
+}
+
+resource "aws_lb_target_group" "this" {
+  name        = "${var.project_name}-${var.app_name}-tg"
+
   default_action {
     type = "redirect"
 
@@ -56,6 +77,7 @@ resource "aws_alb_listener" "http" {
 
 resource "aws_lb_target_group" "this" {
   name        = "${var.project_name}-tg"
+
   port        = 80
   protocol    = "HTTP"
   target_type = "ip"
@@ -64,7 +86,8 @@ resource "aws_lb_target_group" "this" {
   health_check {
     healthy_threshold   = "3"
     unhealthy_threshold = "3"
-    port                = "3000"
+
+    port                = "80"
     interval            = "10"
     protocol            = "HTTP"
     matcher             = "200"
@@ -77,7 +100,8 @@ resource "aws_lb_target_group" "this" {
   ]
 
   tags = {
-    Name = "${var.project_name}-lb-tg"
+    Name = "${var.project_name}-${var.app_name}-tg"
+
   }
 }
 
@@ -91,6 +115,7 @@ resource "aws_lb_listener_rule" "this" {
       values = ["/*"]
     }
   }
-  listener_arn = aws_alb_listener.https.arn
+  listener_arn = aws_alb_listener.http.arn
+
   priority     = "100"
 }

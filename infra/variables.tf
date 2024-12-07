@@ -45,7 +45,9 @@ variable "vpc_data" {
 variable "root_domain" {
   description = "Root domain for the application"
   type        = string
+
   default     = "survey.com"
+
 }
 
 variable "app_subdomain" {
@@ -66,11 +68,7 @@ variable "app_hosted_zone_name" {
   default     = "survey"
 }
 
-variable "image_path" {
-  description = "Path to ECR"
-  type        = string
-  default     = "{AWS-accountID}.dkr.ecr.{region}.amazonaws.com/incredihire"
-}
+
 
 variable "image_tag" {
   description = "The tag to fetch for the image from the repository"
