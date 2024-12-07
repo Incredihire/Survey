@@ -247,7 +247,6 @@ describe("Inquiries Table", () => {
         )
       }
 
-      // eslint-disable-next-line security/detect-object-injection
       const dateCell = cells[scheduledIndex]
       const dateText = escapeUTF8(dateCell.textContent?.trim() ?? "")
       return new Date(dateText)
@@ -446,6 +445,8 @@ describe("Inquiries Table", () => {
     expect(rankDownInquiryButton).toBeVisible()
     fireEvent.click(rankDownInquiryButton)
 
-    await waitFor(() => expect(updateScheduledInquiries).toHaveBeenCalled())
+    await waitFor(() => {
+      expect(updateScheduledInquiries).toHaveBeenCalled()
+    })
   })
 })
