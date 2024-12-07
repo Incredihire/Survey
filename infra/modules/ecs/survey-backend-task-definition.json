@@ -30,7 +30,7 @@
                 },
                 {
                     "name": "POSTGRES_PASSWORD",
-                    "value": "77c340214e684859666941cc517cdadc"
+                    "valueFrom": " arn:aws:secretsmanager:us-west-2:913524926070:secret:staging/survey/rds-6cId0d:password"
                 },
                 {
                     "name": "POSTGRES_PORT",
