@@ -4,6 +4,13 @@ variable "region" {
   default     = "us-west-2"
 }
 
+variable "AWS-accountID" {
+  description = "The default AWS region to use for provisioning infrastructure"
+  type        = string
+  default     = "913524926070"
+}
+
+
 variable "project_name" {
   description = "The name of the project used for tagging resources"
   type        = string
@@ -51,7 +58,6 @@ variable "app_name" {
   type        = string
   default     = "backend"
 }
-
 
 
 

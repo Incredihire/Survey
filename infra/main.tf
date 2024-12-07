@@ -28,7 +28,7 @@ module "iam" {
 
 
 
-##BACKEND
+##BACKEND### 
 # Create application load balancer
 module "alb-backend" {
   source              = "./modules/alb"
@@ -49,13 +49,14 @@ module "ecs-backend" {
   load_balancer_security_group_id = module.alb-backend.alb_security_group_id
   target_group_arn                = module.alb-backend.target_group_arn
   ecs_task_execution_role_arn     = module.iam.ecs_task_execution_role_arn
-  image_path                      =  "913524926070.dkr.ecr.us-west-2.amazonaws.com/survey_backend"
+  #image_path                      =  "913524926070.dkr.ecr.us-west-2.amazonaws.com/survey_backend"
+    image_path                      = "{var.AWS-accountID}.dkr.ecr.{var.region}.amazonaws.com/survey_backend"
   image_tag                       = var.image_tag
 }
 
 
 
-##FRONTEND
+##FRONTEND### 
 # Create application load balancer
 module "alb-frontend" {
   source              = "./modules/alb"
@@ -76,7 +77,8 @@ module "ecs-frontend" {
   load_balancer_security_group_id = module.alb-frontend.alb_security_group_id
   target_group_arn                = module.alb-frontend.target_group_arn
   ecs_task_execution_role_arn     = module.iam.ecs_task_execution_role_arn
-  image_path                      =  "913524926070.dkr.ecr.us-west-2.amazonaws.com/survey_frontend"
+  #image_path                      =  "913524926070.dkr.ecr.us-west-2.amazonaws.com/survey_frontend"
+  image_path                      = "{var.AWS-accountID}.dkr.ecr.{var.region}.amazonaws.com/survey_frontend"
   image_tag                       = var.image_tag
 }
 
