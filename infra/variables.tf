@@ -42,19 +42,9 @@ variable "vpc_data" {
   }
 }
 
-variable "root_domain" {
-  description = "Root domain for the application"
-  type        = string
 
-  default     = "survey.com"
 
-}
 
-variable "app_subdomain" {
-  description = "Sub-domain for the application"
-  type        = string
-  default     = "stg"
-}
 
 variable "app_name" {
   description = "Name of the application used for tagging resources"
@@ -62,11 +52,7 @@ variable "app_name" {
   default     = "backend"
 }
 
-variable "app_hosted_zone_name" {
-  description = "Name of the hosted zone for the application dns records"
-  type        = string
-  default     = "survey"
-}
+
 
 
 
