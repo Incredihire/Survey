@@ -254,9 +254,9 @@ describe("Inquiries Table", () => {
 
     // Validate that each date is greater than the previous date (oldest to newest)
     for (let i = 1; i < inquiryDates.length; i++) {
-      const a = inquiryDates[i]
-      const b = inquiryDates[i - 1]
-      expect(a.toBeGreaterThan(b))
+      const a = inquiryDates[i].getTime()
+      const b = inquiryDates[i - 1].getTime()
+      expect(a).toBeGreaterThan(b)
     }
   })
 
