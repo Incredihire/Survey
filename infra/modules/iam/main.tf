@@ -15,35 +15,36 @@ resource "aws_iam_role" "ecs_task_execution" {
   ]
 }
 EOF
+}
 
-  inline_policy {
-    name = "ecs_secrets_and_logs_access"
+resource "aws_iam_role_policy" "ecs_secrets_and_logs_access" {
+  name = "ecs_secrets_and_logs_access"
+  role = aws_iam_role.ecs_task_execution.id
 
-    policy = jsonencode({
-      Version = "2012-10-17",
-      Statement = [
-        {
-          Effect = "Allow",
-          Action = [
-            "secretsmanager:GetSecretValue"
-          ],
-          Resource = "arn:aws:secretsmanager:us-west-2:913524926070:secret:staging/survey/rds-6cId0d"
-        },
-        {
-          Effect = "Allow",
-          Action = [
-            "logs:CreateLogGroup",
-            "logs:PutRetentionPolicy",
-            "logs:TagResource"
-          ],
-          Resource = [
-            "arn:aws:logs:us-west-2:913524926070:log-group:survey-backend-logs:*",
-            "arn:aws:logs:us-west-2:913524926070:log-group:survey-frontend-logs:*"
-          ]
-        }
-      ]
-    })
-  }
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "secretsmanager:GetSecretValue"
+        ],
+        Resource = "arn:aws:secretsmanager:us-west-2:913524926070:secret:staging/survey/rds-6cId0d"
+      },
+      {
+        Effect = "Allow",
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:PutRetentionPolicy",
+          "logs:TagResource"
+        ],
+        Resource = [
+          "arn:aws:logs:us-west-2:913524926070:log-group:survey-backend-logs:*",
+          "arn:aws:logs:us-west-2:913524926070:log-group:survey-frontend-logs:*"
+        ]
+      }
+    ]
+  })
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_task_execution" {
