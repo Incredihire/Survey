@@ -5,7 +5,7 @@ variable "region" {
 }
 
 variable "AWS-accountID" {
-  description = "The default AWS region to use for provisioning infrastructure"
+  description = "AWS Account ID"
   type        = string
   default     = "913524926070"
 }
