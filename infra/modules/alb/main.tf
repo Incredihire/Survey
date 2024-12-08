@@ -72,7 +72,8 @@ resource "aws_lb_target_group" "this" {
     protocol            = "HTTP"
     matcher             = "200"
     timeout             = "5"
-    path                = "${var.healthcheck_path}"
+    path = var.healthcheck_path
+
   }
 
   depends_on = [
