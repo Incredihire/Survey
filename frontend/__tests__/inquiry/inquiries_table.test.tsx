@@ -128,14 +128,16 @@ describe("Inquiries Table", () => {
     expect(screen.getAllByRole("row").length).toBe(1) // only header row
   })
 
-  it("should display correct number of inquiries in table.", () => {
+  it("should display correct number of inquiries in table.", async () => {
     mockUseInquiries.mockReturnValue({
       data: { data: multipleInquiries },
       isLoading: false,
     })
     renderComponent()
-    const rows = screen.getAllByRole("row")
-    expect(rows.length).toBe(multipleInquiries.length + 1) // +1 for header
+    const removeFromScheduleButtons = await screen.findAllByRole("button", {
+      name: "Remove from Schedule",
+    })
+    expect(removeFromScheduleButtons.length).toBe(multipleInquiries.length)
   })
 
   it("should display correct inquiry text.", () => {
@@ -260,7 +262,7 @@ describe("Inquiries Table", () => {
     ).toEqual(true)
   })
 
-  it("should log the inquiry details on console when clicked.", () => {
+  it("should log the inquiry details on console when clicked.", async () => {
     mockUseInquiries.mockReturnValue({
       data: { data: singleInquiry },
       isLoading: false,
@@ -269,10 +271,11 @@ describe("Inquiries Table", () => {
 
     console.log = jest.fn()
 
-    const rows = screen.getAllByRole("row")
-    const dataRow = rows[1] // First data row
-
-    fireEvent.click(dataRow)
+    const removeFromScheduleButton = await screen.findByRole("button", {
+      name: "Remove from Schedule",
+    })
+    const dataRow = removeFromScheduleButton.closest("tr")
+    if (dataRow) fireEvent.click(dataRow)
 
     expect(console.log).toHaveBeenCalledWith(
       "Row clicked:",
@@ -342,6 +345,33 @@ describe("Inquiries Table", () => {
     })
   })
 
+  it("should update scheduled inquiries when drags and drops a row", async () => {
+    const updateScheduledInquiries =
+      scheduleService.updateScheduledInquiries.mockResolvedValueOnce(
+        singleSchedule,
+      )
+    mockUseInquiries.mockReturnValue({
+      data: { data: multipleInquiries },
+      isLoading: false,
+    })
+    renderComponent()
+    const removeFromScheduleButtons = await screen.findAllByRole("button", {
+      name: "Remove from Schedule",
+    })
+    expect(removeFromScheduleButtons.length).toBe(multipleInquiries.length)
+    const dataRow = removeFromScheduleButtons[0].closest("tr")
+    if (dataRow) {
+      const SPACE = { keyCode: 32 }
+      const ARROW_DOWN = { keyCode: 40 }
+      fireEvent.keyDown(dataRow, SPACE) // Begins the dnd
+      fireEvent.keyDown(dataRow, ARROW_DOWN) // Moves the element
+      fireEvent.keyDown(dataRow, SPACE) // Ends the dnd
+    }
+    await waitFor(() => {
+      expect(updateScheduledInquiries).toHaveBeenCalled()
+    })
+  })
+
   it("should update scheduled inquiries when remove from schedule clicked", async () => {
     mockUseInquiries.mockReturnValue({
       data: { data: singleInquiry },
@@ -403,50 +433,6 @@ describe("Inquiries Table", () => {
 
     await waitFor(() => {
       expect(deleteInquiryRejected).toHaveBeenCalled()
-    })
-  })
-
-  it("should update scheduled inquiries when rank up button clicked", async () => {
-    const updateScheduledInquiries =
-      scheduleService.updateScheduledInquiries.mockResolvedValueOnce(
-        singleSchedule,
-      )
-    mockUseInquiries.mockReturnValue({
-      data: { data: multipleInquiries },
-      isLoading: false,
-    })
-    renderComponent()
-
-    const rankUpInquiryButton = screen.getAllByTestId(
-      "rank-up-inquiry-button",
-    )[0]
-    expect(rankUpInquiryButton).toBeVisible()
-    fireEvent.click(rankUpInquiryButton)
-
-    await waitFor(() => {
-      expect(updateScheduledInquiries).toHaveBeenCalled()
-    })
-  })
-
-  it("should update scheduled inquiries when rank down button clicked", async () => {
-    const updateScheduledInquiries =
-      scheduleService.updateScheduledInquiries.mockResolvedValueOnce(
-        singleSchedule,
-      )
-    mockUseInquiries.mockReturnValue({
-      data: { data: multipleInquiries },
-      isLoading: false,
-    })
-    renderComponent()
-
-    const rankDownInquiryButton = screen.getAllByTestId(
-      "rank-down-inquiry-button",
-    )[0]
-    expect(rankDownInquiryButton).toBeVisible()
-    fireEvent.click(rankDownInquiryButton)
-
-    await waitFor(() => {
-      expect(updateScheduledInquiries).toHaveBeenCalled()
     })
   })
 })

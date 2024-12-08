@@ -19,7 +19,7 @@ import { useThemes } from "../../hooks/useThemes.ts"
 import { DataTable } from "../Common/Table.tsx"
 import AddInquiry from "./AddInquiry.tsx"
 import { columns } from "./InquiriesTable.columns.tsx"
-
+import { ScheduledInquiriesTable } from "./ScheduledInquiriesTable.tsx"
 const InquiriesTable = () => {
   const { data: themesData } = useThemes()
   const themes = themesData?.data ?? []
@@ -84,7 +84,7 @@ const InquiriesTable = () => {
         <TabPanels>
           <TabPanel>
             <Box>
-              <DataTable
+              <ScheduledInquiriesTable
                 data={scheduledInquiries}
                 columns={columns(themes, schedule)}
                 onRowClick={handleRowClick}

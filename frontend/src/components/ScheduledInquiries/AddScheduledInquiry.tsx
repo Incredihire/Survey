@@ -1,7 +1,7 @@
 import { Button, Flex } from "@chakra-ui/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
-import { FiChevronDown, FiChevronUp, FiEdit2, FiTrash } from "react-icons/fi"
+import { FiEdit2, FiTrash } from "react-icons/fi"
 import {
   type ApiError,
   InquiriesService,
@@ -50,50 +50,6 @@ const AddScheduledInquiry = ({
       })
       await queryClient.invalidateQueries({ queryKey: ["inquiries"] })
       showToast("Success!", "Inquiry deleted", "success")
-    },
-    onError: (err: ApiError) => {
-      handleError(err, showToast)
-    },
-  })
-
-  const rankUpMutation = useMutation({
-    mutationFn: async () => {
-      const scheduled_inquiries = schedule?.scheduled_inquiries ?? []
-      const index = scheduled_inquiries.indexOf(inquiry.id)
-      const scheduled_inquiry_id = scheduled_inquiries.splice(index, 1)[0]
-      scheduled_inquiries.splice(index - 1, 0, scheduled_inquiry_id)
-      const data = await ScheduleService.updateScheduledInquiries({
-        requestBody: scheduled_inquiries,
-      })
-      queryClient.setQueryData(["schedule"], data)
-      await queryClient.invalidateQueries({ queryKey: ["inquiries"] })
-      showToast(
-        "Success!",
-        `"${inquiry.text}" moved to ${(data.scheduled_inquiries ?? []).indexOf(inquiry.id) + 1}`,
-        "success",
-      )
-    },
-    onError: (err: ApiError) => {
-      handleError(err, showToast)
-    },
-  })
-
-  const rankDownMutation = useMutation({
-    mutationFn: async () => {
-      const scheduled_inquiries = schedule?.scheduled_inquiries ?? []
-      const index = scheduled_inquiries.indexOf(inquiry.id)
-      const scheduled_inquiry_id = scheduled_inquiries.splice(index, 1)[0]
-      scheduled_inquiries.splice(index + 1, 0, scheduled_inquiry_id)
-      const data = await ScheduleService.updateScheduledInquiries({
-        requestBody: scheduled_inquiries,
-      })
-      queryClient.setQueryData(["schedule"], data)
-      await queryClient.invalidateQueries({ queryKey: ["inquiries"] })
-      showToast(
-        "Success!",
-        `"${inquiry.text}" moved to rank ${(data.scheduled_inquiries ?? []).indexOf(inquiry.id) + 1}`,
-        "success",
-      )
     },
     onError: (err: ApiError) => {
       handleError(err, showToast)
@@ -155,38 +111,6 @@ const AddScheduledInquiry = ({
         <Button data-testid={"edit-inquiry-button"} onClick={openUpdateModal}>
           <FiEdit2 />
         </Button>
-      )}
-      {inquiry.first_scheduled && rank > 0 && (
-        <Flex flexDirection={"column"} flexWrap={"nowrap"}>
-          {rank > 1 ? (
-            <Button
-              data-testid={"rank-up-inquiry-button"}
-              className={"btn-rank-up"}
-              isDisabled={rank <= 1}
-              onClick={() => {
-                rankUpMutation.mutate()
-              }}
-            >
-              <FiChevronUp />
-            </Button>
-          ) : (
-            <div />
-          )}
-          {rank < scheduled_inquiries.length ? (
-            <Button
-              className={"btn-rank-down"}
-              data-testid={"rank-down-inquiry-button"}
-              isDisabled={rank >= scheduled_inquiries.length}
-              onClick={() => {
-                rankDownMutation.mutate()
-              }}
-            >
-              <FiChevronDown />
-            </Button>
-          ) : (
-            <div />
-          )}
-        </Flex>
       )}
       {rank > 0 && (
         <Button
