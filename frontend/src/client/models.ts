@@ -12,15 +12,6 @@ export type InquiryCreate = {
 
 
 
-export type InquiryDelete = {
-	text: string;
-	theme_id: number | null;
-	first_scheduled: string | null;
-	id: number;
-};
-
-
-
 export type InquiryPublic = {
 	text: string;
 	theme_id: number | null;
@@ -73,7 +64,7 @@ export type ScheduleInfo = {
 
 export type SchedulePublic = {
 	schedule: ScheduleInfo;
-	id: number;
+	id: number | null;
 	scheduled_inquiries: Array<number>;
 };
 

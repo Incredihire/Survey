@@ -2,7 +2,7 @@ import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
 
-import type { InquiryCreate,InquiryDelete,InquiryPublic,InquiryUpdate,InquriesPublic,ThemeCreate,ThemePublic,ThemesPublic,Message,UserCreate,UserPublic,UsersPublic,ScheduleCreate,SchedulePublic } from './models';
+import type { InquiryCreate,InquiryPublic,InquiryUpdate,InquriesPublic,Message,ThemeCreate,ThemePublic,ThemesPublic,UserCreate,UserPublic,UsersPublic,ScheduleCreate,SchedulePublic } from './models';
 
 export type AuthData = {
         AuthCallback: {
@@ -21,13 +21,13 @@ UpdateInquiry: {
                     requestBody: InquiryUpdate
                     
                 };
-DeleteInquiry: {
-                    requestBody: InquiryDelete
-                    
-                };
 GetInquries: {
                     limit?: number
 skip?: number
+                    
+                };
+DeleteInquiry: {
+                    inquiryId: number
                     
                 };
 ReadInquiry: {
@@ -185,27 +185,6 @@ requestBody,
 	}
 
 	/**
-	 * Delete Inquiry
-	 * Delete inquiry.
-	 * @returns InquiryDelete Successful Response
-	 * @throws ApiError
-	 */
-	public static deleteInquiry(data: InquiriesData['DeleteInquiry']): CancelablePromise<InquiryDelete> {
-		const {
-requestBody,
-} = data;
-		return __request(OpenAPI, {
-			method: 'DELETE',
-			url: '/api/v1/inquiries/',
-			body: requestBody,
-			mediaType: 'application/json',
-			errors: {
-				422: `Validation Error`,
-			},
-		});
-	}
-
-	/**
 	 * Get Inquries
 	 * Retrieve inquries.
 	 * @returns InquriesPublic Successful Response
@@ -221,6 +200,28 @@ limit = 100,
 			url: '/api/v1/inquiries/',
 			query: {
 				skip, limit
+			},
+			errors: {
+				422: `Validation Error`,
+			},
+		});
+	}
+
+	/**
+	 * Delete Inquiry
+	 * Delete inquiry.
+	 * @returns Message Successful Response
+	 * @throws ApiError
+	 */
+	public static deleteInquiry(data: InquiriesData['DeleteInquiry']): CancelablePromise<Message> {
+		const {
+inquiryId,
+} = data;
+		return __request(OpenAPI, {
+			method: 'DELETE',
+			url: '/api/v1/inquiries/{inquiry_id}',
+			path: {
+				inquiry_id: inquiryId
 			},
 			errors: {
 				422: `Validation Error`,

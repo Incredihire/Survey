@@ -18,27 +18,27 @@ const timezoneTestData = {
   timezones: [
     {
       timezone: "America/New_York", // Eastern Daylight Time (EDT)
-      expectedOutput: "Sep 23, 2024 08:00 AM",
+      expectedOutput: "09/23/2024 08:00 AM",
     },
     {
       timezone: "America/Chicago", // Central Daylight Time (CDT)
-      expectedOutput: "Sep 23, 2024 07:00 AM",
+      expectedOutput: "09/23/2024 07:00 AM",
     },
     {
       timezone: "America/Denver", // Mountain Daylight Time (MDT)
-      expectedOutput: "Sep 23, 2024 06:00 AM",
+      expectedOutput: "09/23/2024 06:00 AM",
     },
     {
       timezone: "America/Los_Angeles", // Pacific Daylight Time (PDT)
-      expectedOutput: "Sep 23, 2024 05:00 AM",
+      expectedOutput: "09/23/2024 05:00 AM",
     },
     {
       timezone: "America/Anchorage", // Alaska Daylight Time (AKDT)
-      expectedOutput: "Sep 23, 2024 04:00 AM",
+      expectedOutput: "09/23/2024 04:00 AM",
     },
     {
       timezone: "Pacific/Honolulu", // Hawaii Standard Time (HAST, no DST)
-      expectedOutput: "Sep 23, 2024 02:00 AM",
+      expectedOutput: "09/23/2024 02:00 AM",
     },
   ],
 }

@@ -1,20 +1,33 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { fireEvent, render, screen /*, within*/ } from "@testing-library/react"
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react"
 import InquiriesTable from "../../src/components/Inquiries/InquiriesTable"
 import "@testing-library/jest-dom"
+import dayjs from "dayjs"
+import type { InquiryPublic } from "../../src/client"
+import {
+  InquiriesService,
+  ScheduleService,
+  ThemesService,
+} from "../../src/client/services"
 import { useInquiries } from "../../src/hooks/useInquiries"
-//import dayjs from "dayjs"
 import { useSchedule } from "../../src/hooks/useSchedule"
 
 jest.mock("../../src/hooks/useSchedule")
 jest.mock("../../src/hooks/useInquiries")
+jest.mock("../../src/client/services")
 
 describe("Inquiries Table", () => {
   const mockUseSchedule = useSchedule as jest.Mock
   const singleSchedule = {
     schedule: {
       startDate: "2024-12-03",
-      endDate: "2025-01-02",
+      endDate: null,
       daysBetween: 1,
       skipWeekends: false,
       skipHolidays: false,
@@ -26,56 +39,71 @@ describe("Inquiries Table", () => {
 
   const mockUseInquiries = useInquiries as jest.Mock
 
-  const multipleInquiries = [
+  const multipleInquiries: InquiryPublic[] = [
     {
       id: 1,
       text: "How is your work-life balance?",
       created_at: "2024-09-22T18:20:53.734830",
+      theme_id: null,
       first_scheduled: "2024-09-22T18:20:53.734830",
     },
     {
       id: 2,
       text: "Is communication effective?",
       created_at: "2024-09-22T12:30:53.734830",
+      theme_id: null,
       first_scheduled: "2024-09-22T12:30:53.734830",
     },
     {
       id: 3,
       text: "How satisfied are you with the work environment?",
       created_at: "2024-09-21T09:20:53.734830",
+      theme_id: null,
       first_scheduled: "2024-09-21T09:20:53.734830",
     },
     {
       id: 4,
       text: "How do you feel about your current role?",
       created_at: "2024-09-19T09:20:53.734830",
+      theme_id: null,
       first_scheduled: "2024-09-19T09:20:53.734830",
     },
     {
       id: 5,
       text: "How is feedback typically given and received within the team?",
       created_at: "2024-09-22T09:20:53.734830",
+      theme_id: null,
       first_scheduled: "2024-09-22T09:20:53.734830",
     },
-  ]
-
-  const singleInquiry = [
     {
       id: 6,
       text: "How is your work-life balance?",
       created_at: "2024-09-22T18:20:53.734830",
+      theme_id: null,
       first_scheduled: "2024-09-22T18:20:53.734830",
     },
   ]
 
-  // TODO: implement valid Scheduled column test(s)
-  // const inquiryWithoutCreationDate = [
-  //   {
-  //     id: "92bc71bf-f42c-4b56-b55d-fddaf4633550",
-  //     text: "How is your work-life balance?",
-  //     created_at: "",
-  //   },
-  // ]
+  const singleInquiry = [multipleInquiries[0]]
+
+  const inquiryUnscheduled: InquiryPublic[] = [
+    {
+      id: 7,
+      text: "How is your work-life balance?",
+      created_at: "2024-09-23T18:20:53.734830",
+      theme_id: null,
+      first_scheduled: null,
+    },
+  ]
+
+  const inquiriesService = InquiriesService as jest.Mocked<
+    typeof InquiriesService
+  >
+
+  const themesService = ThemesService as jest.Mocked<typeof ThemesService>
+  themesService.getThemes.mockResolvedValue({ data: [], count: 0 })
+
+  const scheduleService = ScheduleService as jest.Mocked<typeof ScheduleService>
 
   const queryClient = new QueryClient()
   const renderComponent = () =>
@@ -100,14 +128,16 @@ describe("Inquiries Table", () => {
     expect(screen.getAllByRole("row").length).toBe(1) // only header row
   })
 
-  it("should display correct number of inquiries in table.", () => {
+  it("should display correct number of inquiries in table.", async () => {
     mockUseInquiries.mockReturnValue({
       data: { data: multipleInquiries },
       isLoading: false,
     })
     renderComponent()
-    const rows = screen.getAllByRole("row")
-    expect(rows.length).toBe(multipleInquiries.length + 1) // +1 for header
+    const removeFromScheduleButtons = await screen.findAllByRole("button", {
+      name: "Remove from Schedule",
+    })
+    expect(removeFromScheduleButtons.length).toBe(multipleInquiries.length)
   })
 
   it("should display correct inquiry text.", () => {
@@ -122,28 +152,48 @@ describe("Inquiries Table", () => {
     ).toBeInTheDocument()
   })
 
-  /* TODO: implement valid Scheduled column test(s)
-  it("should display correct inquiry created date and time, formatted to the user's timezone.", () => {
+  it("should display correct inquiry scheduled date and time, formatted to the user's timezone.", () => {
     mockUseInquiries.mockReturnValue({
       data: { data: singleInquiry },
       isLoading: false,
+      error: null,
+      isError: false,
+      isSuccess: true,
+      refetch: jest.fn(),
     })
     // Mock the user's timezone
     jest.spyOn(dayjs.tz, "guess").mockReturnValue("America/Los_Angeles")
     renderComponent()
-    expect(screen.getByText("Sep 22, 2024 11:20 AM")).toBeInTheDocument()
+    const today_0800 = new Date()
+    today_0800.setHours(8, 0, 0, 0)
+
+    const formatter = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/Los_Angeles",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    })
+    const scheduled_at = formatter
+      .formatToParts(today_0800)
+      .map((p) =>
+        p.type === "literal" && (p.value === ", " || p.value === "\u202f")
+          ? " "
+          : p.value,
+      )
+      .join("")
+    expect(screen.getByText(scheduled_at)).toBeInTheDocument()
   })
-
-
-  it("should throw an error for inquiry with invalid created date and time.", () => {
+  it("should render placeholder scheduled text for inquiry with not in scheduled_inquiries list", () => {
     mockUseInquiries.mockReturnValue({
-      data: { data: inquiryWithoutCreationDate },
+      data: { data: inquiryUnscheduled },
       isLoading: false,
     })
-    jest.spyOn(console, "error").mockImplementation(jest.fn())
-    expect(() => renderComponent()).toThrow()
+    renderComponent()
+    expect(screen.getByTestId("unscheduled-date-pattern")).toBeInTheDocument()
   })
-
 
   it("should display inquiries from newest to oldest.", () => {
     mockUseInquiries.mockReturnValue({
@@ -162,7 +212,6 @@ describe("Inquiries Table", () => {
     const scheduledHeader = headerCells.find(
       (header) => header.textContent === "Scheduled",
     )
-
     // Ensure the "Created At" header exists
     expect(scheduledHeader).toBeInTheDocument()
 
@@ -177,12 +226,10 @@ describe("Inquiries Table", () => {
     if (
       typeof scheduledIndex !== "number" ||
       !Number.isInteger(scheduledIndex) ||
-        scheduledIndex < 0 ||
-        scheduledIndex >= totalColumns
+      scheduledIndex < 0 ||
+      scheduledIndex >= totalColumns
     ) {
-      throw new Error(
-        `Invalid index for "Scheduled" column: ${scheduledIndex}`,
-      )
+      throw new Error(`Invalid index for "Scheduled" column: ${scheduledIndex}`)
     }
 
     // Get all data rows excluding the header
@@ -201,21 +248,21 @@ describe("Inquiries Table", () => {
         )
       }
 
-      // eslint-disable-next-line security/detect-object-injection
       const dateCell = cells[scheduledIndex]
       const dateText = dateCell.textContent?.trim() ?? ""
       return new Date(dateText)
     })
 
-    // Validate that each date is less than the previous date (newest to oldest)
-    for (let i = 1; i < inquiryDates.length; i++) {
-      expect(inquiryDates[i].getTime()).toBeLessThan(
-        inquiryDates[i - 1].getTime(),
-      )
-    }
-  })*/
+    // Validate that each date is greater than the previous date (oldest to newest)
+    expect(
+      inquiryDates.every(
+        (value, index) =>
+          index === 0 || value.getTime() > inquiryDates[index - 1].getTime(),
+      ),
+    ).toEqual(true)
+  })
 
-  it("should log the inquiry details on console when clicked.", () => {
+  it("should log the inquiry details on console when clicked.", async () => {
     mockUseInquiries.mockReturnValue({
       data: { data: singleInquiry },
       isLoading: false,
@@ -224,10 +271,11 @@ describe("Inquiries Table", () => {
 
     console.log = jest.fn()
 
-    const rows = screen.getAllByRole("row")
-    const dataRow = rows[1] // First data row
-
-    fireEvent.click(dataRow)
+    const removeFromScheduleButton = await screen.findByRole("button", {
+      name: "Remove from Schedule",
+    })
+    const dataRow = removeFromScheduleButton.closest("tr")
+    if (dataRow) fireEvent.click(dataRow)
 
     expect(console.log).toHaveBeenCalledWith(
       "Row clicked:",
@@ -237,5 +285,154 @@ describe("Inquiries Table", () => {
         created_at: singleInquiry[0].created_at,
       }),
     )
+  })
+
+  it("should display update modal when user presses edit inquiry button", async () => {
+    mockUseInquiries.mockReturnValue({
+      data: { data: inquiryUnscheduled },
+      isLoading: false,
+    })
+    renderComponent()
+
+    const unscheduledTab = screen.getByText("Unscheduled")
+    fireEvent.click(unscheduledTab)
+
+    fireEvent.click(screen.getByTestId("edit-inquiry-button"))
+    const textArea = screen.getByTestId("update-inquiry-text")
+    fireEvent.change(textArea, {
+      target: {
+        value: "Why do birds suddenly appear every time you are near?",
+      },
+    })
+    const updateInquiry = inquiriesService.updateInquiry.mockResolvedValue({
+      ...inquiryUnscheduled[0],
+      text: "Why do birds suddenly appear every time you are near?",
+    })
+    fireEvent.click(screen.getByTestId("submit-update-inquiry"))
+    await waitFor(() => {
+      expect(updateInquiry).toHaveBeenCalled()
+    })
+  })
+
+  it("should show modal when add to schedule clicked and update scheduled inquiries when continue button clicked", async () => {
+    mockUseInquiries.mockReturnValue({
+      data: { data: inquiryUnscheduled },
+      isLoading: false,
+    })
+    renderComponent()
+
+    const unscheduledTab = screen.getByText("Unscheduled")
+    fireEvent.click(unscheduledTab)
+
+    const addToScheduleButton = screen.getByText("Add to Schedule")
+    fireEvent.click(addToScheduleButton)
+
+    expect(
+      screen.getByText(
+        "You're about to add this inquiry to the schedule. Are you sure?",
+      ),
+    ).toBeVisible()
+
+    const updateScheduledInquiries =
+      scheduleService.updateScheduledInquiries.mockResolvedValueOnce({
+        ...singleSchedule,
+        scheduled_inquiries: [inquiryUnscheduled[0].id],
+      })
+    const continueButton = screen.getByText("Continue")
+    fireEvent.click(continueButton)
+    await waitFor(() => {
+      expect(updateScheduledInquiries).toHaveBeenCalled()
+    })
+  })
+
+  it("should update scheduled inquiries when drags and drops a row", async () => {
+    const updateScheduledInquiries =
+      scheduleService.updateScheduledInquiries.mockResolvedValueOnce(
+        singleSchedule,
+      )
+    mockUseInquiries.mockReturnValue({
+      data: { data: multipleInquiries },
+      isLoading: false,
+    })
+    renderComponent()
+    const removeFromScheduleButtons = await screen.findAllByRole("button", {
+      name: "Remove from Schedule",
+    })
+    expect(removeFromScheduleButtons.length).toBe(multipleInquiries.length)
+    const dataRow = removeFromScheduleButtons[0].closest("tr")
+    if (dataRow) {
+      const SPACE = { keyCode: 32 }
+      const ARROW_DOWN = { keyCode: 40 }
+      fireEvent.keyDown(dataRow, SPACE) // Begins the dnd
+      fireEvent.keyDown(dataRow, ARROW_DOWN) // Moves the element
+      fireEvent.keyDown(dataRow, SPACE) // Ends the dnd
+    }
+    await waitFor(() => {
+      expect(updateScheduledInquiries).toHaveBeenCalled()
+    })
+  })
+
+  it("should update scheduled inquiries when remove from schedule clicked", async () => {
+    mockUseInquiries.mockReturnValue({
+      data: { data: singleInquiry },
+      isLoading: false,
+    })
+    renderComponent()
+
+    const updateScheduledInquiries =
+      scheduleService.updateScheduledInquiries.mockResolvedValueOnce({
+        ...singleSchedule,
+        scheduled_inquiries: [],
+      })
+    const removeFromScheduleButton = screen.getByText("Remove from Schedule")
+    fireEvent.click(removeFromScheduleButton)
+    await waitFor(() => {
+      expect(updateScheduledInquiries).toHaveBeenCalled()
+    })
+  })
+
+  it("should remove inquiry when delete button clicked", async () => {
+    const deleteInquiry = inquiriesService.deleteInquiry.mockResolvedValueOnce({
+      message: "Inquiry deleted",
+    })
+    mockUseInquiries.mockReturnValue({
+      data: { data: inquiryUnscheduled },
+      isLoading: false,
+    })
+    renderComponent()
+
+    const unscheduledTab = screen.getByText("Unscheduled")
+    fireEvent.click(unscheduledTab)
+
+    const deleteInquiryButton = screen.getByTestId("delete-inquiry-button")
+    expect(deleteInquiryButton).toBeVisible()
+    fireEvent.click(deleteInquiryButton)
+
+    await waitFor(() => {
+      expect(deleteInquiry).toHaveBeenCalled()
+    })
+  })
+
+  it("should fail inquiry when delete button clicked", async () => {
+    const deleteInquiryRejected =
+      inquiriesService.deleteInquiry.mockRejectedValueOnce({
+        detail: "Invalid inquiry id for delete",
+      })
+    mockUseInquiries.mockReturnValue({
+      data: { data: inquiryUnscheduled },
+      isLoading: false,
+    })
+    renderComponent()
+
+    const unscheduledTab = screen.getByText("Unscheduled")
+    fireEvent.click(unscheduledTab)
+
+    const deleteInquiryButton = screen.getByTestId("delete-inquiry-button")
+    expect(deleteInquiryButton).toBeVisible()
+    fireEvent.click(deleteInquiryButton)
+
+    await waitFor(() => {
+      expect(deleteInquiryRejected).toHaveBeenCalled()
+    })
   })
 })

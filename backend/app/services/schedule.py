@@ -29,9 +29,7 @@ def update_scheduled_inquiries(
     Update scheduled_inquiries.
     """
     scheduled_inquiries_as_string = json.dumps(scheduled_inquiries)
-    db_item = session.exec(select(Schedule)).first()
-    if not db_item:
-        raise ValueError("Invalid schedule for update")
+    db_item = session.exec(select(Schedule)).one()
     db_item.scheduled_inquiries = scheduled_inquiries_as_string
     session.add(db_item)
     session.commit()

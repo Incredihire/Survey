@@ -88,7 +88,7 @@ const AddInquiry = ({
     <FormModal<InquiryCreate>
       isOpen={isOpen}
       onClose={onClose}
-      title={`Add ${scheduledFilter ? "Scheduled" : "Unscheduled"} Inquiry`}
+      title={"Add Inquiry"}
       fields={fields}
       mutationFn={mutationFn}
       successMessage="Inquiry created successfully."

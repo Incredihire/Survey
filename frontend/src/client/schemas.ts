@@ -39,40 +39,6 @@ export const $InquiryCreate = {
 	},
 } as const;
 
-export const $InquiryDelete = {
-	properties: {
-		text: {
-	type: 'string',
-	isRequired: true,
-	maxLength: 256,
-	minLength: 10,
-},
-		theme_id: {
-	type: 'any-of',
-	contains: [{
-	type: 'number',
-}, {
-	type: 'null',
-}],
-	isRequired: true,
-},
-		first_scheduled: {
-	type: 'any-of',
-	contains: [{
-	type: 'string',
-	format: 'date-time',
-}, {
-	type: 'null',
-}],
-	isRequired: true,
-},
-		id: {
-	type: 'number',
-	isRequired: true,
-},
-	},
-} as const;
-
 export const $InquiryPublic = {
 	properties: {
 		text: {
@@ -230,7 +196,12 @@ export const $SchedulePublic = {
 	isRequired: true,
 },
 		id: {
+	type: 'any-of',
+	contains: [{
 	type: 'number',
+}, {
+	type: 'null',
+}],
 	isRequired: true,
 },
 		scheduled_inquiries: {

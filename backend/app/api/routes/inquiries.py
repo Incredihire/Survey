@@ -2,8 +2,8 @@ from fastapi import APIRouter, HTTPException
 
 import app.services.inquiries as inquiries_service
 from app.api.deps import SessionDep
-from app.models import Inquiry, InquiryCreate, InquiryPublic, InquriesPublic
-from app.models.inquiry import InquiryDelete, InquiryUpdate
+from app.models import Inquiry, InquiryCreate, InquiryPublic, InquriesPublic, Message
+from app.models.inquiry import InquiryUpdate
 
 router = APIRouter()
 
@@ -36,13 +36,13 @@ def update_inquiry(*, session: SessionDep, inquiry_in: InquiryUpdate) -> Inquiry
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.delete("/", response_model=InquiryDelete)
-def delete_inquiry(*, session: SessionDep, inquiry_in: InquiryDelete) -> InquiryDelete:
+@router.delete("/{inquiry_id}", response_model=Message)
+def delete_inquiry(*, session: SessionDep, inquiry_id: int) -> Message:
     """
     Delete inquiry.
     """
     try:
-        return inquiries_service.delete_inquiry(session=session, inquiry_in=inquiry_in)
+        return inquiries_service.delete_inquiry(session=session, inquiry_id=inquiry_id)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 

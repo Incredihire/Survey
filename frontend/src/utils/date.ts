@@ -41,7 +41,6 @@ export const formatISODateToUserTimezone = (date: string): string => {
   }
 
   const userTimezone = dayjs.tz.guess()
-  return parsedDate.tz(userTimezone).format("MMM DD, YYYY hh:mm A")
-  //return parsedDate.format("MM/DD/YYYY hh:mm A")
+  return parsedDate.tz(userTimezone).format("MM/DD/YYYY hh:mm A")
   /* eslint-enable */
 }

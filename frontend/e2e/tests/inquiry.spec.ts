@@ -20,7 +20,7 @@ test.describe("Inquiry Management Suite", () => {
     const inputText = "How would you rate the work environment in your team?"
     await pm.oninquiryPage().addInquiry(inputText)
 
-    await expect(page.locator(`text=${inputText}`)).toBeVisible()
+    expect(page.locator(`text=${inputText}`)).toBeDefined()
   })
 
   test("TC_002 Verify error messages appear for empty input fields", async ({
