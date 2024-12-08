@@ -21,6 +21,10 @@
                 "value": "backend.survey"
             },
             {
+                    "name": "POSTGRES_DB",
+                    "value": "postgres"
+            },
+            {
                 "name": "ENVIRONMENT",
                 "value": "staging"
             },
@@ -53,10 +57,6 @@
             {
                 "name": "POSTGRES_PORT",
                 "valueFrom": "arn:aws:secretsmanager:us-west-2:913524926070:secret:staging/survey/rds-6cId0d:port::"
-            },
-            {
-                "name": "POSTGRES_DB",
-                "valueFrom": "arn:aws:secretsmanager:us-west-2:913524926070:secret:staging/survey/rds-6cId0d:dbInstanceIdentifier::"
             }
             
         ],
