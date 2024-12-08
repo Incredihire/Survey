@@ -1,0 +1,34 @@
+
+[
+    {
+        "name": "survey-frontend-container",
+        "image": "913524926070.dkr.ecr.us-west-2.amazonaws.com/survey_frontend:latest",
+        "cpu": 0,
+        "portMappings": [
+            {
+                "containerPort": 80,
+                "hostPort": 80,
+                "protocol": "tcp"
+            }
+        ],
+        "essential": true,
+        "environment": [
+                {
+                    "name": "VITE_API_URL",
+                    "value": "http://survey-backend-alb-1736008534.us-west-2.elb.amazonaws.com/"
+                },
+                {
+                    "name": "PROJECT_NAME",
+                    "value": "Survey"
+                }
+        ],
+        "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+                "awslogs-group": "survey-frontend-logs",
+                "awslogs-region": "us-west-2",
+                "awslogs-stream-prefix": "ecs"
+            }
+        }
+    }
+]
