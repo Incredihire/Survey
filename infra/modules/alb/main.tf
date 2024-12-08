@@ -1,4 +1,4 @@
-### create security group for alb
+### create security group for alb ### 
 resource "aws_security_group" "load_balancer" {
   vpc_id = var.vpc_id
   name   = "${var.project_name}-${var.app_name}-alb-sg"
@@ -72,7 +72,8 @@ resource "aws_lb_target_group" "this" {
     protocol            = "HTTP"
     matcher             = "200"
     timeout             = "5"
-    path                = "/"
+    path = var.healthcheck_path
+
   }
 
   depends_on = [
