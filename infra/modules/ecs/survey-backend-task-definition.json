@@ -40,23 +40,23 @@
         "secrets": [
             {
                 "name": "POSTGRES_USER",
-                "valueFrom": "arn:aws:secretsmanager:us-west-2:913524926070:secret:staging/survey/rds-6cId0d:username"
+                "valueFrom": "arn:aws:secretsmanager:us-west-2:913524926070:secret:staging/survey/rds-6cId0d:username::"
             },
             {
                 "name": "POSTGRES_PASSWORD",
-                "valueFrom": "arn:aws:secretsmanager:us-west-2:913524926070:secret:staging/survey/rds-6cId0d:password"
+                "valueFrom": "arn:aws:secretsmanager:us-west-2:913524926070:secret:staging/survey/rds-6cId0d:password::"
             },
             {
                 "name": "POSTGRES_SERVER",
-                "valueFrom": "arn:aws:secretsmanager:us-west-2:913524926070:secret:staging/survey/rds-6cId0d:host"
+                "valueFrom": "arn:aws:secretsmanager:us-west-2:913524926070:secret:staging/survey/rds-6cId0d:host::"
             },
             {
                 "name": "POSTGRES_PORT",
-                "valueFrom": "arn:aws:secretsmanager:us-west-2:913524926070:secret:staging/survey/rds-6cId0d:port"
+                "valueFrom": "arn:aws:secretsmanager:us-west-2:913524926070:secret:staging/survey/rds-6cId0d:port::"
             },
             {
                 "name": "POSTGRES_DB",
-                "valueFrom": "arn:aws:secretsmanager:us-west-2:913524926070:secret:staging/survey/rds-6cId0d:dbInstanceIdentifier"
+                "valueFrom": "arn:aws:secretsmanager:us-west-2:913524926070:secret:staging/survey/rds-6cId0d:dbInstanceIdentifier::"
             }
             
         ],
