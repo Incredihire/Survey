@@ -50,18 +50,6 @@ variable "vpc_data" {
 }
 
 
-
-
-
-variable "app_name" {
-  description = "Name of the application used for tagging resources"
-  type        = string
-  default     = "backend"
-}
-
-
-
-
 variable "image_tag" {
   description = "The tag to fetch for the image from the repository"
   type        = string

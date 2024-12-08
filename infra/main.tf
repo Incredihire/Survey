@@ -36,6 +36,7 @@ module "alb-backend" {
   vpc_id              = module.vpc.vpc_id
   project_name        = var.project_name
   app_name            = "backend"
+  healthcheck_path    = "/docs"
 }
 
 # Create ecs cluster, service and task definition
@@ -64,6 +65,7 @@ module "alb-frontend" {
   vpc_id              = module.vpc.vpc_id
   project_name        = var.project_name
   app_name            = "frontend"
+  healthcheck_path    = "/"
 }
 
 # Create ecs cluster, service and task definition
