@@ -4,6 +4,13 @@ variable "region" {
   default     = "us-west-2"
 }
 
+variable "AWS-accountID" {
+  description = "AWS Account ID"
+  type        = string
+  default     = "913524926070"
+}
+
+
 variable "project_name" {
   description = "The name of the project used for tagging resources"
   type        = string
@@ -41,19 +48,6 @@ variable "vpc_data" {
     }]
   }
 }
-
-
-
-
-
-variable "app_name" {
-  description = "Name of the application used for tagging resources"
-  type        = string
-  default     = "backend"
-}
-
-
-
 
 
 variable "image_tag" {
