@@ -36,7 +36,7 @@ tzlocal = "^5.2"
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
 mypy = "^1.13.0"
-ruff = "^0.7.0"
+ruff = "^0.8.2"
 pre-commit = "^4.0.1"
 types-passlib = "^1.7.7.20240106"
 coverage = "^7.6.7"
