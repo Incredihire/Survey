@@ -4,14 +4,12 @@ import {
   type ColumnHelper as ColumnHelperType,
   createColumnHelper,
 } from "@tanstack/react-table"
-import { parseDate } from "tough-cookie"
 import type { InquiryPublic, SchedulePublic, ThemePublic } from "../../client"
 import { formatISODateToUserTimezone } from "../../utils/date"
 import AddScheduledInquiry from "../ScheduledInquiries/AddScheduledInquiry"
 
 const columnHelper: ColumnHelperType<InquiryPublic> =
   createColumnHelper<InquiryPublic>()
-
 export function columns(
   themes: ThemePublic[],
   schedule: SchedulePublic | null | undefined,
@@ -31,66 +29,52 @@ export function columns(
     }),
     columnHelper.accessor("text", {
       header: "Inquiry",
-      cell: (info: CellContext<InquiryPublic, string>) => (
-        <span
-          className={
-            (schedule?.scheduled_inquiries.indexOf(info.row.original.id) ??
-              -1) >= 0
-              ? ""
-              : "inactive-text"
-          }
-        >
-          {info.getValue()}
-        </span>
-      ),
+      cell: (info: CellContext<InquiryPublic, string>) => {
+        const str = info.getValue()
+        if (str.length > 70) {
+          return `${str.slice(0, 70)}...`
+        }
+        return str
+      },
       enableResizing: true,
     }),
     columnHelper.display({
       header: "Category",
-      cell: ({ row: { original } }) => (
-        <span
-          className={
-            (schedule?.scheduled_inquiries.indexOf(original.id) ?? -1) >= 0
-              ? ""
-              : "inactive-text"
-          }
-        >
-          {original.theme?.name}
-        </span>
-      ),
+      cell: ({ row: { original } }) => original.theme?.name,
     }),
     columnHelper.display({
       header: "Scheduled",
       cell: ({ row }) => {
         const { original } = row
-        let scheduled_at: Date | null = null
-        const rank =
-          (schedule?.scheduled_inquiries.indexOf(original.id) ?? -1) + 1
-        if (rank) {
-          scheduled_at = parseDate(
-            `${schedule?.schedule.startDate}·${schedule?.schedule.timesOfDay[0]}:${schedule?.schedule.timesOfDay[1]}·${schedule?.schedule.timesOfDay[2]}`,
+        const now = new Date()
+
+        const rank = schedule?.scheduled_inquiries.indexOf(original.id) ?? -1
+        if (rank >= 0) {
+          let scheduled_at = new Date(
+            `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`,
           )
-          if (!scheduled_at) {
-            scheduled_at = new Date()
-            scheduled_at.setHours(8, 0, 0, 0)
+          if (schedule?.schedule.startDate) {
+            const start_date = new Date(
+              `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}`,
+            )
+            if (start_date > scheduled_at) scheduled_at = start_date
           }
+          const timesOfDay = schedule?.schedule.timesOfDay[0] ?? "08:00"
+          const timesOfDaySplit = timesOfDay.split(":")
+          scheduled_at.setHours(
+            Number.parseInt(timesOfDaySplit[0]),
+            Number.parseInt(timesOfDaySplit[1]),
+            0,
+            0,
+          )
           scheduled_at.setDate(
             scheduled_at.getDate() +
               rank * (schedule?.schedule.daysBetween ?? 1),
           )
+          return formatISODateToUserTimezone(scheduled_at.toISOString())
         }
         return (
-          <span
-            className={
-              (schedule?.scheduled_inquiries.indexOf(original.id) ?? -1) >= 0
-                ? ""
-                : "inactive-text"
-            }
-          >
-            {scheduled_at
-              ? formatISODateToUserTimezone(scheduled_at.toISOString())
-              : "--/--/----  ----"}
-          </span>
+          <span data-testid={"unscheduled-date-pattern"}>--/--/---- ----</span>
         )
       },
     }),
