@@ -15,7 +15,9 @@ const useAuth = () => {
     enabled: true,
   })
   if (failureReason) {
-    window.location.href = `${OpenAPI.BASE}/api/v1/auth/login`
+    window.location.href = escape(
+      `${OpenAPI.BASE.split(":")[1]}/api/v1/auth/login`,
+    )
   }
   return {
     user,
