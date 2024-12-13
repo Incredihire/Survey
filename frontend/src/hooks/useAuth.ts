@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
-import { UsersService } from "../client"
+import { OpenAPI, UsersService } from "../client"
 
 const useAuth = () => {
   const [error, setError] = useState<string | null>(null)
@@ -16,7 +16,7 @@ const useAuth = () => {
   })
   if (failureReason) {
     window.location.href = escape(
-      `//${window.location.hostname}/api/v1/auth/login`,
+      `${OpenAPI.BASE.split(":")[1]}/api/v1/auth/login`,
     )
   }
   return {
