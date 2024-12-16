@@ -49,13 +49,12 @@ export function columns(
           schedule?.scheduled_inquiries_and_dates.inquiries.indexOf(
             original.id,
           ) ?? -1
-        if (rank >= 0) {
+        if (
+          rank >= 0 &&
+          (schedule?.scheduled_inquiries_and_dates.dates.length ?? 0) > rank
+        ) {
           return (
-            <span>
-              {escape(
-                schedule?.scheduled_inquiries_and_dates.dates[rank] ?? "",
-              )}
-            </span>
+            <span>{schedule?.scheduled_inquiries_and_dates.dates[rank]}</span>
           )
         }
         return (
