@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react"
-import TimerPanel from "../../src/components/TimerPanel/TimerPanel"
+import { Inquiries } from "../../src/routes/_layout/inquiries"
 import "@testing-library/jest-dom"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 
 // eslint-disable-next-line
 const mockCreateSchedule = jest.fn(() => {})
@@ -11,12 +12,18 @@ jest.mock("../../src/hooks/useCreateSchedule.ts", () => () => ({
 
 describe("TimerPanel", () => {
   it("should show a form with fields that can be changed andand submitted", async () => {
-    render(<TimerPanel />)
-    expect(screen.getByText("Question Schedule"))
+    const queryClient = new QueryClient()
+    render(
+      <QueryClientProvider client={queryClient}>
+        <Inquiries />
+      </QueryClientProvider>,
+    )
     const startDate = "2024-10-01"
     const endDate = "2024-11-01"
     const daysBetween = 2
     const timeOfDay = "10:00"
+    const scheduleSettingsButton = screen.getByText("Schedule Settings")
+    fireEvent.click(scheduleSettingsButton)
     const startDateInput = screen.getByLabelText("Date Start")
     const endDateInput = screen.getByLabelText("Date End")
     const daysBetweenInput = screen.getByLabelText("Days Between Inquiries")
@@ -39,7 +46,7 @@ describe("TimerPanel", () => {
     expect(skipWeekendsCheckbox).toBeChecked()
     expect(skipHolidaysCheckbox).not.toBeChecked()
 
-    const submitButton = screen.getByText("Create Schedule")
+    const submitButton = screen.getByText("Save Schedule")
     fireEvent.submit(submitButton)
 
     // eslint-disable-next-line
@@ -59,8 +66,14 @@ describe("TimerPanel", () => {
   })
 
   it("updates end date when start date is changed to a later date", () => {
-    render(<TimerPanel />)
-
+    const queryClient = new QueryClient()
+    render(
+      <QueryClientProvider client={queryClient}>
+        <Inquiries />
+      </QueryClientProvider>,
+    )
+    const scheduleSettingsButton = screen.getByText("Schedule Settings")
+    fireEvent.click(scheduleSettingsButton)
     const startDateInput = screen.getByLabelText("Date Start")
     const endDateInput = screen.getByLabelText("Date End")
 

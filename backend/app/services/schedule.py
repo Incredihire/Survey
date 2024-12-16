@@ -3,7 +3,7 @@ import json
 from sqlmodel import select
 
 from app.api.deps import SessionDep
-from app.models import Schedule, ScheduleCreate
+from app.models import Schedule, ScheduleCreate, ScheduleInfo, SchedulePublic
 
 
 def create_schedule(*, session: SessionDep, schedule_in: ScheduleCreate) -> Schedule:
@@ -24,17 +24,21 @@ def create_schedule(*, session: SessionDep, schedule_in: ScheduleCreate) -> Sche
 
 def update_scheduled_inquiries(
     *, session: SessionDep, scheduled_inquiries: list[int]
-) -> Schedule:
+) -> SchedulePublic:
     """
     Update scheduled_inquiries.
     """
     scheduled_inquiries_as_string = json.dumps(scheduled_inquiries)
-    db_item = session.exec(select(Schedule)).one()
-    db_item.scheduled_inquiries = scheduled_inquiries_as_string
-    session.add(db_item)
+    db_schedule = session.exec(select(Schedule)).one()
+    db_schedule.scheduled_inquiries = scheduled_inquiries_as_string
+    session.add(db_schedule)
     session.commit()
-    session.refresh(db_item)
-    return db_item
+    session.refresh(db_schedule)
+    return SchedulePublic(
+        id=db_schedule.id,
+        schedule=ScheduleInfo.model_validate_json(db_schedule.schedule),
+        scheduled_inquiries=json.loads(db_schedule.scheduled_inquiries),
+    )
 
 
 def get_schedule(session: SessionDep) -> Schedule | None:

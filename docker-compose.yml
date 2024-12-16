@@ -65,7 +65,7 @@ services:
       - SENTRY_DSN=${SENTRY_DSN}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}    
-
+      - TZ=America/Honolulu
     build:
       context: ./backend
       args:

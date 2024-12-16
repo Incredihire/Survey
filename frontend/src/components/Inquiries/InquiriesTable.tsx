@@ -1,32 +1,28 @@
 import {
   Box,
-  Button,
   Flex,
-  Icon,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
-  useDisclosure,
 } from "@chakra-ui/react"
-import { useMemo, useState } from "react"
-import { FaPlus } from "react-icons/fa"
-import type { InquiryPublic } from "../../client"
+import { useMemo } from "react"
+import type { InquiryPublic, SchedulePublic, ThemePublic } from "../../client"
 import { useInquiries } from "../../hooks/useInquiries.ts"
-import { useSchedule } from "../../hooks/useSchedule.ts"
-import { useThemes } from "../../hooks/useThemes.ts"
 import { DataTable } from "../Common/Table.tsx"
-import AddInquiry from "./AddInquiry.tsx"
+
 import { columns } from "./InquiriesTable.columns.tsx"
 import { ScheduledInquiriesTable } from "./ScheduledInquiriesTable.tsx"
-const InquiriesTable = () => {
-  const { data: themesData } = useThemes()
-  const themes = themesData?.data ?? []
-  const { data: schedule } = useSchedule()
+
+interface InquiriesTableProps {
+  themes: ThemePublic[]
+  schedule: SchedulePublic | null | undefined
+}
+
+const InquiriesTable = ({ themes, schedule }: InquiriesTableProps) => {
   const { data: inquiriesData } = useInquiries()
   const inquiries = inquiriesData?.data ?? []
-  const [activeTabIndex, setActiveTabindex] = useState(0)
   const sortedInquiries: InquiryPublic[] = useMemo(() => {
     return inquiries
       .sort((a: InquiryPublic, b: InquiryPublic) =>
@@ -34,11 +30,13 @@ const InquiriesTable = () => {
       )
       .sort((a: InquiryPublic, b: InquiryPublic) => {
         return (
-          (schedule?.scheduled_inquiries.indexOf(a.id) ?? -1) -
-          (schedule?.scheduled_inquiries.indexOf(b.id) ?? -1)
+          (schedule?.scheduled_inquiries_and_dates.inquiries.indexOf(a.id) ??
+            -1) -
+          (schedule?.scheduled_inquiries_and_dates.inquiries.indexOf(b.id) ??
+            -1)
         )
       })
-  }, [schedule?.scheduled_inquiries, inquiries])
+  }, [schedule?.scheduled_inquiries_and_dates?.inquiries, inquiries])
 
   const scheduledInquiries = sortedInquiries.filter(
     (i) => (schedule?.scheduled_inquiries.indexOf(i.id) ?? -1) >= 0,
@@ -51,7 +49,6 @@ const InquiriesTable = () => {
     console.log("Row clicked:", inquiry)
   }
 
-  const addScheduledModal = useDisclosure()
   return (
     <Flex
       gap={4}
@@ -59,24 +56,7 @@ const InquiriesTable = () => {
       alignItems={"flex-start"}
       flexDirection={"column"}
     >
-      <AddInquiry
-        isOpen={addScheduledModal.isOpen}
-        onClose={addScheduledModal.onClose}
-        schedule={schedule}
-        themes={themes}
-        scheduledFilter={activeTabIndex === 0}
-      />
-      <Button
-        variant="primary"
-        gap={1}
-        fontSize={{ base: "sm", md: "inherit" }}
-        onClick={addScheduledModal.onOpen}
-        data-testid={"add-inquiry-button"}
-      >
-        <Icon as={FaPlus} /> Add Inquiry
-      </Button>
-
-      <Tabs onChange={setActiveTabindex}>
+      <Tabs>
         <TabList>
           <Tab>Scheduled</Tab>
           <Tab>Unscheduled</Tab>
