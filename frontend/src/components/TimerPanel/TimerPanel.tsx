@@ -7,6 +7,7 @@ import {
   Flex,
   FormControl,
   FormLabel,
+  Heading,
   Input,
   Modal,
   ModalBody,
@@ -97,22 +98,24 @@ const TimerPanel = ({ isOpen, onClose, schedule }: TimerPanelProps) => {
   }
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      size={{ base: "sm", md: "md" }}
-      isCentered={true}
-    >
+    <Modal isOpen={isOpen} onClose={onClose} size={"3xl"} isCentered={true}>
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Question Schedule</ModalHeader>
+      <ModalContent w={"80%"}>
+        <ModalHeader>Schedule Settings</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Flex direction="column">
+              <FormLabel size={"sm"}>
+                Set the delivery frequency for scheduled inquiries.
+              </FormLabel>
+              <Heading size={"md"} pt={4} pb={4}>
+                Inquiry Frequency
+              </Heading>
               <FormRow>
                 <FormControl>
                   <FormLabel>Date Start</FormLabel>
+
                   <Controller
                     name="startDate"
                     control={control}
@@ -203,7 +206,9 @@ const TimerPanel = ({ isOpen, onClose, schedule }: TimerPanelProps) => {
                 </div>
               </FormRow>
               <FormRow>
-                <Button type="submit">Save Schedule</Button>
+                <Button type="submit" mt={4}>
+                  Create Schedule
+                </Button>
               </FormRow>
             </Flex>
           </form>

@@ -46,7 +46,7 @@ describe("TimerPanel", () => {
     expect(skipWeekendsCheckbox).toBeChecked()
     expect(skipHolidaysCheckbox).not.toBeChecked()
 
-    const submitButton = screen.getByText("Save Schedule")
+    const submitButton = screen.getByText("Create Schedule")
     fireEvent.submit(submitButton)
 
     // eslint-disable-next-line
