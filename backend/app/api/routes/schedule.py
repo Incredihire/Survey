@@ -62,7 +62,7 @@ def update_scheduled_inquiries(
     )
     active_index = 0
     if len(schedule_public.scheduled_inquiries) > 0:
-        active_index = schedule_public.scheduled_inquiries_and_dates.inquiries.index(
+        active_index = schedule_public.scheduled_inquiries_and_dates().inquiries.index(
             schedule_public.scheduled_inquiries[0]
         )
     schedule_public = schedule_service.update_scheduled_inquiries(
