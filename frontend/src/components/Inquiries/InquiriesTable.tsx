@@ -36,7 +36,7 @@ const InquiriesTable = ({ themes, schedule }: InquiriesTableProps) => {
             -1)
         )
       })
-  }, [schedule?.scheduled_inquiries_and_dates?.inquiries, inquiries])
+  }, [schedule?.scheduled_inquiries_and_dates.inquiries, inquiries])
 
   const scheduledInquiries = sortedInquiries.filter(
     (i) => (schedule?.scheduled_inquiries.indexOf(i.id) ?? -1) >= 0,

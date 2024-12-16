@@ -50,7 +50,13 @@ export function columns(
             original.id,
           ) ?? -1
         if (rank >= 0) {
-          return schedule?.scheduled_inquiries_and_dates.dates[rank]
+          return (
+            <span>
+              {escape(
+                schedule?.scheduled_inquiries_and_dates.dates[rank] ?? "",
+              )}
+            </span>
+          )
         }
         return (
           <span data-testid={"unscheduled-date-pattern"}>--/--/---- ----</span>
