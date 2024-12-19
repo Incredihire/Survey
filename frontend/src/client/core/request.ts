@@ -67,6 +67,7 @@ export const getQueryString = (params: Record<string, unknown>): string => {
 const getUrl = (config: OpenAPIConfig, options: ApiRequestOptions): string => {
 	const encoder = config.ENCODE_PATH || encodeURI;
 
+	console.log(`In getUrl, base is ${config.BASE}, version is ${config.VERSION}, url is ${options.url} `)
 	const path = options.url
 		.replace('{api-version}', config.VERSION)
 		.replace(/{(.*?)}/g, (substring: string, group: string) => {
@@ -185,6 +186,8 @@ export const sendRequest = async <T>(
 ): Promise<AxiosResponse<T>> => {
 	const controller = new AbortController();
 
+	console.log(`In sendRequest, url is ${url}`)
+	
 	let requestConfig: AxiosRequestConfig = {
 		data: body ?? formData,
 		headers,
