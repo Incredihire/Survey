@@ -14,11 +14,11 @@
         "environment": [
             {
                 "name": "FIRST_SUPERUSER_PASSWORD",
-                "value": "changethis"
+                "value": "ABC123456789"
             },
             {
                 "name": "DOMAIN",
-                "value": "backend.survey"
+                "value": "incredihire.com"
             },
             {
                     "name": "POSTGRES_DB",
@@ -39,6 +39,10 @@
             {
                 "name": "PROJECT_NAME",
                 "value": "Survey"
+            },
+            {
+                "name": "BACKEND_CORS_ORIGINS",
+                "value": "http://incredihire.com"
             }
         ],
         "secrets": [
