@@ -189,6 +189,25 @@ export const $ScheduleInfo = {
 	},
 } as const;
 
+export const $ScheduleInquiriesAndDates = {
+	properties: {
+		inquiries: {
+	type: 'array',
+	contains: {
+	type: 'number',
+},
+	isRequired: true,
+},
+		dates: {
+	type: 'array',
+	contains: {
+	type: 'string',
+},
+	isRequired: true,
+},
+	},
+} as const;
+
 export const $SchedulePublic = {
 	properties: {
 		schedule: {
@@ -209,6 +228,11 @@ export const $SchedulePublic = {
 	contains: {
 	type: 'number',
 },
+	isRequired: true,
+},
+		scheduled_inquiries_and_dates: {
+	type: 'ScheduleInquiriesAndDates',
+	isReadOnly: true,
 	isRequired: true,
 },
 	},
