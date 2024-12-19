@@ -41,10 +41,7 @@ jobs:
       - name: Taint ECS Backend and Frontend Services
         working-directory: ./infra
         run: |
-          terraform taint aws_ecs_service.survey_backend_service
-          terraform taint aws_ecs_service.survey_frontend_service
-          terraform taint aws_ecs_task_definition.survey_backend
-          terraform taint aws_ecs_task_definition.survey_frontend
+          terraform state list
 
       - name: Apply Terraform configuration
         working-directory: ./infra
