@@ -42,7 +42,7 @@
             },
             {
                 "name": "BACKEND_CORS_ORIGINS",
-                "value": "http://incredihire.com"
+                "value": "https://survey.incredihire.com"
             },
             {
                 "name": "GOOGLE_CLIENT_ID",
