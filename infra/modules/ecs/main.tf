@@ -19,14 +19,8 @@ resource "aws_ecs_cluster_capacity_providers" "this" {
 }
 
 resource "aws_ecs_task_definition" "this" {
-
-  family = "${var.project_name}-${var.app_name}-ecs-task_definition"
-  container_definitions = jsonencode([
-    {
-      name  = "${var.project_name}-${var.app_name}-container"
-      image = "${var.image_path}:${var.image_tag}"
-    }
-  ])
+  family                   = "${var.project_name}-${var.app_name}-ecs-task_definition"
+  container_definitions    = file("${path.module}/${var.project_name}-${var.app_name}-task-definition.json")
   task_role_arn            = var.ecs_task_execution_role_arn
   execution_role_arn       = var.ecs_task_execution_role_arn
   requires_compatibilities = ["FARGATE"]
@@ -36,7 +30,6 @@ resource "aws_ecs_task_definition" "this" {
 
   tags = {
     Name = "${var.project_name}-${var.app_name}-ecs-task_definition"
-
   }
 }
 
