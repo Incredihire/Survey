@@ -1,7 +1,9 @@
 import sentry_sdk
 from fastapi import FastAPI
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.routing import APIRoute
 from starlette.middleware.cors import CORSMiddleware
+from starlette.middleware.proxy_headers import ProxyHeadersMiddleware
 
 from app.api.main import api_router
 from app.core.config import settings
@@ -33,3 +35,5 @@ if settings.BACKEND_CORS_ORIGINS:
     )
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=["*"])
+app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")

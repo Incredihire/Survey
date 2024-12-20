@@ -47,6 +47,14 @@
             {
                 "name": "GOOGLE_CLIENT_ID",
                 "value": "233290826498-mfs7tcq5k1vdl2uhmavbcqn2k47dvk2t.apps.googleusercontent.com"
+            },
+            {
+                "name": "FORWARDED_ALLOW_IPS",
+                "value": "*"
+            },
+            {
+                "name": "PROXY_HEADERS",
+                "value": "1"
             }
         ],
         "secrets": [
