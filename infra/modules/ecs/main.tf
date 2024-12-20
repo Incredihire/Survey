@@ -22,7 +22,7 @@ resource "aws_ecs_task_definition" "this" {
   family                   = "${var.project_name}-${var.app_name}-ecs-task_definition"
   #container_definitions    = file("${path.module}/${var.project_name}-${var.app_name}-task-definition.json")
    container_definitions    = templatefile("${path.module}/${var.project_name}-${var.app_name}-task-definition.json", {
-    image_url = var.image_path,
+    image_path = var.image_path,
     image_tag = var.image_tag
   })
   task_role_arn            = var.ecs_task_execution_role_arn
