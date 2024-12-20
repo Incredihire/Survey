@@ -18,7 +18,7 @@
             },
             {
                 "name": "DOMAIN",
-                "value": "incredihire.com"
+                "value": "survey-api.incredihire.com"
             },
             {
                     "name": "POSTGRES_DB",
