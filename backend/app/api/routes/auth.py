@@ -59,7 +59,7 @@ async def login(request: Request) -> RedirectResponse:
     flow = Flow.from_client_config(
         GOOGLE_CLIENT_CONFIG,
         SCOPES,
-        redirect_uri=request.url_for("auth_callback"),
+        redirect_uri=request.url_for("auth_callback") if settings.ENVIRONMENT == "local" else f"https://{settings.DOMAIN}/api/v1/auth/callback",
         autogenerate_code_verifier=True,
     )
     google_auth_url, state = flow.authorization_url()

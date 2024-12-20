@@ -15,7 +15,7 @@
         "environment": [
                 {
                     "name": "VITE_API_URL",
-                    "value": "http://survey-backend-alb-1736008534.us-west-2.elb.amazonaws.com/"
+                    "value": "https://survey-api.incredihire.com/"
                 },
                 {
                     "name": "PROJECT_NAME",
