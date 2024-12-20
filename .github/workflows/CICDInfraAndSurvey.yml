@@ -1,4 +1,4 @@
-name: CI/CD Infra and Survey Workflow
+name: CI/CD Workflow to Build Infra Images and Push 2 Fargate
 
 on:
   workflow_dispatch:  # Single declaration for manual trigger
@@ -8,7 +8,7 @@ env:
   ECS_CLUSTER: Survey
 
 jobs:
-  build-and-deploy-images:
+  build-and-deploy-images-ecr:
     runs-on: ubuntu-latest
 
     steps:
@@ -52,7 +52,7 @@ jobs:
           docker push $ECR_REGISTRY/survey_frontend:$IMAGE_TAG
           echo "image_tag=$IMAGE_TAG" >> $GITHUB_ENV
 
-  infrabuild-and-deploy2fargate:
+  build-core-infra-deploy-2fargate:
     runs-on: ubuntu-latest
 
     steps:
