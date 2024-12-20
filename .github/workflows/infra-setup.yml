@@ -41,10 +41,10 @@ jobs:
       - name: Taint ECS Backend and Frontend Services
         working-directory: ./infra
         run: |
-           terraform taint module.ecs-backend.aws_ecs_service.this
-           terraform taint module.ecs-backend.aws_ecs_task_definition.this
-           terraform taint module.ecs-frontend.aws_ecs_service.this
-           terraform taint  module.ecs-frontend.aws_ecs_task_definition.this
+          # terraform taint module.ecs-backend.aws_ecs_service.this
+          # terraform taint module.ecs-backend.aws_ecs_task_definition.this
+          # terraform taint module.ecs-frontend.aws_ecs_service.this
+          # terraform taint  module.ecs-frontend.aws_ecs_task_definition.this
 
 
  #     - name: Apply Terraform configuration
