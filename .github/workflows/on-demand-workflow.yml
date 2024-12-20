@@ -47,7 +47,7 @@ jobs:
           ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY_BACKEND=survey_backend 
           ECR_REPOSITORY_FRONTEND=survey_frontend 
-          IMAGE_TAG=${GITHUB_SHA::7}
+          IMAGE_TAG=latest
 
           # Build and push backend
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_BACKEND:$IMAGE_TAG ./backend
