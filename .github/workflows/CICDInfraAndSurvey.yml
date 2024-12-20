@@ -6,6 +6,7 @@ on:
 env:
   AWS_REGION: us-west-2
   ECS_CLUSTER: Survey
+  IMAGE_TAG: ${GITHUB_SHA::7}
 
 jobs:
   build-and-deploy-images-ecr:
@@ -21,55 +22,61 @@ jobs:
           python-version: '3.10'
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@latest
+        uses: docker/setup-buildx-action@0f069ddc17b8eb78586b08a7fe335fd54649e2d3
 
       - name: Install Docker Compose
         run: |
           sudo apt-get update
           sudo apt-get install -y docker-compose
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@latest
-        with:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@0e613a0980cbf65ed5b322eb7a1e075d28913a83
+        with: 
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@latest
+        uses: aws-actions/amazon-ecr-login@62f4f872db3836360b72999f4b87f1ff13310f3a
 
-      - name: Build and Push Docker Images
+      - name: Build and push Docker images
         id: build-image
         env:
           VITE_API_URL: ${{ vars.VITE_API_URL }}
         run: |
           ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG=${GITHUB_SHA::7}
-          docker build -t $ECR_REGISTRY/survey_backend:$IMAGE_TAG ./backend
-          docker push $ECR_REGISTRY/survey_backend:$IMAGE_TAG
-          docker build --build-arg VITE_API_URL=${VITE_API_URL} -t $ECR_REGISTRY/survey_frontend:$IMAGE_TAG ./frontend
-          docker push $ECR_REGISTRY/survey_frontend:$IMAGE_TAG
-          echo "image_tag=$IMAGE_TAG" >> $GITHUB_ENV
+          ECR_REPOSITORY_BACKEND=survey_backend 
+          ECR_REPOSITORY_FRONTEND=survey_frontend 
+    
+          # Build and push backend
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_BACKEND:${{ env.IMAGE_TAG }} ./backend
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY_BACKEND:${{ env.IMAGE_TAG }}
+    
+          # Build and push frontend
+          docker build --build-arg VITE_API_URL=${VITE_API_URL} -t $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:${{ env.IMAGE_TAG }} ./frontend
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:${{ env.IMAGE_TAG }}
+    
+          echo "IMAGE_TAG=${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
 
-  build-core-infra-deploy-2fargate:
+  build-core-infra-deploy-2-fargate:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@latest
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@0e613a0980cbf65ed5b322eb7a1e075d28913a83
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@latest
+        uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd
         with:
-          terraform_version: 1.10.1
+            terraform_version: 1.10.1 
 
       - name: Initialize Terraform
         working-directory: ./infra
@@ -79,9 +86,17 @@ jobs:
         working-directory: ./infra
         run: terraform validate
 
+      - name: Taint ECS Backend and Frontend Services
+        working-directory: ./infra
+        run: |
+          terraform taint module.ecs-backend.aws_ecs_service.this
+          terraform taint module.ecs-backend.aws_ecs_task_definition.this
+          terraform taint module.ecs-frontend.aws_ecs_service.this
+          terraform taint module.ecs-frontend.aws_ecs_task_definition.this
+
       - name: Apply Terraform Configuration
         working-directory: ./infra
         env:
           TF_VAR_aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           TF_VAR_aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: terraform apply -auto-approve -var="image_tag=${{ env.image_tag }}"
+        run: terraform apply -auto-approve -var="image_tag=${{ env.IMAGE_TAG }}"
