@@ -27,7 +27,7 @@
                 },
                 {
                     "name": "PROJECT_NAME",
-                    "value": "Survey"
+                    "value": "Survey-frontend"
                 }
         ],
         "logConfiguration": {
