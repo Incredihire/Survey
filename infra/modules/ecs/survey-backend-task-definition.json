@@ -61,6 +61,14 @@
             {
                 "name": "POSTGRES_PORT",
                 "valueFrom": "arn:aws:secretsmanager:us-west-2:913524926070:secret:staging/survey/rds-6cId0d:port::"
+            },
+            {
+                "name": "GOOGLE_CLIENT_ID",
+                "valueFrom": "arn:aws:secretsmanager:us-west-2:913524926070:secret:staging/survey/googleoauth2-WJ9VZV:GOOGLE_CLIENT_ID::"
+            },
+            {
+                "name": "GOOGLE_CLIENT_SECRET",
+                "valueFrom": "arn:aws:secretsmanager:us-west-2:913524926070:secret:staging/survey/googleoauth2-WJ9VZV:GOOGLE_CLIENT_SECRET::"
             }
             
         ],
