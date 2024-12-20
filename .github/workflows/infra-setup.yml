@@ -38,9 +38,19 @@ jobs:
         working-directory: ./infra
         run: terraform validate
 
+      - name: Taint ECS Backend and Frontend Services
+        working-directory: ./infra
+        run: |
+          terraform taint module.ecs-backend.aws_ecs_service.this
+          terraform taint module.ecs-backend.aws_ecs_task_definition.this
+          terraform taint module.ecs-frontend.aws_ecs_service.this
+          terraform taint  module.ecs-frontend.aws_ecs_task_definition.this
+
+
       - name: Apply Terraform configuration
         working-directory: ./infra
         env:
           TF_VAR_aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           TF_VAR_aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: terraform apply -auto-approve
+
