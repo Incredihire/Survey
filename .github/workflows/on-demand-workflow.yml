@@ -41,16 +41,20 @@ jobs:
           
       - name: Build and push Docker images
         id: build-image
+        env:
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
         run: |
-          IMAGE_TAG=latest
           ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY_BACKEND=survey_backend 
           ECR_REPOSITORY_FRONTEND=survey_frontend 
-          cp .env.example .env
-          docker compose build
-          docker compose down -v --remove-orphans
-          docker compose up -d 
-          docker tag survey_backend:latest $ECR_REGISTRY/$ECR_REPOSITORY_BACKEND:$IMAGE_TAG 
-          docker tag survey_frontend:latest $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:$IMAGE_TAG  
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY_BACKEND:$IMAGE_TAG 
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:$IMAGE_TAG 
+          IMAGE_TAG=${GITHUB_SHA::7}
+
+          # Build and push backend
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_BACKEND:$IMAGE_TAG ./backend
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY_BACKEND:$IMAGE_TAG
+
+          # Build and push frontend
+          docker build --build-arg VITE_API_URL=${VITE_API_URL} -t $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:$IMAGE_TAG ./frontend
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:$IMAGE_TAG
+
+          echo "::set-output name=image_tag::$IMAGE_TAG"
