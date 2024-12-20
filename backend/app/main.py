@@ -36,4 +36,5 @@ if settings.BACKEND_CORS_ORIGINS:
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
 app.add_middleware(TrustedHostMiddleware, allowed_hosts=["*"])
-app.add_middleware(HTTPSRedirectMiddleware)
+if(settings.ENVIRONMENT != "local"):
+    app.add_middleware(HTTPSRedirectMiddleware)
