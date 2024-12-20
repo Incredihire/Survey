@@ -2,7 +2,7 @@
 [
     {
         "name": "survey-frontend-container",
-        "image": "913524926070.dkr.ecr.us-west-2.amazonaws.com/survey_frontend:717aa74",
+        "image": "${image_path}:${image_tag}",
         "cpu": 0,
         "portMappings": [
             {
