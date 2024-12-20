@@ -43,6 +43,10 @@
             {
                 "name": "BACKEND_CORS_ORIGINS",
                 "value": "http://incredihire.com"
+            },
+            {
+                "name": "GOOGLE_CLIENT_ID",
+                "value": "233290826498-mfs7tcq5k1vdl2uhmavbcqn2k47dvk2t.apps.googleusercontent.com"
             }
         ],
         "secrets": [
@@ -61,10 +65,6 @@
             {
                 "name": "POSTGRES_PORT",
                 "valueFrom": "arn:aws:secretsmanager:us-west-2:913524926070:secret:staging/survey/rds-6cId0d:port::"
-            },
-            {
-                "name": "GOOGLE_CLIENT_ID",
-                "valueFrom": "arn:aws:secretsmanager:us-west-2:913524926070:secret:staging/survey/googleoauth2-WJ9VZV:GOOGLE_CLIENT_ID::"
             },
             {
                 "name": "GOOGLE_CLIENT_SECRET",

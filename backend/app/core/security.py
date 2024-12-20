@@ -14,8 +14,8 @@ GOOGLE_CLIENT_CONFIG = {
         "client_secret": f"{settings.GOOGLE_CLIENT_SECRET}",
         "redirect_uris": [
             "https://survey.incredihire.com",
-            "https://survey.incredihire.com/api/v1/auth/callback",
-            "https://survey.incredihire.com/docs/oauth2-redirect",
+            "https://survey-api.incredihire.com/api/v1/auth/callback",
+            "https://survey-api.incredihire.com/docs/oauth2-redirect",
             "http://localhost/",
             "http://localhost/api/v1/auth/callback",
             "http://localhost/docs/oauth2-redirect",
