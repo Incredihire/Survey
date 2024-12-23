@@ -86,13 +86,14 @@ jobs:
         working-directory: ./infra
         run: terraform validate
 
-      - name: Taint ECS Backend and Frontend Services
-        working-directory: ./infra
-        run: |
-          terraform taint module.ecs-backend.aws_ecs_service.this
-          terraform taint module.ecs-backend.aws_ecs_task_definition.this
-          terraform taint module.ecs-frontend.aws_ecs_service.this
-          terraform taint module.ecs-frontend.aws_ecs_task_definition.this
+      # Not sure this is still needed given we're not using the 'latest' tag for all our images
+      # - name: Taint ECS Backend and Frontend Services
+      #   working-directory: ./infra
+      #   run: |
+      #     terraform taint module.ecs-backend.aws_ecs_service.this
+      #     terraform taint module.ecs-backend.aws_ecs_task_definition.this
+      #     terraform taint module.ecs-frontend.aws_ecs_service.this
+      #     terraform taint module.ecs-frontend.aws_ecs_task_definition.this
 
       - name: Apply Terraform Configuration
         working-directory: ./infra
