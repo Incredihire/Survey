@@ -20,6 +20,10 @@
                 {
                     "name": "PROJECT_NAME",
                     "value": "Survey-frontend"
+                },
+                {
+                    "name": "WITH_CREDENTIALS",
+                    "value": "true"
                 }
         ],
         "logConfiguration": {
