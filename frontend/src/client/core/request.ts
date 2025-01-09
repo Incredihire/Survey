@@ -204,33 +204,47 @@ export const sendRequest = async <T>(
 	}
 
 	try {
+		console.log(`Sending request to ${url} with method ${options.method}`)
 		return await axiosClient.request(requestConfig);
-	} catch (error) {
-		const axiosError = error as AxiosError<T>;
-		if(axiosError.response?.status === 401) {
-			try {
-				let refreshRequestConfig: AxiosRequestConfig = {
-					headers,
-					method: 'POST',
-					url: config.BASE + '/api/v1/auth/refresh',
-					withCredentials: true,
-				};
-				await axiosClient.request(refreshRequestConfig); // refresh access token
-				// This is necessary for local development running on specific port other than port 80
-				if (window.location.href.startsWith("http://localhost:") && Cookies.get("access_token")) {
-					headers['Authorization'] = `Bearer ${Cookies.get("access_token")}`;
-				}
-				return await axiosClient.request(requestConfig); // re-attempt original request
-			} catch (error1) {
-				const axiosError1 = error as AxiosError<T>;
-				if (axiosError1.response) {
-					return axiosError1.response;
-				}
-				throw error1;
-			}
-		}
-		throw error;
 	}
+	catch (error) {
+			const axiosError = error as AxiosError<T>;
+			console.log(`Request to ${url} failed, status: ${axiosError.response?.status}, error: ${axiosError.message}`);
+			if (axiosError.response?.status === 401) {
+				try {
+					console.log("Attempting to refresh the access token...")
+
+					const refreshRequestConfig: AxiosRequestConfig = {
+						headers,
+						method: 'POST',
+						url: config.BASE + '/api/v1/auth/refresh',
+						withCredentials: true,
+					};
+					const refreshResponse = await axiosClient.request(refreshRequestConfig);
+
+					// Assuming the new access token is returned in the response
+					const newAccessToken = refreshResponse.data.access_token;
+					if (newAccessToken) {
+						// Update the cookie with the new access token
+						Cookies.set("access_token", newAccessToken, { path: '/' });
+
+						// Update the Authorization header with the new token
+						headers['Authorization'] = `Bearer ${newAccessToken}`;
+
+						// Retry the original request with the updated token
+						return await axiosClient.request(requestConfig);
+					}
+				} catch (error1) {
+					const axiosError1 = error1 as AxiosError<T>;
+					console.log(`Failed to refresh the access token, aborting the request... Error: ${axiosError1}`);
+					if (axiosError1.response) {
+						return axiosError1.response;
+					}
+					throw error1;
+				}
+			}
+			throw error;
+		}
 };
 
 export const getResponseHeader = (response: AxiosResponse<unknown>, responseHeader?: string): string | undefined => {
