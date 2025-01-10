@@ -2,7 +2,7 @@
 [
     {
         "name": "survey-frontend-container",
-        "image": "913524926070.dkr.ecr.us-west-2.amazonaws.com/survey_frontend:latest",
+        "image": "${image_path}:${image_tag}",
         "cpu": 0,
         "portMappings": [
             {
@@ -15,11 +15,15 @@
         "environment": [
                 {
                     "name": "VITE_API_URL",
-                    "value": "http://survey-backend-alb-1736008534.us-west-2.elb.amazonaws.com/"
+                    "value": "https://survey-api.incredihire.com/"
                 },
                 {
                     "name": "PROJECT_NAME",
-                    "value": "Survey"
+                    "value": "Survey-frontend"
+                },
+                {
+                    "name": "WITH_CREDENTIALS",
+                    "value": "true"
                 }
         ],
         "logConfiguration": {

@@ -8,7 +8,12 @@ import { StrictMode } from "react"
 import { OpenAPI } from "./client"
 import theme from "./theme"
 
-OpenAPI.BASE = import.meta.env.VITE_API_URL
+OpenAPI.BASE = import.meta.env.VITE_API_URL as string
+
+if (!OpenAPI.BASE) {
+  throw new Error("Missing VITE_API_URL environment variable")
+}
+console.log("API_URL:", OpenAPI.BASE)
 
 const queryClient = new QueryClient()
 

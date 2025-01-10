@@ -1,7 +1,7 @@
 [
     {
         "name": "survey-backend-container",
-        "image": "913524926070.dkr.ecr.us-west-2.amazonaws.com/survey_backend:latest",
+        "image": "${image_path}:${image_tag}",
         "cpu": 0,
         "portMappings": [
             {
@@ -14,11 +14,11 @@
         "environment": [
             {
                 "name": "FIRST_SUPERUSER_PASSWORD",
-                "value": "changethis"
+                "value": "ABC123456789"
             },
             {
                 "name": "DOMAIN",
-                "value": "backend.survey"
+                "value": "survey-api.incredihire.com"
             },
             {
                     "name": "POSTGRES_DB",
@@ -39,6 +39,22 @@
             {
                 "name": "PROJECT_NAME",
                 "value": "Survey"
+            },
+            {
+                "name": "BACKEND_CORS_ORIGINS",
+                "value": "https://survey.incredihire.com"
+            },
+            {
+                "name": "GOOGLE_CLIENT_ID",
+                "value": "233290826498-mfs7tcq5k1vdl2uhmavbcqn2k47dvk2t.apps.googleusercontent.com"
+            },
+            {
+                "name": "FORWARDED_ALLOW_IPS",
+                "value": "*"
+            },
+            {
+                "name": "PROXY_HEADERS",
+                "value": "1"
             }
         ],
         "secrets": [
@@ -57,6 +73,10 @@
             {
                 "name": "POSTGRES_PORT",
                 "valueFrom": "arn:aws:secretsmanager:us-west-2:913524926070:secret:staging/survey/rds-6cId0d:port::"
+            },
+            {
+                "name": "GOOGLE_CLIENT_SECRET",
+                "valueFrom": "arn:aws:secretsmanager:us-west-2:913524926070:secret:staging/survey/googleoauth2-WJ9VZV:GOOGLE_CLIENT_SECRET::"
             }
             
         ],

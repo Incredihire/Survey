@@ -4,6 +4,11 @@ variable "region" {
   default     = "us-west-2"
 }
 
+variable "image_tag" {
+  description = "The tag to fetch for the image from the repository"
+  type        = string
+}
+
 variable "AWS-accountID" {
   description = "AWS Account ID"
   type        = string
@@ -47,11 +52,4 @@ variable "vpc_data" {
         private_app_subnet_cidr = "10.0.96.0/20"
     }]
   }
-}
-
-
-variable "image_tag" {
-  description = "The tag to fetch for the image from the repository"
-  type        = string
-  default     = "latest"
 }
