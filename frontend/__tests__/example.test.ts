@@ -1,9 +1,12 @@
 /* eslint-disable */
+import { BroadcastChannel } from "node:worker_threads"
+Reflect.set(globalThis, "BroadcastChannel", BroadcastChannel)
+import { TransformStream } from "web-streams-polyfill/es5"
+Reflect.set(globalThis, "TransformStream", TransformStream)
 import { http, HttpResponse } from "msw"
 import { setupServer } from "msw/node"
 
 const inquiryURL = "http://localhost/api/v1/inquiries"
-
 const handlers = [
   http.get(inquiryURL, () => {
     return HttpResponse.json({

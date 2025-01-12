@@ -38,6 +38,7 @@ export function Inquiries() {
   const addInquiryModal = useDisclosure()
   const scheduleSettingsModal = useDisclosure()
 
+  if (!schedule || !themesData) return "Data is loading."
   return (
     <Container maxW="full">
       <Heading

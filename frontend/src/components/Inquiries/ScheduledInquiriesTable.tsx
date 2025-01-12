@@ -24,6 +24,7 @@ import {
 import {
   type ApiError,
   type InquiryPublic,
+  type SchedulePublic,
   ScheduleService,
 } from "../../client"
 import useCustomToast from "../../hooks/useCustomToast.ts"
@@ -31,12 +32,14 @@ import { handleError } from "../../utils/showToastOnError.ts"
 
 export type ScheduledInquiriesTableProps<InquiryPublic> = {
   data: InquiryPublic[]
+  schedule: SchedulePublic
   columns: ColumnDef<InquiryPublic, string>[]
   onRowClick?: (row: InquiryPublic) => void
 }
 
 export function ScheduledInquiriesTable<Data extends object>({
   data,
+  schedule,
   columns,
   onRowClick,
 }: ScheduledInquiriesTableProps<Data>) {
@@ -65,12 +68,18 @@ export function ScheduledInquiriesTable<Data extends object>({
       const reorderedItems = Array.from(data)
       const [reorderedItem] = reorderedItems.splice(result.source.index, 1)
       reorderedItems.splice(result.destination.index, 0, reorderedItem)
-
-      console.log({ reorderedItems })
       const scheduled_inquiries = reorderedItems.map(
         (x) => (x.valueOf() as InquiryPublic).id,
       )
-      reorderMutation.mutate(scheduled_inquiries)
+      const startIndex =
+        schedule.scheduled_inquiries_and_dates.inquiries.indexOf(
+          schedule.scheduled_inquiries[0],
+        )
+      reorderMutation.mutate(
+        scheduled_inquiries
+          .slice(startIndex)
+          .concat(scheduled_inquiries.slice(0, startIndex)),
+      )
     }
   }
   return (

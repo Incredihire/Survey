@@ -1,10 +1,12 @@
 import pluginJs from "@eslint/js"
 import pluginReact from "eslint-plugin-react"
+import pluginSecurity from "eslint-plugin-security"
 import globals from "globals"
 import tseslint from "typescript-eslint"
 
 export default [
   pluginJs.configs.recommended,
+  pluginSecurity.configs.recommended,
   pluginReact.configs.flat.recommended,
   ...tseslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,

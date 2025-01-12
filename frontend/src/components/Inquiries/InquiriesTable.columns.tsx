@@ -5,6 +5,7 @@ import {
   createColumnHelper,
 } from "@tanstack/react-table"
 import type { InquiryPublic, SchedulePublic, ThemePublic } from "../../client"
+import { formatISODateToUserTimezone } from "../../utils/date"
 import AddScheduledInquiry from "../ScheduledInquiries/AddScheduledInquiry"
 
 const columnHelper: ColumnHelperType<InquiryPublic> =
@@ -45,16 +46,22 @@ export function columns(
       header: "Scheduled",
       cell: ({ row }) => {
         const { original } = row
-        const rank =
-          schedule?.scheduled_inquiries_and_dates.inquiries.indexOf(
-            original.id,
-          ) ?? -1
         if (
-          rank >= 0 &&
-          (schedule?.scheduled_inquiries_and_dates.dates.length ?? 0) > rank
+          schedule &&
+          schedule.scheduled_inquiries_and_dates.inquiries.indexOf(
+            original.id,
+          ) >= 0
         ) {
           return (
-            <span>{schedule?.scheduled_inquiries_and_dates.dates[rank]}</span>
+            <span>
+              {formatISODateToUserTimezone(
+                schedule.scheduled_inquiries_and_dates.dates[
+                  schedule.scheduled_inquiries_and_dates.inquiries.indexOf(
+                    original.id,
+                  )
+                ],
+              )}
+            </span>
           )
         }
         return (

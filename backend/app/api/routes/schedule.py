@@ -19,7 +19,6 @@ def verify_schedule(schedule: ScheduleInfo) -> None:
             datetime.strptime(
                 f"{schedule.endDate} {schedule.timesOfDay[0]}", "%Y-%m-%d %H:%M"
             )
-
     except ValueError:
         raise HTTPException(
             status_code=422,
@@ -47,28 +46,9 @@ def create_schedule(
 def update_scheduled_inquiries(
     *, session: SessionDep, scheduled_inquiries: list[int]
 ) -> SchedulePublic:
-    db_schedule = schedule_service.get_schedule(session)
-    if not db_schedule:
-        raise HTTPException(
-            status_code=404,
-            detail="Schedule was not found.",
-        )
-    schedule = ScheduleInfo.model_validate_json(db_schedule.schedule)
-    db_scheduled_inquiries: list[int] = json.loads(db_schedule.scheduled_inquiries)
-    schedule_public = SchedulePublic(
-        id=db_schedule.id,
-        schedule=schedule,
-        scheduled_inquiries=db_scheduled_inquiries,
-    )
-    active_index = 0
-    if len(schedule_public.scheduled_inquiries) > 0:
-        active_index = schedule_public.scheduled_inquiries_and_dates().inquiries.index(
-            schedule_public.scheduled_inquiries[0]
-        )
     schedule_public = schedule_service.update_scheduled_inquiries(
         session=session,
-        scheduled_inquiries=scheduled_inquiries[active_index:]
-        + scheduled_inquiries[:active_index],
+        scheduled_inquiries=scheduled_inquiries,
     )
     return schedule_public
 

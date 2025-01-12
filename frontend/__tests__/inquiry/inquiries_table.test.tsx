@@ -8,6 +8,7 @@ import {
 } from "@testing-library/react"
 import { Inquiries } from "../../src/routes/_layout/inquiries"
 import "@testing-library/jest-dom"
+import dayjs from "dayjs"
 import type { InquiryPublic } from "../../src/client"
 import {
   InquiriesService,
@@ -37,13 +38,13 @@ describe("Inquiries Table", () => {
     scheduled_inquiries_and_dates: {
       inquiries: [1, 2, 3, 4, 5, 6],
       dates: [
-        "12/09/2024 08:00 AM",
-        "12/10/2024 08:00 AM",
-        "12/11/2024 08:00 AM",
-        "12/12/2024 08:00 AM",
-        "12/13/2024 08:00 AM",
-        "12/14/2024 08:00 AM",
-        "12/15/2024 08:00 AM",
+        "2024-12-09T08:00:00",
+        "2024-12-10T08:00:00",
+        "2024-12-11T08:00:00",
+        "2024-12-12T08:00:00",
+        "2024-12-13T08:00:00",
+        "2024-12-14T08:00:00",
+        "2024-12-15T08:00:00",
       ],
     },
   }
@@ -129,14 +130,15 @@ describe("Inquiries Table", () => {
     mockUseSchedule.mockReturnValue({ data: singleSchedule, isLoading: false })
   })
 
-  it("should display empty table when there's no inquiries.", () => {
+  it("should display empty table when there's no inquiries.", async () => {
     mockUseInquiries.mockReturnValue({
       data: { data: [] },
       isLoading: false,
     })
 
     renderComponent()
-    expect(screen.getAllByRole("row").length).toBe(1) // only header row
+    const rows = await screen.findAllByRole("row")
+    expect(rows.length).toBe(1) // only header row
   })
 
   it("should display correct number of inquiries in table.", async () => {
@@ -172,8 +174,10 @@ describe("Inquiries Table", () => {
       isSuccess: true,
       refetch: jest.fn(),
     })
+    // Mock the user's timezone
+    jest.spyOn(dayjs.tz, "guess").mockReturnValue("America/Los_Angeles")
     renderComponent()
-    expect(screen.getByText("12/09/2024 08:00 AM")).toBeInTheDocument()
+    expect(screen.getByText("12/09/2024 8:00 AM")).toBeInTheDocument()
   })
   it("should render placeholder scheduled text for inquiry with not in scheduled_inquiries list", () => {
     mockUseInquiries.mockReturnValue({
@@ -329,7 +333,7 @@ describe("Inquiries Table", () => {
         scheduled_inquiries_and_dates: {
           inquiries: [inquiryUnscheduled[0].id],
           dates: [
-            `${singleSchedule.schedule.startDate} ${singleSchedule.schedule.timesOfDay[0]} AM`,
+            `${singleSchedule.schedule.startDate}T${singleSchedule.schedule.timesOfDay[0]}:00.000000`,
           ],
         },
       })
