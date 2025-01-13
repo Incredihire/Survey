@@ -23,7 +23,7 @@ def test_get_schedule_service_when_schedule_exists_should_return_schedule_entity
     result = get_schedule(session=db)
     assert result
     assert result.id
-    assert result.schedule == first_schedule_string
+    assert result.schedule.model_dump_json() == first_schedule_string
 
 
 def test_get_schedule_service_when_two_schedules_added_exists_should_return_latest_schedule(
@@ -33,9 +33,9 @@ def test_get_schedule_service_when_two_schedules_added_exists_should_return_late
     result = get_schedule(session=db)
     assert result
     first_id = result.id
-    assert result.schedule == first_schedule_string
+    assert result.schedule.model_dump_json() == first_schedule_string
     create_second_schedule(db)
     result = get_schedule(session=db)
     assert result
     assert result.id == first_id
-    assert result.schedule == second_schedule_string
+    assert result.schedule.model_dump_json() == second_schedule_string

@@ -1,10 +1,6 @@
 # The Schedule is stored in the database as a string.
 # However, it is created with a JSON object and returns a JSON object
-from datetime import datetime, timedelta
-
-import holidays
 from pydantic import BaseModel
-from pydantic.fields import computed_field
 from sqlmodel import SQLModel
 
 from .mixins import IdMixin
@@ -40,45 +36,4 @@ class SchedulePublic(BaseModel):
     schedule: ScheduleInfo
     id: int | None
     scheduled_inquiries: list[int]
-
-    @staticmethod
-    def skip_days(schedule: ScheduleInfo, current_date: datetime) -> datetime:
-        if schedule.skipWeekends:
-            while current_date.weekday() in [5, 6]:  # 5: Saturday, 6: Sunday
-                current_date += timedelta(days=1)
-        if schedule.skipHolidays:
-            while current_date in holidays.country_holidays("US"):
-                current_date += timedelta(days=1)
-        return current_date
-
-    @computed_field
-    def scheduled_inquiries_and_dates(self) -> ScheduleInquiriesAndDates:
-        schedule = self.schedule
-        scheduled_inquiries = self.scheduled_inquiries
-        today = datetime.strptime(
-            f"{datetime.now().strftime('%Y-%m-%d')} {schedule.timesOfDay[0]}",
-            "%Y-%m-%d %H:%M",
-        )
-        start = datetime.strptime(
-            f"{schedule.startDate} {schedule.timesOfDay[0]}", "%Y-%m-%d %H:%M"
-        )
-        current_date = start
-        past_scheduled_count = 0
-        while current_date < today:
-            current_date = self.skip_days(schedule, current_date)
-            current_date += timedelta(days=schedule.daysBetween)
-            past_scheduled_count += 1
-        scheduled_inquiries_count = len(scheduled_inquiries)
-        scheduled_dates: list[str] = []
-        for _index in scheduled_inquiries:
-            current_date = self.skip_days(schedule, current_date)
-            scheduled_dates.append(current_date.isoformat())
-            current_date += timedelta(days=schedule.daysBetween)
-        active_index = 0
-        if past_scheduled_count > 0 and scheduled_inquiries_count > 0:
-            active_index = past_scheduled_count % scheduled_inquiries_count
-        return ScheduleInquiriesAndDates(
-            inquiries=scheduled_inquiries[active_index:]
-            + scheduled_inquiries[:active_index],
-            dates=scheduled_dates,
-        )
+    scheduled_inquiries_and_dates: ScheduleInquiriesAndDates
