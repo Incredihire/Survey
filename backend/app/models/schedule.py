@@ -15,6 +15,11 @@ class ScheduleInfo(BaseModel):
     timesOfDay: list[str]
 
 
+class ScheduleInquiriesAndDates(BaseModel):
+    inquiries: list[int]
+    dates: list[str]
+
+
 # Properties to receive on Schedule creation
 class ScheduleCreate(SQLModel):
     schedule: ScheduleInfo
@@ -31,3 +36,4 @@ class SchedulePublic(BaseModel):
     schedule: ScheduleInfo
     id: int | None
     scheduled_inquiries: list[int]
+    scheduled_inquiries_and_dates: ScheduleInquiriesAndDates

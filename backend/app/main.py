@@ -5,10 +5,10 @@ from fastapi import FastAPI
 from fastapi.routing import APIRoute
 from starlette.middleware.cors import CORSMiddleware
 
-logger = logging.getLogger(__name__)
-
 from app.api.main import api_router
 from app.core.config import settings
+
+logger = logging.getLogger(__name__)
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:
@@ -25,7 +25,7 @@ app = FastAPI(
 )
 
 # Set all CORS enabled origins
-logger.info("CORS origins: %s", settings.BACKEND_CORS_ORIGINS)  
+logger.info("CORS origins: %s", settings.BACKEND_CORS_ORIGINS)
 if settings.BACKEND_CORS_ORIGINS:
     app.add_middleware(
         CORSMiddleware,
@@ -33,7 +33,17 @@ if settings.BACKEND_CORS_ORIGINS:
             str(origin).strip("/") for origin in settings.BACKEND_CORS_ORIGINS
         ],
         allow_credentials=True,
-        allow_methods=["GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE", "PATCH"],
+        allow_methods=[
+            "GET",
+            "HEAD",
+            "POST",
+            "PUT",
+            "DELETE",
+            "CONNECT",
+            "OPTIONS",
+            "TRACE",
+            "PATCH",
+        ],
         allow_headers=["*"],
     )
 

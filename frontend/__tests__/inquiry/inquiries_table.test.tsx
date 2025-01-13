@@ -6,7 +6,7 @@ import {
   waitFor,
   within,
 } from "@testing-library/react"
-import InquiriesTable from "../../src/components/Inquiries/InquiriesTable"
+import { Inquiries } from "../../src/routes/_layout/inquiries"
 import "@testing-library/jest-dom"
 import dayjs from "dayjs"
 import type { InquiryPublic } from "../../src/client"
@@ -26,7 +26,7 @@ describe("Inquiries Table", () => {
   const mockUseSchedule = useSchedule as jest.Mock
   const singleSchedule = {
     schedule: {
-      startDate: "2024-12-03",
+      startDate: "2024-12-09",
       endDate: null,
       daysBetween: 1,
       skipWeekends: false,
@@ -35,6 +35,18 @@ describe("Inquiries Table", () => {
     },
     id: 1,
     scheduled_inquiries: [1, 2, 3, 4, 5, 6],
+    scheduled_inquiries_and_dates: {
+      inquiries: [1, 2, 3, 4, 5, 6],
+      dates: [
+        "2024-12-09T08:00:00",
+        "2024-12-10T08:00:00",
+        "2024-12-11T08:00:00",
+        "2024-12-12T08:00:00",
+        "2024-12-13T08:00:00",
+        "2024-12-14T08:00:00",
+        "2024-12-15T08:00:00",
+      ],
+    },
   }
 
   const mockUseInquiries = useInquiries as jest.Mock
@@ -109,7 +121,7 @@ describe("Inquiries Table", () => {
   const renderComponent = () =>
     render(
       <QueryClientProvider client={queryClient}>
-        <InquiriesTable />
+        <Inquiries />
       </QueryClientProvider>,
     )
 
@@ -118,14 +130,15 @@ describe("Inquiries Table", () => {
     mockUseSchedule.mockReturnValue({ data: singleSchedule, isLoading: false })
   })
 
-  it("should display empty table when there's no inquiries.", () => {
+  it("should display empty table when there's no inquiries.", async () => {
     mockUseInquiries.mockReturnValue({
       data: { data: [] },
       isLoading: false,
     })
 
     renderComponent()
-    expect(screen.getAllByRole("row").length).toBe(1) // only header row
+    const rows = await screen.findAllByRole("row")
+    expect(rows.length).toBe(1) // only header row
   })
 
   it("should display correct number of inquiries in table.", async () => {
@@ -164,27 +177,7 @@ describe("Inquiries Table", () => {
     // Mock the user's timezone
     jest.spyOn(dayjs.tz, "guess").mockReturnValue("America/Los_Angeles")
     renderComponent()
-    const today_0800 = new Date()
-    today_0800.setHours(8, 0, 0, 0)
-
-    const formatter = new Intl.DateTimeFormat("en-US", {
-      timeZone: "America/Los_Angeles",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    })
-    const scheduled_at = formatter
-      .formatToParts(today_0800)
-      .map((p) =>
-        p.type === "literal" && (p.value === ", " || p.value === "\u202f")
-          ? " "
-          : p.value,
-      )
-      .join("")
-    expect(screen.getByText(scheduled_at)).toBeInTheDocument()
+    expect(screen.getByText("12/09/2024 8:00 AM")).toBeInTheDocument()
   })
   it("should render placeholder scheduled text for inquiry with not in scheduled_inquiries list", () => {
     mockUseInquiries.mockReturnValue({
@@ -337,6 +330,12 @@ describe("Inquiries Table", () => {
       scheduleService.updateScheduledInquiries.mockResolvedValueOnce({
         ...singleSchedule,
         scheduled_inquiries: [inquiryUnscheduled[0].id],
+        scheduled_inquiries_and_dates: {
+          inquiries: [inquiryUnscheduled[0].id],
+          dates: [
+            `${singleSchedule.schedule.startDate}T${singleSchedule.schedule.timesOfDay[0]}:00.000000`,
+          ],
+        },
       })
     const continueButton = screen.getByText("Continue")
     fireEvent.click(continueButton)
@@ -383,6 +382,7 @@ describe("Inquiries Table", () => {
       scheduleService.updateScheduledInquiries.mockResolvedValueOnce({
         ...singleSchedule,
         scheduled_inquiries: [],
+        scheduled_inquiries_and_dates: { inquiries: [], dates: [] },
       })
     const removeFromScheduleButton = screen.getByText("Remove from Schedule")
     fireEvent.click(removeFromScheduleButton)

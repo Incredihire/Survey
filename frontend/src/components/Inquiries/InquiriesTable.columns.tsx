@@ -46,32 +46,23 @@ export function columns(
       header: "Scheduled",
       cell: ({ row }) => {
         const { original } = row
-        const now = new Date()
-
-        const rank = schedule?.scheduled_inquiries.indexOf(original.id) ?? -1
-        if (rank >= 0) {
-          let scheduled_at = new Date(
-            `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`,
+        if (
+          schedule &&
+          schedule.scheduled_inquiries_and_dates.inquiries.indexOf(
+            original.id,
+          ) >= 0
+        ) {
+          return (
+            <span>
+              {formatISODateToUserTimezone(
+                schedule.scheduled_inquiries_and_dates.dates[
+                  schedule.scheduled_inquiries_and_dates.inquiries.indexOf(
+                    original.id,
+                  )
+                ],
+              )}
+            </span>
           )
-          if (schedule?.schedule.startDate) {
-            const start_date = new Date(
-              `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}`,
-            )
-            if (start_date > scheduled_at) scheduled_at = start_date
-          }
-          const timesOfDay = schedule?.schedule.timesOfDay[0] ?? "08:00"
-          const timesOfDaySplit = timesOfDay.split(":")
-          scheduled_at.setHours(
-            Number.parseInt(timesOfDaySplit[0]),
-            Number.parseInt(timesOfDaySplit[1]),
-            0,
-            0,
-          )
-          scheduled_at.setDate(
-            scheduled_at.getDate() +
-              rank * (schedule?.schedule.daysBetween ?? 1),
-          )
-          return formatISODateToUserTimezone(scheduled_at.toISOString())
         }
         return (
           <span data-testid={"unscheduled-date-pattern"}>--/--/---- ----</span>
