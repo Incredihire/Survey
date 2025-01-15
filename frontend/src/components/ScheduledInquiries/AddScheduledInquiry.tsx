@@ -107,11 +107,11 @@ const AddScheduledInquiry = ({
         inquiry={inquiry}
         themes={themes}
       />
-      {!inquiry.first_scheduled && (
+      {
         <Button data-testid={"edit-inquiry-button"} onClick={openUpdateModal}>
           <FiEdit2 />
         </Button>
-      )}
+      }
       {rank > 0 && (
         <Button
           onClick={() => {
