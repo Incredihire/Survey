@@ -73,7 +73,7 @@ export type SchedulePublic = {
 	schedule: ScheduleInfo;
 	id: number | null;
 	scheduled_inquiries: Array<number>;
-	readonly scheduled_inquiries_and_dates: ScheduleInquiriesAndDates;
+	scheduled_inquiries_and_dates: ScheduleInquiriesAndDates;
 };
 
 

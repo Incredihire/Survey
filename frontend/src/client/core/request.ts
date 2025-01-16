@@ -7,7 +7,6 @@ import type { ApiResult } from './ApiResult';
 import { CancelablePromise } from './CancelablePromise';
 import type { OnCancel } from './CancelablePromise';
 import type { OpenAPIConfig } from './OpenAPI';
-import Cookies from "js-cookie"
 
 export const isString = (value: unknown): value is string => {
 	return typeof value === 'string';
@@ -67,7 +66,6 @@ export const getQueryString = (params: Record<string, unknown>): string => {
 const getUrl = (config: OpenAPIConfig, options: ApiRequestOptions): string => {
 	const encoder = config.ENCODE_PATH || encodeURI;
 
-	console.log(`In getUrl, base is ${config.BASE}, version is ${config.VERSION}, url is ${options.url} `)
 	const path = options.url
 		.replace('{api-version}', config.VERSION)
 		.replace(/{(.*?)}/g, (substring: string, group: string) => {
@@ -144,10 +142,7 @@ export const getHeaders = async (config: OpenAPIConfig, options: ApiRequestOptio
 		const credentials = base64(`${username}:${password}`);
 		headers['Authorization'] = `Basic ${credentials}`;
 	}
-	// This is necessary for local development running on specific port other than port 80
-	if (window.location.href.startsWith("http://localhost:") && Cookies.get("access_token")) {
-		headers['Authorization'] = `Bearer ${Cookies.get("access_token")}`;
-	}
+
 	if (options.body !== undefined) {
 		if (options.mediaType) {
 			headers['Content-Type'] = options.mediaType;
@@ -186,8 +181,6 @@ export const sendRequest = async <T>(
 ): Promise<AxiosResponse<T>> => {
 	const controller = new AbortController();
 
-	console.log(`In sendRequest, url is ${url}`)
-	
 	let requestConfig: AxiosRequestConfig = {
 		data: body ?? formData,
 		headers,
@@ -204,47 +197,14 @@ export const sendRequest = async <T>(
 	}
 
 	try {
-		console.log(`Sending request to ${url} with method ${options.method}`)
 		return await axiosClient.request(requestConfig);
-	}
-	catch (error) {
-			const axiosError = error as AxiosError<T>;
-			console.log(`Request to ${url} failed, status: ${axiosError.response?.status}, error: ${axiosError.message}`);
-			if (axiosError.response?.status === 401) {
-				try {
-					console.log("Attempting to refresh the access token...")
-
-					const refreshRequestConfig: AxiosRequestConfig = {
-						headers,
-						method: 'POST',
-						url: config.BASE + '/api/v1/auth/refresh',
-						withCredentials: true,
-					};
-					const refreshResponse = await axiosClient.request(refreshRequestConfig);
-
-					// Assuming the new access token is returned in the response
-					const newAccessToken = refreshResponse.data.access_token;
-					if (newAccessToken) {
-						// Update the cookie with the new access token
-						Cookies.set("access_token", newAccessToken, { path: '/' });
-
-						// Update the Authorization header with the new token
-						headers['Authorization'] = `Bearer ${newAccessToken}`;
-
-						// Retry the original request with the updated token
-						return await axiosClient.request(requestConfig);
-					}
-				} catch (error1) {
-					const axiosError1 = error1 as AxiosError<T>;
-					console.log(`Failed to refresh the access token, aborting the request... Error: ${axiosError1}`);
-					if (axiosError1.response) {
-						return axiosError1.response;
-					}
-					throw error1;
-				}
-			}
-			throw error;
+	} catch (error) {
+		const axiosError = error as AxiosError<T>;
+		if (axiosError.response) {
+			return axiosError.response;
 		}
+		throw error;
+	}
 };
 
 export const getResponseHeader = (response: AxiosResponse<unknown>, responseHeader?: string): string | undefined => {

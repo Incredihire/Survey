@@ -1,19 +1,13 @@
 import { ChakraProvider } from "@chakra-ui/react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { RouterProvider, createRouter } from "@tanstack/react-router"
-import ReactDOM from "react-dom/client"
-import { routeTree } from "./routeTree.gen"
-
 import { StrictMode } from "react"
-import { OpenAPI } from "./client"
+import ReactDOM from "react-dom/client"
+import initOpenAPI from "./initOpenAPI"
+import { routeTree } from "./routeTree.gen"
 import theme from "./theme"
 
-OpenAPI.BASE = import.meta.env.VITE_API_URL as string
-
-if (!OpenAPI.BASE) {
-  throw new Error("Missing VITE_API_URL environment variable")
-}
-console.log("API_URL:", OpenAPI.BASE)
+initOpenAPI()
 
 const queryClient = new QueryClient()
 
