@@ -57,7 +57,7 @@ OpenAPI.interceptors.response.use(async (response) => {
       window.location.href = escape(
         `${OpenAPI.BASE.split(":")[1]}/api/v1/auth/login`,
       )
-      return Promise.reject(refreshError)
+      throw refreshError
     }
   }
   return response
