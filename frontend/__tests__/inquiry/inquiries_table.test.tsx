@@ -435,4 +435,27 @@ describe("Inquiries Table", () => {
       expect(deleteInquiryRejected).toHaveBeenCalled()
     })
   })
+
+  it("should display an Edit button for scheduled inquiry in the list", async () => {
+    mockUseInquiries.mockReturnValue({
+      data: { data: multipleInquiries },
+      isLoading: false,
+    })
+
+    renderComponent()
+
+    const table = await screen.findByRole("table")
+
+    // Get all rowGroup elements (header + data rows)
+    const rowGroups = within(table).getAllByRole("rowgroup")
+
+    // Data rows are in the second rowGroup (index 1)
+    const dataRowGroup = rowGroups[1]
+
+    const rows = dataRowGroup.querySelectorAll("tr")
+    for (const row of rows) {
+      const editButton = within(row).queryByTestId("edit-inquiry-button")
+      expect(editButton).toBeInTheDocument()
+    }
+  })
 })
