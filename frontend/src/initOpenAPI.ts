@@ -22,7 +22,7 @@ export default function initOpenAPI() {
         // Handle refresh token errors by clearing stored tokens and redirecting to the login page.
         console.error("Token refresh failed:", refreshError)
         Cookies.remove("access_token_cookie")
-        window.location.href = "/login"
+        window.location.href = escape("/login")
         throw refreshError
       }
     }

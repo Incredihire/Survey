@@ -17,15 +17,9 @@ import { type SubmitHandler, useForm } from "react-hook-form"
 
 import { useMutation } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
-import { AxiosError } from "axios"
 import { useState } from "react"
 import Logo from "/assets/images/fastapi-logo.svg"
-import {
-  type ApiError,
-  AuthService,
-  type Body_auth_login,
-  OpenAPI,
-} from "../client"
+import { AuthService, type Body_auth_login, OpenAPI } from "../client"
 import { emailPattern } from "../utils/validation.ts"
 
 export const Route = createFileRoute("/login")({
@@ -47,18 +41,12 @@ function Login() {
     onSuccess: async () => {
       await navigate({ to: "/" })
     },
-    onError: (err: ApiError) => {
-      let errDetail = (err.body as any)?.detail
-
-      if (err instanceof AxiosError) {
-        errDetail = err.message
+    onError: (err: Error) => {
+      if (!err.message) {
+        setError("Something went wrong")
+      } else {
+        setError(err.message)
       }
-
-      if (Array.isArray(errDetail)) {
-        errDetail = "Something went wrong"
-      }
-
-      setError(errDetail)
     },
   })
   const {

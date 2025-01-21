@@ -18,7 +18,7 @@ function Dashboard() {
         </Flex>
       ) : (
         <Box pt={12} m={4}>
-          <Text fontSize="2xl">Hi, {user?.full_name || user?.email} 👋🏼</Text>
+          <Text fontSize="2xl">Hi, {user?.full_name ?? user?.email} 👋🏼</Text>
           <Text>Welcome back, nice to see you again!</Text>
         </Box>
       )}
