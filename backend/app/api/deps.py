@@ -20,7 +20,7 @@ def get_db() -> Generator[Session, None, None]:
 
 class CookieOAuth2AuthorizationCodeBearer(OAuth2AuthorizationCodeBearer):
     async def __call__(self, request: Request) -> str | None:
-        token = request.cookies.get("access_token")
+        token = request.cookies.get("access_token_cookie")
         if not token:
             authorization_header = request.headers.get("Authorization")
             if authorization_header and authorization_header.startswith("Bearer "):
@@ -59,7 +59,7 @@ def get_current_user(session: SessionDep, token: TokenDep) -> User:
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid access_token"
         )
 
-    email = jwt_token.get("email")
+    email = jwt_token.get("subject").get("email")
 
     user = users_service.get_user_by_email(session=session, email=email)
     if not user:

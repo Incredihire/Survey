@@ -3,7 +3,7 @@ import { testSuperuserToken } from "../config.ts"
 setup("authenticate", async ({ page, context }) => {
   await context.addCookies([
     {
-      name: "access_token",
+      name: "access_token_cookie",
       value: testSuperuserToken,
       domain: "localhost",
       path: "/",

@@ -8,7 +8,7 @@ authors = ["Admin <admin@example.com>"]
 python = "^3.10"
 uvicorn = {extras = ["standard"], version = "^0.32.0"}
 fastapi = "^0.115.5"
-python-multipart = "^0.0.18"
+python-multipart = "^0.0.20"
 email-validator = "^2.1.0.post1"
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 tenacity = "^9.0.0"
@@ -33,6 +33,8 @@ google-auth-oauthlib = "^1.2.1"
 tldextract = "^5.1.3"
 tzlocal = "^5.2"
 holidays = "^0.62"
+authlib = "^1.3.2"
+fastapi-jwt = "^0.3.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"

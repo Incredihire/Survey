@@ -1,6 +1,9 @@
-import time
+from datetime import timedelta
 
-import jwt
+from fastapi_jwt import (
+    JwtAccessBearerCookie,
+)
+from passlib.context import CryptContext
 
 from app.core.config import settings
 
@@ -19,6 +22,7 @@ GOOGLE_CLIENT_CONFIG = {
             "http://localhost/",
             "http://localhost/api/v1/auth/callback",
             "http://localhost/docs/oauth2-redirect",
+            "http://local.jeremewillig.com/api/v1/auth/callback",
         ],
         "javascript_origins": [
             "https://localhost:8000",
@@ -34,16 +38,20 @@ SCOPES = [
     "https://www.googleapis.com/auth/userinfo.profile",
 ]
 
+access_security = JwtAccessBearerCookie(
+    secret_key=settings.JWT_SECRET_KEY,
+    auto_error=False,
+    access_expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
+    refresh_expires_delta=timedelta(minutes=settings.REFRESH_TOKEN_EXPIRE_MINUTES),
+    algorithm=settings.JWT_ALGORITHM,
+)
 
-def create_access_token(email: str) -> str:
-    iat = int(time.time())
-    access_token = jwt.encode(
-        {
-            "email": email,
-            "iat": iat,
-            "exp": iat + settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-        },
-        settings.JWT_SECRET_KEY,
-        algorithm=settings.JWT_ALGORITHM,
-    )
-    return access_token
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    return pwd_context.verify(plain_password, hashed_password)
+
+
+def get_password_hash(password: str) -> str:
+    return pwd_context.hash(password)

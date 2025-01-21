@@ -38,7 +38,6 @@ export function Inquiries() {
   const addInquiryModal = useDisclosure()
   const scheduleSettingsModal = useDisclosure()
 
-  if (!schedule || !themesData) return "Data is loading."
   return (
     <Container maxW="full">
       <Heading
@@ -50,22 +49,26 @@ export function Inquiries() {
         Inquiries Management
       </Heading>
       <Flex gap={2}>
-        <Button
-          variant="primary"
-          gap={1}
-          fontSize={{ base: "sm", md: "inherit" }}
-          onClick={addInquiryModal.onOpen}
-          data-testid={"add-inquiry-button"}
-        >
-          <Icon as={FaPlus} /> Add Inquiry
-        </Button>
-        <AddInquiry
-          isOpen={addInquiryModal.isOpen}
-          onClose={addInquiryModal.onClose}
-          schedule={schedule}
-          themes={themes}
-          scheduledFilter={false}
-        />
+        {schedule && (
+          <Button
+            variant="primary"
+            gap={1}
+            fontSize={{ base: "sm", md: "inherit" }}
+            onClick={addInquiryModal.onOpen}
+            data-testid={"add-inquiry-button"}
+          >
+            <Icon as={FaPlus} /> Add Inquiry
+          </Button>
+        )}
+        {schedule && (
+          <AddInquiry
+            isOpen={addInquiryModal.isOpen}
+            onClose={addInquiryModal.onClose}
+            schedule={schedule}
+            themes={themes}
+            scheduledFilter={false}
+          />
+        )}
         <Button
           variant="primary"
           gap={1}
@@ -81,7 +84,7 @@ export function Inquiries() {
           onClose={scheduleSettingsModal.onClose}
         />
       </Flex>
-      <InquiriesTable schedule={schedule} themes={themes} />
+      {schedule && <InquiriesTable schedule={schedule} themes={themes} />}
     </Container>
   )
 }

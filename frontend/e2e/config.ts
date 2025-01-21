@@ -26,15 +26,16 @@ if (typeof JWT_ALGORITHM !== "string") {
 
 const IAT = Math.floor(Date.now() / 1000)
 const EXP = IAT + 60 * 30 // 30 minutes
+const TYPE = "access"
 export const firstSuperuser = FIRST_SUPERUSER as string
 export const testSuperuserToken = jwt.sign(
-  { email: firstSuperuser, iat: IAT, exp: EXP },
+  { subject: { email: firstSuperuser }, iat: IAT, exp: EXP, type: TYPE },
   JWT_SECRET_KEY,
   { algorithm: JWT_ALGORITHM as jwt.Algorithm },
 )
 export const emailTestUser = EMAIL_TEST_USER
 export const testUserToken = jwt.sign(
-  { email: emailTestUser, iat: IAT, exp: EXP },
+  { subject: { email: emailTestUser }, iat: IAT, exp: EXP, type: TYPE },
   JWT_SECRET_KEY,
   { algorithm: JWT_ALGORITHM as jwt.Algorithm },
 )

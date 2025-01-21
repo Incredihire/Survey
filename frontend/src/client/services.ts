@@ -2,12 +2,11 @@ import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
 
-import type { InquiryCreate,InquiryPublic,InquiryUpdate,InquriesPublic,Message,ThemeCreate,ThemePublic,ThemesPublic,UserCreate,UserPublic,UsersPublic,ScheduleCreate,SchedulePublic } from './models';
+import type { Body_auth_login,InquiryCreate,InquiryPublic,InquiryUpdate,InquriesPublic,Message,ThemeCreate,ThemePublic,ThemesPublic,UserCreate,UserPublic,UsersPublic,ScheduleCreate,SchedulePublic } from './models';
 
 export type AuthData = {
-        AuthCallback: {
-                    code: string
-state: string
+        Login: {
+                    formData: Body_auth_login
                     
                 };
     }
@@ -93,33 +92,45 @@ UpdateScheduledInquiries: {
 export class AuthService {
 
 	/**
-	 * Login
+	 * Oauth
+	 * Init OAuth flow to get an access token for future requests
 	 * @returns unknown Successful Response
 	 * @throws ApiError
 	 */
-	public static login(): CancelablePromise<unknown> {
+	public static oauth(): CancelablePromise<unknown> {
 				return __request(OpenAPI, {
 			method: 'GET',
-			url: '/api/v1/auth/login',
+			url: '/api/v1/auth/oauth',
 		});
 	}
 
 	/**
-	 * Auth Callback
+	 * Callback
 	 * @returns unknown Successful Response
 	 * @throws ApiError
 	 */
-	public static authCallback(data: AuthData['AuthCallback']): CancelablePromise<unknown> {
-		const {
-code,
-state,
-} = data;
-		return __request(OpenAPI, {
+	public static callback(): CancelablePromise<unknown> {
+				return __request(OpenAPI, {
 			method: 'GET',
 			url: '/api/v1/auth/callback',
-			query: {
-				code, state
-			},
+		});
+	}
+
+	/**
+	 * Login
+	 * Login request to get an access token for future requests
+	 * @returns unknown Successful Response
+	 * @throws ApiError
+	 */
+	public static login(data: AuthData['Login']): CancelablePromise<unknown> {
+		const {
+formData,
+} = data;
+		return __request(OpenAPI, {
+			method: 'POST',
+			url: '/api/v1/auth/login',
+			formData: formData,
+			mediaType: 'application/x-www-form-urlencoded',
 			errors: {
 				422: `Validation Error`,
 			},
