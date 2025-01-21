@@ -104,7 +104,7 @@ def login(
     access_security.set_access_cookie(
         response, access_token, access_security.access_expires_delta
     )
-    refresh_token = access_security.create_access_token(subject)
+    refresh_token = access_security.create_refresh_token(subject)
     access_security.set_refresh_cookie(
         response, refresh_token, access_security.refresh_expires_delta
     )
@@ -133,8 +133,5 @@ async def refresh(session: SessionDep, request: Request) -> JSONResponse:
     access_token = access_security.create_access_token(subject)
     access_security.set_access_cookie(
         response, access_token, access_security.access_expires_delta
-    )
-    access_security.set_refresh_cookie(
-        response, refresh_token, access_security.refresh_expires_delta
     )
     return response
