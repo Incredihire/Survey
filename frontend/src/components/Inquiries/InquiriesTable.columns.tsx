@@ -6,7 +6,7 @@ import {
 } from "@tanstack/react-table"
 import type { InquiryPublic, SchedulePublic, ThemePublic } from "../../client"
 import { formatISODateToUserTimezone } from "../../utils/date"
-import AddScheduledInquiry from "../ScheduledInquiries/AddScheduledInquiry"
+import InquiryManagement from "../ScheduledInquiries/InquiryManagement"
 
 const columnHelper: ColumnHelperType<InquiryPublic> =
   createColumnHelper<InquiryPublic>()
@@ -19,7 +19,7 @@ export function columns(
       header: "Action",
       cell: ({ row }) => (
         <>
-          <AddScheduledInquiry
+          <InquiryManagement
             schedule={schedule}
             inquiry={row.original}
             themes={themes}
