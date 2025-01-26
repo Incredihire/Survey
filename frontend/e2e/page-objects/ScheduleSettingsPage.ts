@@ -72,14 +72,14 @@ export default class ScheduleSettingsPage extends HelperBase {
     }
   }
 
-  async getScheduleDetails(): Promise<{
+  getScheduleDetails(): {
     dateStart: number
     dateEnd: number
     daysBetween: string
     timeOfDay: string
     shouldSkipWeekends: boolean
     shouldSkipHolidays: boolean
-  }> {
+  } {
     return {
       dateStart: scheduleSettingsData.selectStartDateFromToday,
       dateEnd: scheduleSettingsData.selectEndDateFromToday,
@@ -92,7 +92,7 @@ export default class ScheduleSettingsPage extends HelperBase {
 
   async createSchedule() {
     await this.scheduleSettingsButton.click()
-    const scheduleDetails = await this.getScheduleDetails()
+    const scheduleDetails = this.getScheduleDetails()
     await this.selectDateFromToday(scheduleDetails.dateStart, "start")
     await this.selectDateFromToday(scheduleDetails.dateEnd, "end")
     await this.setDaysBetween(scheduleDetails.daysBetween)
