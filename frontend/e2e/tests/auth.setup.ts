@@ -36,14 +36,10 @@ setup("authenticate", async () => {
       firstSuperuserPassword,
     )
     await page.locator("button >> nth=1").click()
-    await page.waitForURL(/https:\/\/accounts.google.com\/signin\/oauth\/id/)
+    await page.waitForURL(/https:\/\/accounts\.google.com\/signin\/oauth\/id/)
     await page.locator("button >> nth=1").click()
     // Wait for redirect back to tested site after authentication
-    await page.waitForURL(
-      new RegExp(
-        `${testConfig.use?.baseURL?.replace("/", "/").replace(".", ".")}.*`,
-      ),
-    )
+    await page.waitForURL(testConfig.use?.baseURL ?? "/")
     // Save signed in state
     await page.context().storageState({ path: "playwright/.auth/user.json" })
   }
