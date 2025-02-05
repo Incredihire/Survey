@@ -16,5 +16,5 @@ if (typeof FIRST_SUPERUSER_PASSWORD !== "string") {
   throw new Error("Environment variable FIRST_SUPERUSER_PASSWORD is undefined")
 }
 
-export const firstSuperuser = FIRST_SUPERUSER as string
-export const firstSuperuserPassword = FIRST_SUPERUSER_PASSWORD as string
+export const firstSuperuser = FIRST_SUPERUSER
+export const firstSuperuserPassword = FIRST_SUPERUSER_PASSWORD

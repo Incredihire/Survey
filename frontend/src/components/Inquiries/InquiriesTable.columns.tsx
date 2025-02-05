@@ -47,20 +47,14 @@ export function columns(
       cell: ({ row }) => {
         if (schedule) {
           const { original } = row
-          const idx = schedule.scheduled_inquiries_and_dates.inquiries.indexOf(
-            original.id,
-          )
-          if (
-            idx >= 0 &&
-            schedule.scheduled_inquiries_and_dates.dates.length > idx
-          ) {
-            return (
-              <span>
-                {formatISODateToUserTimezone(
-                  schedule.scheduled_inquiries_and_dates.dates[idx],
-                )}
-              </span>
-            )
+          const scheduleDate =
+            schedule.scheduled_inquiries_and_dates.dates[
+              schedule.scheduled_inquiries_and_dates.inquiries.indexOf(
+                original.id,
+              )
+            ]
+          if (scheduleDate) {
+            return <span>{formatISODateToUserTimezone(scheduleDate)}</span>
           }
         }
         return (

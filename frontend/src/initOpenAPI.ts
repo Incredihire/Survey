@@ -12,7 +12,7 @@ export default function initOpenAPI() {
   OpenAPI.WITH_CREDENTIALS = true
 
   OpenAPI.interceptors.response.use((response) => {
-    if ([401, 403, 404].indexOf(response.status) >= 0) {
+    if ([401, 403, 404].includes(response.status)) {
       const { pathname, search, hash } = window.location
       Cookies.set(AUTH_REFERER_COOKIE, `${pathname}${search}${hash}`)
       Cookies.remove(ACCESS_TOKEN_COOKIE)
