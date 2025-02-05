@@ -1,13 +1,13 @@
 import logging
 
 import sentry_sdk
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.routing import APIRoute
 from starlette.middleware.cors import CORSMiddleware
-from starlette.middleware.sessions import SessionMiddleware
 
 from app.api.main import api_router
 from app.core.config import settings
+from app.core.security import auth
 
 logger = logging.getLogger(__name__)
 
@@ -23,8 +23,8 @@ app = FastAPI(
     title=settings.PROJECT_NAME,
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
     generate_unique_id_function=custom_generate_unique_id,
+    dependencies=[Depends(auth)],
 )
-app.add_middleware(SessionMiddleware, secret_key=settings.JWT_SECRET_KEY)
 
 # Set all CORS enabled origins
 logger.info("CORS origins: %s", settings.BACKEND_CORS_ORIGINS)

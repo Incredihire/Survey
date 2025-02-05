@@ -68,6 +68,8 @@
     "jsonwebtoken": "^9.0.2",
     "lefthook": "^1.7.15",
     "msw": "^2.4.9",
+    "playwright-extra": "^4.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.2.2",

@@ -1,14 +1,17 @@
 from collections.abc import Generator
 
 import pytest
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi.testclient import TestClient
+from fastapi_third_party_auth import IDToken  # type: ignore[import-untyped]
 from sqlmodel import Session, SQLModel, create_engine, select
 from sqlmodel.pool import StaticPool
 
 from app.api.deps import get_db
 from app.core.config import settings
 from app.core.db import init_db
-from app.core.security import access_security
+from app.core.security import auth
 from app.main import app
 from app.models import Inquiry, Schedule
 
@@ -29,6 +32,7 @@ def client_fixture(db: Session) -> Generator[TestClient, None, None]:
         return db
 
     app.dependency_overrides[get_db] = get_db_override
+    app.dependency_overrides[auth.required] = auth_required_override
     init_db(db)
     client = TestClient(app)
     yield client
@@ -50,11 +54,27 @@ def clear_tables_after_tests(db: Session) -> Generator[None, None, None]:
 
 @pytest.fixture(scope="module")
 def superuser_token_headers() -> dict[str, str]:
-    subject = {"email": settings.FIRST_SUPERUSER}
-    return {"Authorization": f"Bearer {access_security.create_access_token(subject)}"}
+    return {"Authorization": f"Bearer {settings.FIRST_SUPERUSER}"}
 
 
 @pytest.fixture(scope="module")
 def normal_user_token_headers() -> dict[str, str]:
-    subject = {"email": settings.EMAIL_TEST_USER}
-    return {"Authorization": f"Bearer {access_security.create_access_token(subject)}"}
+    return {"Authorization": f"Bearer {settings.EMAIL_TEST_USER}"}
+
+
+def auth_required_override(
+    authorization_credentials: HTTPAuthorizationCredentials | None = Depends(
+        HTTPBearer()
+    ),
+) -> IDToken:
+    if authorization_credentials is None:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED)
+    id_token = IDToken(
+        sub=authorization_credentials.credentials,
+        iss=settings.OIDC_ISSUER,
+        aud="",
+        iat=0,
+        exp=0,
+    )
+    id_token.email = authorization_credentials.credentials
+    return id_token

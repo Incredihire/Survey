@@ -1,137 +1,70 @@
-import os
-from typing import Annotated
-
-import jwt
-from authlib.integrations.starlette_client import OAuth, OAuthError  # type: ignore
+import httpx
 from dotenv import load_dotenv
-from fastapi import APIRouter, Depends, HTTPException, Request, status
-from fastapi.responses import JSONResponse, RedirectResponse
-from fastapi.security import OAuth2PasswordRequestForm
-from jwt.exceptions import DecodeError, ExpiredSignatureError, InvalidSignatureError
+from fastapi import APIRouter, HTTPException, Request, status
+from fastapi.responses import RedirectResponse
 
-import app.services.users as users_service
-from app.api.deps import SessionDep
 from app.core.config import settings
-from app.core.security import access_security, verify_password
+from app.core.security import auth
+
+FRONTEND_LOCAL_DEV_PORT_LOGIN_COOKIE = "frontend_local_dev_port_login_cookie"
+ACCESS_TOKEN_COOKIE = "access_token_cookie"
 
 load_dotenv()
+
+oidc_spec = auth.discover.auth_server(openid_connect_url=auth.openid_connect_url)
+local_dev = settings.ENVIRONMENT == "local" and settings.DOMAIN == "localhost"
+
 router = APIRouter()
 
-LOCAL_DEV_AUTH = settings.DOMAIN == "localhost" and settings.ENVIRONMENT == "local"
-if LOCAL_DEV_AUTH:
-    os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
-oauth = OAuth()
-oauth.register(
-    name="google",
-    server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
-    client_id=settings.GOOGLE_CLIENT_ID,
-    client_secret=settings.GOOGLE_CLIENT_SECRET,
-    client_kwargs={"scope": "email openid profile"},
-)
-
-
-@router.get("/oauth")
-async def init_oauth(request: Request) -> RedirectResponse:
-    """
-    Init OAuth flow to get an access token for future requests
-    """
-    if not request.query_params.get("provider") == "google":
-        raise HTTPException(status_code=400, detail="Invalid provider.")
-    callback_path = "/api/v1/auth/callback"
-    url = f"http{'' if LOCAL_DEV_AUTH else 's'}://{settings.DOMAIN}{callback_path}"
-    response: RedirectResponse = await oauth.google.authorize_redirect(
-        request, url, access_type="offline"
+@router.get("/login")
+async def login(request: Request) -> RedirectResponse:
+    response = RedirectResponse(
+        f"{auth.discover.authorization_url(oidc_spec)}?response_type=code&redirect_uri={settings.OIDC_REDIRECT_URI}&client_id={auth.client_id}&scope=openid%20email%20profile"
     )
-    response.set_cookie(
-        "oauth_provider",
-        "google",
-        secure=not LOCAL_DEV_AUTH,
-        httponly=True,
-        domain=settings.DOMAIN,
-        path=callback_path,
-    )
+    if local_dev and str(request.headers.get("Referer")).startswith(
+        "http://localhost:5173"
+    ):
+        response.set_cookie(
+            key=FRONTEND_LOCAL_DEV_PORT_LOGIN_COOKIE,
+            value=str(True),
+            httponly=True,
+            max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        )
     return response
 
 
 @router.get("/callback")
-async def callback(session: SessionDep, request: Request) -> RedirectResponse:
-    if not request.cookies.get("oauth_provider") == "google":
-        raise HTTPException(status_code=400, detail="Invalid provider.")
-    try:
-        token = await oauth.google.authorize_access_token(request)
-    except OAuthError as e:
-        raise HTTPException(status_code=400, detail=f"Invalid token: {str(e)}")
-    user_info = token.get("userinfo")
-    email = user_info.get("email")
-    user = users_service.get_user_by_email(session=session, email=email)
-    if not user or not user.is_active:
-        raise HTTPException(status_code=400, detail="Inactive user.")
-    response = RedirectResponse(
-        f"http://{settings.DOMAIN}:5173/"
-        if LOCAL_DEV_AUTH
-        else f"https://{settings.DOMAIN}/"
-    )
-    subject = {"email": email}
-    access_token = access_security.create_access_token(subject)
-    access_security.set_access_cookie(
-        response, access_token, access_security.access_expires_delta
-    )
-    refresh_token = access_security.create_refresh_token(subject)
-    access_security.set_refresh_cookie(
-        response, refresh_token, access_security.refresh_expires_delta
-    )
-    return response
-
-
-@router.post("/login")
-def login(
-    session: SessionDep, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
-) -> JSONResponse:
-    """
-    Login request to get an access token for future requests
-    """
-    user = users_service.get_user_by_email(session=session, email=form_data.username)
-    if not user:
-        raise HTTPException(status_code=400, detail="Incorrect email or password")
-    if not verify_password(form_data.password, user.hashed_password):
-        raise HTTPException(status_code=400, detail="Incorrect email or password")
-    if not user.is_active:
-        raise HTTPException(status_code=400, detail="Inactive user")
-    response = JSONResponse({"status": "success"})
-    subject = {"email": user.email}
-    access_token = access_security.create_access_token(subject)
-    access_security.set_access_cookie(
-        response, access_token, access_security.access_expires_delta
-    )
-    refresh_token = access_security.create_refresh_token(subject)
-    access_security.set_refresh_cookie(
-        response, refresh_token, access_security.refresh_expires_delta
-    )
-    return response
-
-
-@router.post("/refresh")
-async def refresh(session: SessionDep, request: Request) -> JSONResponse:
-    refresh_token = request.cookies.get("refresh_token_cookie")
-    if not refresh_token:
-        raise HTTPException(status_code=400, detail="Missing refresh_token.")
-    try:
-        refresh_token_decoded = jwt.decode(
-            refresh_token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
+async def callback(request: Request, code: str) -> RedirectResponse:
+    async with httpx.AsyncClient() as client:
+        token_response = await client.post(
+            auth.discover.token_url(oidc_spec),
+            data={
+                "grant_type": "authorization_code",
+                "code": code,
+                "redirect_uri": settings.OIDC_REDIRECT_URI,
+                "client_id": auth.client_id,
+                "client_secret": settings.OIDC_CLIENT_SECRET,
+            },
         )
-    except (DecodeError, ExpiredSignatureError, InvalidSignatureError):
+        response_data = token_response.json()
+    if token_response.status_code != 200:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh_token"
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid token request"
         )
-    subject = refresh_token_decoded.get("subject")
-    email = subject.get("email")
-    user = users_service.get_user_by_email(session=session, email=email)
-    if not user or not user.is_active:
-        raise HTTPException(status_code=400, detail="Inactive user")
-    response = JSONResponse({"status": "success"})
-    access_token = access_security.create_access_token(subject)
-    access_security.set_access_cookie(
-        response, access_token, access_security.access_expires_delta
+    id_token = response_data.get("id_token")
+    port = (
+        ":5173"
+        if local_dev
+        and request.cookies.get(FRONTEND_LOCAL_DEV_PORT_LOGIN_COOKIE) == str(True)
+        else ""
+    )
+    response = RedirectResponse(f"//{settings.DOMAIN}{port}?auth_callback=true")
+    response.set_cookie(
+        key=ACCESS_TOKEN_COOKIE,
+        value=id_token,
+        httponly=False,
+        max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        secure=settings.ENVIRONMENT != "local",
     )
     return response
