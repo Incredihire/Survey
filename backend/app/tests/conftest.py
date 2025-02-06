@@ -31,7 +31,7 @@ def client_fixture(db: Session) -> Generator[TestClient, None, None]:
         return db
 
     def get_current_user_override(authorization: AuthorizationDep) -> User:
-        scheme, token = get_authorization_scheme_param(authorization)
+        _scheme, token = get_authorization_scheme_param(authorization)
         user = users_service.get_user_by_email(session=db, email=token)
         if not user:
             raise HTTPException(
