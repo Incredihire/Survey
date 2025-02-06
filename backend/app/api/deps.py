@@ -2,13 +2,15 @@ import logging
 from collections.abc import Generator
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, Security, status
-from fastapi_third_party_auth import IDToken  # type: ignore[import-untyped]
+import jwt
+from fastapi import Depends, HTTPException, status
+from fastapi.security.utils import get_authorization_scheme_param
 from sqlmodel import Session
 
 import app.services.users as users_service
+from app.core.config import settings
 from app.core.db import engine
-from app.core.security import auth
+from app.core.security import algorithms, jwks, oidc_auth
 from app.models import User
 
 logging.basicConfig(level=logging.INFO)
@@ -21,12 +23,37 @@ def get_db() -> Generator[Session, None, None]:
 
 
 SessionDep = Annotated[Session, Depends(get_db)]
+AuthorizationDep = Annotated[str, Depends(oidc_auth)]
 
 
-def get_current_user(
-    session: SessionDep, id_token: IDToken = Security(auth.required)
-) -> User:
-    user = users_service.get_user_by_email(session=session, email=id_token.email)
+def get_current_user(session: SessionDep, authorization: AuthorizationDep) -> User:
+    scheme, token = get_authorization_scheme_param(authorization)
+    if not authorization or scheme.lower() != "bearer":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    attempt = 0
+    payload = None
+    while payload is None and attempt < len(jwks["keys"]):
+        try:
+            payload = jwt.decode(
+                jwt=token,
+                key=jwt.PyJWK(jwk_data=jwks["keys"][attempt]),
+                algorithms=algorithms,
+                audience=settings.OIDC_CLIENT_ID,
+                options={"verify_signature": True},
+            )
+        except Exception as e:
+            attempt += 1
+            logger.error(f"Failed attempt #{attempt} to decode JWT token: {e}")
+    if payload is None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Could not validate credentials",
+        )
+    user = users_service.get_user_by_email(session=session, email=payload.get("email"))
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found"

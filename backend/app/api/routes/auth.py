@@ -4,14 +4,11 @@ from fastapi import APIRouter, HTTPException, Request, status
 from fastapi.responses import RedirectResponse
 
 from app.core.config import settings
-from app.core.security import auth
+from app.core.security import authorization_endpoint, token_endpoint
 
 FRONTEND_LOCAL_DEV_PORT_LOGIN_COOKIE = "frontend_local_dev_port_login_cookie"
-ACCESS_TOKEN_COOKIE = "access_token_cookie"
 
 load_dotenv()
-
-oidc_spec = auth.discover.auth_server(openid_connect_url=auth.openid_connect_url)
 local_dev = settings.ENVIRONMENT == "local" and settings.DOMAIN == "localhost"
 
 router = APIRouter()
@@ -20,7 +17,7 @@ router = APIRouter()
 @router.get("/login")
 async def login(request: Request) -> RedirectResponse:
     response = RedirectResponse(
-        f"{auth.discover.authorization_url(oidc_spec)}?response_type=code&redirect_uri={settings.OIDC_REDIRECT_URI}&client_id={auth.client_id}&scope=openid%20email%20profile"
+        f"{authorization_endpoint}?response_type=code&redirect_uri={settings.OIDC_REDIRECT_URI}&client_id={settings.OIDC_CLIENT_ID}&scope=openid%20email%20profile"
     )
     if local_dev and str(request.headers.get("Referer")).startswith(
         "http://localhost:5173"
@@ -38,12 +35,12 @@ async def login(request: Request) -> RedirectResponse:
 async def callback(request: Request, code: str) -> RedirectResponse:
     async with httpx.AsyncClient() as client:
         token_response = await client.post(
-            auth.discover.token_url(oidc_spec),
+            token_endpoint,
             data={
                 "grant_type": "authorization_code",
                 "code": code,
                 "redirect_uri": settings.OIDC_REDIRECT_URI,
-                "client_id": auth.client_id,
+                "client_id": settings.OIDC_CLIENT_ID,
                 "client_secret": settings.OIDC_CLIENT_SECRET,
             },
         )
@@ -61,7 +58,7 @@ async def callback(request: Request, code: str) -> RedirectResponse:
     )
     response = RedirectResponse(f"//{settings.DOMAIN}{port}?auth_callback=true")
     response.set_cookie(
-        key=ACCESS_TOKEN_COOKIE,
+        key="access_token_cookie",
         value=id_token,
         httponly=False,
         max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
