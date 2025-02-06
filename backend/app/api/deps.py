@@ -45,6 +45,9 @@ def get_current_user(session: SessionDep, authorization: AuthorizationDep) -> Us
                 audience=settings.OIDC_CLIENT_ID,
                 options={"verify_signature": True},
             )
+            if payload is not None:
+                attempt += 1
+                logger.info(f"Attempt #{attempt} to decode JWT token was successful.")
         except Exception as e:
             attempt += 1
             logger.error(f"Failed attempt #{attempt} to decode JWT token: {e}")

@@ -31,6 +31,7 @@ fastapi-jwt = "^0.3.0"
 pytest-mock = "^3.14.0"
 pyjwt = "^2.10.1"
 cryptography = "^44.0.0"
+types-requests = "^2.32.0.20241016"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
