@@ -21,6 +21,7 @@ from .inquiry import (
     InquiryUpdate,
     InquriesPublic,
 )
+from .inquiry_history import InquiryHistory, InquiryHistoryCreate, InquiryHistoryPublic
 from .response import Response, ResponseCreate, ResponsePublic, ResponsesPublic
 from .schedule import Schedule, ScheduleCreate, ScheduleInfo, SchedulePublic
 from .theme import Theme, ThemeCreate, ThemePublic, ThemesPublic
@@ -64,4 +65,8 @@ __all__ = [
     "ScheduleCreate",
     "SchedulePublic",
     "ScheduleInfo",
+    # inquiry history model
+    "InquiryHistory",
+    "InquiryHistoryCreate",
+    "InquiryHistoryPublic",
 ]

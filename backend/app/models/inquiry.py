@@ -9,6 +9,7 @@ from app.models.theme import ThemePublic
 from .mixins import IdMixin
 
 if TYPE_CHECKING:
+    from app.models.inquiry_history import InquiryHistory
     from app.models.theme import Theme
 
 MIN_LENGTH = 10
@@ -45,6 +46,7 @@ class Inquiry(InquiryBase, IdMixin, table=True):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     responses: list["Response"] = Relationship(back_populates="inquiry")
     theme: "Theme" = Relationship(back_populates="inquiries")
+    inquiries_histories: list["InquiryHistory"] = Relationship(back_populates="inquiry")
 
 
 # Properties to return via API, id is always required
