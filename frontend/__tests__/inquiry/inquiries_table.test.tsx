@@ -435,6 +435,31 @@ describe("Inquiries Table", () => {
       expect(deleteInquiryRejected).toHaveBeenCalled()
     })
   })
+  it("should display the delete confirmation modal when the delete button is clicked", async () => {
+    mockUseInquiries.mockReturnValue({
+      data: { data: inquiryUnscheduled },
+      isLoading: false,
+    })
+    renderComponent()
+    await waitFor(() => {
+      expect(screen.getByText("Unscheduled")).toBeInTheDocument()
+    })
+    const unscheduledTab = screen.getByText("Unscheduled")
+    fireEvent.click(unscheduledTab)
+    const table = await screen.findByRole("table")
+
+    screen.debug(table)
+    // Find and click the delete button
+    const deleteInquiryButton = screen.getByTestId("delete-inquiry-button")
+    expect(deleteInquiryButton).toBeVisible()
+    fireEvent.click(deleteInquiryButton)
+
+    // Check that the delete confirmation modal appears
+    const modalTitle = screen.getByText(
+      "You're about to delete this inquiry. Are you sure?",
+    )
+    expect(modalTitle).toBeVisible()
+  })
 
   it("should display an Edit button for scheduled inquiry in the list", async () => {
     mockUseInquiries.mockReturnValue({

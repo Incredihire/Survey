@@ -14,11 +14,11 @@ test.describe("Inquiry Management Suite", () => {
     page,
   }) => {
     const pm = new PageManager(page)
-    await pm.oninquiryPage().navigateToInquiriesPage()
-    await pm.oninquiryPage().openInquiryForm()
+    await pm.getinquiryPage().navigateToInquiriesPage()
+    await pm.getinquiryPage().openInquiryForm()
 
     const inputText = "How would you rate the work environment in your team?"
-    await pm.oninquiryPage().addInquiry(inputText)
+    await pm.getinquiryPage().addInquiry(inputText)
 
     expect(page.locator(`text=${inputText}`)).toBeDefined()
   })
@@ -27,11 +27,11 @@ test.describe("Inquiry Management Suite", () => {
     page,
   }) => {
     const pm = new PageManager(page)
-    await pm.oninquiryPage().navigateToInquiriesPage()
-    await pm.oninquiryPage().openInquiryForm()
+    await pm.getinquiryPage().navigateToInquiriesPage()
+    await pm.getinquiryPage().openInquiryForm()
 
     const inputText = ""
-    await pm.oninquiryPage().addInquiry(inputText)
+    await pm.getinquiryPage().addInquiry(inputText)
 
     await expect(page.getByText("Inquiry text is required.")).toHaveText(
       "Inquiry text is required.",
@@ -44,10 +44,10 @@ test.describe("Inquiry Management Suite", () => {
     const inputText =
       "In a world where technology is advancing at an exponential rate, it's important to remember the value of human connection, empathy, and kindness. As we move forward, let's not forget the importance of collaboration creativity and the pursuit of happiness in world."
     const pm = new PageManager(page)
-    await pm.oninquiryPage().navigateToInquiriesPage()
-    await pm.oninquiryPage().openInquiryForm()
+    await pm.getinquiryPage().navigateToInquiriesPage()
+    await pm.getinquiryPage().openInquiryForm()
 
-    await pm.oninquiryPage().addInquiry(inputText)
+    await pm.getinquiryPage().addInquiry(inputText)
 
     await expect(
       page.getByText("Inquiry can not be greater than 256 characters."),
@@ -59,10 +59,10 @@ test.describe("Inquiry Management Suite", () => {
   }) => {
     const inputText = "whats up?"
     const pm = new PageManager(page)
-    await pm.oninquiryPage().navigateToInquiriesPage()
-    await pm.oninquiryPage().openInquiryForm()
+    await pm.getinquiryPage().navigateToInquiriesPage()
+    await pm.getinquiryPage().openInquiryForm()
 
-    await pm.oninquiryPage().addInquiry(inputText)
+    await pm.getinquiryPage().addInquiry(inputText)
 
     await expect(
       page.getByText("Inquiry must be at least 10 characters."),
@@ -71,10 +71,10 @@ test.describe("Inquiry Management Suite", () => {
 
   test("TC_005 Verify the behavior of Cancel button", async ({ page }) => {
     const pm = new PageManager(page)
-    await pm.oninquiryPage().navigateToInquiriesPage()
-    await pm.oninquiryPage().openInquiryForm()
+    await pm.getinquiryPage().navigateToInquiriesPage()
+    await pm.getinquiryPage().openInquiryForm()
 
-    await pm.oninquiryPage().dismissPopupUsingCancel()
+    await pm.getinquiryPage().dismissPopupUsingCancel()
 
     await expect(page.getByRole("button", { name: "Cancel" })).toBeHidden()
   })
@@ -83,10 +83,10 @@ test.describe("Inquiry Management Suite", () => {
     page,
   }) => {
     const pm = new PageManager(page)
-    await pm.oninquiryPage().navigateToInquiriesPage()
-    await pm.oninquiryPage().openInquiryForm()
+    await pm.getinquiryPage().navigateToInquiriesPage()
+    await pm.getinquiryPage().openInquiryForm()
 
-    await pm.oninquiryPage().dismissPopupUsingX()
+    await pm.getinquiryPage().dismissPopupUsingX()
 
     await expect(page.locator(".chakra-modal__close-btn")).toBeHidden()
   })
