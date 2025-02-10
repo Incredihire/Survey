@@ -6,6 +6,7 @@ from sqlmodel import Field, Relationship, SQLModel
 from .mixins import IdMixin
 
 if TYPE_CHECKING:
+    from app.models.inquiry_history import InquiryHistory
     from app.models.response import Response
 
 
@@ -28,6 +29,7 @@ class User(UserBase, IdMixin, table=True):
 
     # Relationships
     responses: list["Response"] = Relationship(back_populates="user")
+    inquiries_histories: list["InquiryHistory"] = Relationship(back_populates="user")
 
 
 # Properties to return via API, id is always required

@@ -20,6 +20,8 @@ from .inquiry import (
     InquiryUpdate,
     InquriesPublic,
 )
+
+from .inquiry_history import InquiryHistory, InquiryHistoryCreate, InquiryHistoryPublic
 from .message import Message
 from .response import Response, ResponseCreate, ResponsePublic, ResponsesPublic
 from .schedule import Schedule, ScheduleCreate, ScheduleInfo, SchedulePublic
@@ -62,4 +64,8 @@ __all__ = [
     "ScheduleCreate",
     "SchedulePublic",
     "ScheduleInfo",
+    # inquiry history model
+    "InquiryHistory",
+    "InquiryHistoryCreate",
+    "InquiryHistoryPublic",
 ]
