@@ -408,6 +408,10 @@ describe("Inquiries Table", () => {
     expect(deleteInquiryButton).toBeVisible()
     fireEvent.click(deleteInquiryButton)
 
+    const confirmDeleteButton = screen.getByText("Delete")
+    expect(confirmDeleteButton).toBeVisible()
+    fireEvent.click(confirmDeleteButton)
+
     await waitFor(() => {
       expect(deleteInquiry).toHaveBeenCalled()
     })
@@ -430,6 +434,10 @@ describe("Inquiries Table", () => {
     const deleteInquiryButton = screen.getByTestId("delete-inquiry-button")
     expect(deleteInquiryButton).toBeVisible()
     fireEvent.click(deleteInquiryButton)
+
+    const confirmDeleteButton = screen.getByText("Delete")
+    expect(confirmDeleteButton).toBeVisible()
+    fireEvent.click(confirmDeleteButton)
 
     await waitFor(() => {
       expect(deleteInquiryRejected).toHaveBeenCalled()

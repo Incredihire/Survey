@@ -1,3 +1,45 @@
+export const $Body_auth_login = {
+    properties: {
+        grant_type: {
+            type: 'any-of',
+            contains: [{
+                type: 'string',
+                pattern: 'password',
+            }, {
+                type: 'null',
+            }],
+        },
+        username: {
+            type: 'string',
+            isRequired: true,
+        },
+        password: {
+            type: 'string',
+            isRequired: true,
+        },
+        scope: {
+            type: 'string',
+            default: '',
+        },
+        client_id: {
+            type: 'any-of',
+            contains: [{
+                type: 'string',
+            }, {
+                type: 'null',
+            }],
+        },
+        client_secret: {
+            type: 'any-of',
+            contains: [{
+                type: 'string',
+            }, {
+                type: 'null',
+            }],
+        },
+    },
+} as const;
+
 export const $HTTPValidationError = {
     properties: {
         detail: {
@@ -232,7 +274,6 @@ export const $SchedulePublic = {
         },
         scheduled_inquiries_and_dates: {
             type: 'ScheduleInquiriesAndDates',
-            isReadOnly: true,
             isRequired: true,
         },
     },

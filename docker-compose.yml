@@ -49,8 +49,6 @@ services:
       - DOMAIN=${DOMAIN}
       - ENVIRONMENT=${ENVIRONMENT}
       - BACKEND_CORS_ORIGINS=${BACKEND_CORS_ORIGINS}
-      - JWT_SECRET_KEY=${JWT_SECRET_KEY?Variable not set}
-      - JWT_ALGORITHM=${JWT_ALGORITHM?Variable not set}
       - FIRST_SUPERUSER=${FIRST_SUPERUSER?Variable not set}
       - FIRST_SUPERUSER_PASSWORD=${FIRST_SUPERUSER_PASSWORD?Variable not set}
       - SMTP_HOST=${SMTP_HOST}
@@ -63,7 +61,6 @@ services:
       - POSTGRES_USER=${POSTGRES_USER?Variable not set}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
       - SENTRY_DSN=${SENTRY_DSN}
-      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
     build:
       context: ./backend
       args:
@@ -102,7 +99,7 @@ services:
     build:
       context: ./frontend
       args:
-        - VITE_API_URL=https://${DOMAIN?Variable not set}
+        - VITE_API_URL=//${DOMAIN?Variable not set}
         - NODE_ENV=production
     labels:
       - traefik.enable=true
