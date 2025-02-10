@@ -12,8 +12,8 @@ from app.models.user import UserPublic
 from .mixins import IdMixin
 
 if TYPE_CHECKING:
-    from app.models.inquiry import Inquiry, InquiryPublic
-    from app.models.user import User, UserPublic
+    from app.models.inquiry import Inquiry
+    from app.models.user import User
 
 
 class ActionType(str, Enum):
