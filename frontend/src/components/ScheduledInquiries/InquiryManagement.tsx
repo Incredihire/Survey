@@ -15,19 +15,20 @@ import useCustomToast from "../../hooks/useCustomToast"
 import { handleError } from "../../utils/showToastOnError.ts"
 import FormModal from "../Common/FormModal.tsx"
 
-type AddScheduledInquiryProps = {
+type InquiryManagementProps = {
   themes: ThemePublic[]
   inquiry: InquiryPublic
   schedule: SchedulePublic | null | undefined
 }
-const AddScheduledInquiry = ({
+const InquiryManagement = ({
   themes,
   inquiry,
   schedule,
-}: AddScheduledInquiryProps) => {
+}: InquiryManagementProps) => {
   const queryClient = useQueryClient()
   const [isModalOpen, setModalOpen] = useState(false)
   const [isUpdateModalOpen, setUpdateModalOpen] = useState(false)
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
 
   const showToast = useCustomToast()
   const scheduled_inquiries = schedule?.scheduled_inquiries ?? []
@@ -43,18 +44,12 @@ const AddScheduledInquiry = ({
     })
   }
 
-  const deleteInquiryMutation = useMutation({
-    mutationFn: async () => {
-      await InquiriesService.deleteInquiry({
-        inquiryId: inquiry.id,
-      })
-      await queryClient.invalidateQueries({ queryKey: ["inquiries"] })
-      showToast("Success!", "Inquiry deleted", "success")
-    },
-    onError: (err: ApiError) => {
-      handleError(err, showToast)
-    },
-  })
+  const deleteInquiryMutation = async () => {
+    await InquiriesService.deleteInquiry({
+      inquiryId: inquiry.id,
+    })
+    await queryClient.invalidateQueries({ queryKey: ["inquiries"] })
+  }
 
   const disableMutation = useMutation({
     mutationFn: async () => {
@@ -89,29 +84,39 @@ const AddScheduledInquiry = ({
   const closeUpdateModal = () => {
     setUpdateModalOpen(false)
   }
+
+  const openDeleteModal = () => {
+    setDeleteModalOpen(true)
+  }
+  const closeDeleteModal = () => {
+    setDeleteModalOpen(false)
+  }
   return (
     <Flex flexDirection={"row"} alignItems={"center"} gap={1}>
       {!inquiry.first_scheduled && (
-        <Button
-          data-testid={"delete-inquiry-button"}
-          onClick={() => {
-            deleteInquiryMutation.mutate()
-          }}
-        >
+        <Button data-testid={"delete-inquiry-button"} onClick={openDeleteModal}>
           <FiTrash />
         </Button>
       )}
+      <FormModal
+        isOpen={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        title={"You're about to delete this inquiry. Are you sure?"}
+        mutationFn={deleteInquiryMutation}
+        successMessage={"Inquiry has been successfully deleted."}
+        content={<span>{inquiry.text}</span>}
+        submitButtonText="Delete"
+        queryKeyToInvalidate={["inquiries"]}
+      />
       <UpdateInquiry
         isOpen={isUpdateModalOpen}
         onClose={closeUpdateModal}
         inquiry={inquiry}
         themes={themes}
       />
-      {
-        <Button data-testid={"edit-inquiry-button"} onClick={openUpdateModal}>
-          <FiEdit2 />
-        </Button>
-      }
+      <Button data-testid={"edit-inquiry-button"} onClick={openUpdateModal}>
+        <FiEdit2 />
+      </Button>
       {rank > 0 && (
         <Button
           onClick={() => {
@@ -126,7 +131,9 @@ const AddScheduledInquiry = ({
       <FormModal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title={`You're about to add this inquiry to the schedule. Are you sure?`}
+        title={
+          "You're about to add this inquiry to the schedule. Are you sure?"
+        }
         mutationFn={addToScheduledInquiries}
         successMessage={"Added inquiry to schedule."}
         content={<span>{inquiry.text}</span>}
@@ -137,4 +144,4 @@ const AddScheduledInquiry = ({
   )
 }
 
-export default AddScheduledInquiry
+export default InquiryManagement
