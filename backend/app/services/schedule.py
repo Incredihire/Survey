@@ -29,6 +29,13 @@ def _get_scheduled_inquiries_and_dates(
     start = datetime.strptime(
         f"{schedule.startDate} {schedule.timesOfDay[0]}", "%Y-%m-%d %H:%M"
     )
+    end = (
+        None
+        if schedule.endDate is None
+        else datetime.strptime(
+            f"{schedule.endDate} {schedule.timesOfDay[0]}", "%Y-%m-%d %H:%M"
+        )
+    )
     current_date = start
     past_scheduled_count = 0
     while current_date < today:
@@ -39,7 +46,8 @@ def _get_scheduled_inquiries_and_dates(
     scheduled_dates: list[str] = []
     for _index in scheduled_inquiries:
         current_date = _skip_days(schedule, current_date)
-        scheduled_dates.append(current_date.isoformat())
+        if end is None or current_date <= end:
+            scheduled_dates.append(current_date.isoformat())
         current_date += timedelta(days=schedule.daysBetween)
     active_index = 0
     if past_scheduled_count > 0 and scheduled_inquiries_count > 0:

@@ -1,16 +1,20 @@
+import logging
 from collections.abc import Generator
 from typing import Annotated
 
 import jwt
-from fastapi import Depends, HTTPException, Request, status
-from fastapi.security import OAuth2AuthorizationCodeBearer
-from jwt.exceptions import DecodeError, ExpiredSignatureError, InvalidSignatureError
+from fastapi import Depends, HTTPException, status
+from fastapi.security.utils import get_authorization_scheme_param
 from sqlmodel import Session
 
 import app.services.users as users_service
 from app.core.config import settings
 from app.core.db import engine
+from app.core.security import algorithms, jwks, oidc_auth
 from app.models import User
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def get_db() -> Generator[Session, None, None]:
@@ -18,50 +22,41 @@ def get_db() -> Generator[Session, None, None]:
         yield session
 
 
-class CookieOAuth2AuthorizationCodeBearer(OAuth2AuthorizationCodeBearer):
-    async def __call__(self, request: Request) -> str | None:
-        token = request.cookies.get("access_token")
-        if not token:
-            authorization_header = request.headers.get("Authorization")
-            if authorization_header and authorization_header.startswith("Bearer "):
-                token = authorization_header.split("Bearer ")[1]
-            else:
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Could not validate credentials",
-                    headers={"WWW-Authenticate": "Bearer"},
-                )
-        return token
-
-
-reusable_oauth2 = CookieOAuth2AuthorizationCodeBearer(
-    authorizationUrl=settings.GOOGLE_AUTHORIZATION_URL,
-    tokenUrl=settings.GOOGLE_TOKEN_URL,
-    scopes={
-        "openid": "openid",
-        "email": "email",
-        "profile": "profile",
-    },
-)
-
-
 SessionDep = Annotated[Session, Depends(get_db)]
-TokenDep = Annotated[str, Depends(reusable_oauth2)]
+AuthorizationDep = Annotated[str, Depends(oidc_auth)]
 
 
-def get_current_user(session: SessionDep, token: TokenDep) -> User:
-    try:
-        jwt_token = jwt.decode(
-            token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
-        )
-    except (DecodeError, ExpiredSignatureError, InvalidSignatureError):
+def get_current_user(session: SessionDep, authorization: AuthorizationDep) -> User:
+    scheme, token = get_authorization_scheme_param(authorization)
+    if not authorization or scheme.lower() != "bearer":
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid access_token"
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
         )
-
-    email = jwt_token.get("email")
-
-    user = users_service.get_user_by_email(session=session, email=email)
+    attempt = 0
+    payload = None
+    while payload is None and attempt < len(jwks["keys"]):
+        try:
+            payload = jwt.decode(
+                jwt=token,
+                key=jwt.PyJWK(jwk_data=jwks["keys"][attempt]),
+                algorithms=algorithms,
+                audience=settings.OIDC_CLIENT_ID,
+                options={"verify_signature": True},
+            )
+            if payload is not None:
+                attempt += 1
+                logger.info(f"Attempt #{attempt} to decode JWT token was successful.")
+        except Exception as e:
+            attempt += 1
+            logger.error(f"Failed attempt #{attempt} to decode JWT token: {e}")
+    if payload is None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Could not validate credentials",
+        )
+    user = users_service.get_user_by_email(session=session, email=payload.get("email"))
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found"

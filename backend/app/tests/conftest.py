@@ -1,16 +1,18 @@
 from collections.abc import Generator
 
 import pytest
+from fastapi import HTTPException, status
+from fastapi.security.utils import get_authorization_scheme_param
 from fastapi.testclient import TestClient
 from sqlmodel import Session, SQLModel, create_engine, select
 from sqlmodel.pool import StaticPool
 
-from app.api.deps import get_db
+import app.services.users as users_service
+from app.api.deps import AuthorizationDep, get_current_user, get_db
 from app.core.config import settings
 from app.core.db import init_db
-from app.core.security import create_access_token
 from app.main import app
-from app.models import Inquiry, Schedule
+from app.models import Inquiry, Schedule, User
 
 
 @pytest.fixture(name="db", scope="session")
@@ -28,7 +30,17 @@ def client_fixture(db: Session) -> Generator[TestClient, None, None]:
     def get_db_override() -> Session:
         return db
 
+    def get_current_user_override(authorization: AuthorizationDep) -> User:
+        _scheme, token = get_authorization_scheme_param(authorization)
+        user = users_service.get_user_by_email(session=db, email=token)
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+            )
+        return user
+
     app.dependency_overrides[get_db] = get_db_override
+    app.dependency_overrides[get_current_user] = get_current_user_override
     init_db(db)
     client = TestClient(app)
     yield client
@@ -50,9 +62,9 @@ def clear_tables_after_tests(db: Session) -> Generator[None, None, None]:
 
 @pytest.fixture(scope="module")
 def superuser_token_headers() -> dict[str, str]:
-    return {"Authorization": f"Bearer {create_access_token(settings.FIRST_SUPERUSER)}"}
+    return {"Authorization": f"Bearer {settings.FIRST_SUPERUSER}"}
 
 
 @pytest.fixture(scope="module")
 def normal_user_token_headers() -> dict[str, str]:
-    return {"Authorization": f"Bearer {create_access_token(settings.EMAIL_TEST_USER)}"}
+    return {"Authorization": f"Bearer {settings.EMAIL_TEST_USER}"}

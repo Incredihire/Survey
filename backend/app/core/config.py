@@ -1,4 +1,3 @@
-import secrets
 import warnings
 from typing import Annotated, Any, Literal
 
@@ -27,11 +26,8 @@ class Settings(BaseSettings):
         env_file="../.env", env_ignore_empty=True, extra="ignore"
     )
     API_V1_STR: str = "/api/v1"
-    JWT_SECRET_KEY: str = secrets.token_urlsafe(32)
-    JWT_ALGORITHM: str = "HS256"
-    REFRESH_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 365  # 1 year
     # 60 minutes * 24 hours * 8 days = 8 days
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     DOMAIN: str = "localhost"
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
 
@@ -54,10 +50,11 @@ class Settings(BaseSettings):
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str = ""
     POSTGRES_DB: str = ""
-    GOOGLE_AUTHORIZATION_URL: str = "https://accounts.google.com/o/oauth2/auth"
-    GOOGLE_TOKEN_URL: str = "https://oauth2.googleapis.com/token"
-    GOOGLE_CLIENT_ID: str = ""
-    GOOGLE_CLIENT_SECRET: str = ""
+    OPENID_CONNECT_URL: str = ""
+    OIDC_CLIENT_ID: str = ""
+    OIDC_CLIENT_SECRET: str = ""
+    OIDC_ISSUER: str = ""
+    OIDC_REDIRECT_URI: str = ""
 
     @computed_field  # type: ignore[prop-decorator]
     @property
@@ -113,8 +110,7 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def _enforce_non_default_secrets(self) -> Self:
-        self._check_default_secret("JWT_SECRET_KEY", self.JWT_SECRET_KEY)
-        self._check_default_secret("GOOGLE_CLIENT_SECRET", self.GOOGLE_CLIENT_SECRET)
+        self._check_default_secret("OIDC_CLIENT_SECRET", self.OIDC_CLIENT_SECRET)
         self._check_default_secret("POSTGRES_PASSWORD", self.POSTGRES_PASSWORD)
         self._check_default_secret(
             "FIRST_SUPERUSER_PASSWORD", self.FIRST_SUPERUSER_PASSWORD

@@ -45,24 +45,17 @@ export function columns(
     columnHelper.display({
       header: "Scheduled",
       cell: ({ row }) => {
-        const { original } = row
-        if (
-          schedule &&
-          schedule.scheduled_inquiries_and_dates.inquiries.indexOf(
-            original.id,
-          ) >= 0
-        ) {
-          return (
-            <span>
-              {formatISODateToUserTimezone(
-                schedule.scheduled_inquiries_and_dates.dates[
-                  schedule.scheduled_inquiries_and_dates.inquiries.indexOf(
-                    original.id,
-                  )
-                ],
-              )}
-            </span>
-          )
+        if (schedule) {
+          const { original } = row
+          const scheduleDate =
+            schedule.scheduled_inquiries_and_dates.dates[
+              schedule.scheduled_inquiries_and_dates.inquiries.indexOf(
+                original.id,
+              )
+            ]
+          if (scheduleDate) {
+            return <span>{formatISODateToUserTimezone(scheduleDate)}</span>
+          }
         }
         return (
           <span data-testid={"unscheduled-date-pattern"}>--/--/---- ----</span>

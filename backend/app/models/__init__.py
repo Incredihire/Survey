@@ -12,7 +12,6 @@ Important:
     https://sqlmodel.tiangolo.com/tutorial/create-db-and-table/?h=metadata#sqlmodel-metadata
 """
 
-from .auth import Message, Token, TokenPayload
 from .inquiry import (
     Inquiry,
     InquiryCreate,
@@ -21,7 +20,9 @@ from .inquiry import (
     InquiryUpdate,
     InquriesPublic,
 )
+
 from .inquiry_history import InquiryHistory, InquiryHistoryCreate, InquiryHistoryPublic
+from .message import Message
 from .response import Response, ResponseCreate, ResponsePublic, ResponsesPublic
 from .schedule import Schedule, ScheduleCreate, ScheduleInfo, SchedulePublic
 from .theme import Theme, ThemeCreate, ThemePublic, ThemesPublic
@@ -34,10 +35,8 @@ from .user import (
 
 # https://realpython.com/python-all-attribute/#names-from-a-package
 __all__ = [
-    # auth model
+    # message model
     "Message",
-    "Token",
-    "TokenPayload",
     # inquiry model
     "Inquiry",
     "InquiryCreate",
