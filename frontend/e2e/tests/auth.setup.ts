@@ -1,3 +1,4 @@
+import { readFile } from "node:fs/promises"
 import { test as setup } from "@playwright/test"
 import { chromium } from "playwright-extra"
 import stealth from "puppeteer-extra-plugin-stealth"
@@ -8,10 +9,9 @@ import { firstSuperuser, firstSuperuserPassword } from "../config.ts"
 setup("authenticate", async () => {
   let accessTokenCookie = null
   try {
-    const userJson = await import("../../playwright/.auth/user.json", {
-      assert: { type: "json" },
-    })
-    const cookies: any[] = userJson.default.cookies
+    const userJsonFile = await readFile("playwright/.auth/user.json", "utf8")
+    const userJson = JSON.parse(userJsonFile)
+    const cookies: any[] = userJson.cookies
     accessTokenCookie = cookies.find((c) => c.name === ACCESS_TOKEN_COOKIE)
   } catch (err) {
     console.error("Error:", err)
