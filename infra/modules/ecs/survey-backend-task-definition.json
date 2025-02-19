@@ -58,7 +58,7 @@
             },
             {
                 "name": "OIDC_REDIRECT_URI",
-                "value": "https://survey.incredihire.com/api/v1/auth/callback"
+                "value": "https://survey-api.incredihire.com/api/v1/auth/callback"
             },
             {
                 "name": "FORWARDED_ALLOW_IPS",
