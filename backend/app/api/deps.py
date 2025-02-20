@@ -42,7 +42,7 @@ def get_current_user(session: SessionDep, authorization: AuthorizationDep) -> Us
                 jwt=token,
                 key=jwt.PyJWK(jwk_data=jwks["keys"][attempt]),
                 algorithms=algorithms,
-                audience=settings.OIDC_CLIENT_ID,
+                audience=[settings.OIDC_CLIENT_ID, settings.OIDC_CLIENT_ID_DESKTOP],
                 options={"verify_signature": True},
             )
             if payload is not None:

@@ -144,9 +144,10 @@ You can set several variables, like:
 * `SENTRY_DSN`: The DSN for Sentry, if you are using it.
 * `OPENID_CONNECT_URL`: The OpenID Connect URL i.e. `https://accounts.google.com/.well-known/openid-configuration`
 * `OIDC_ISSUER`: The OpenID Connect issuer i.e. `https://accounts.google.com`
-* `OIDC_REDIRECT_URI`: The OpenID Connect redirect URI i.e. `http://localhost/api/v1/auth/callback`
-* `OIDC_CLIENT_ID`: The OpenID Connect client ID.
-* `OIDC_CLIENT_SECRET`: The OpenID Connect client secret.
+* `OIDC_REDIRECT_URI`: The OpenID Connect redirect URI for the web application i.e. `https://survey-api.incredihire.com/api/v1/auth/callback`
+* `OIDC_CLIENT_ID`: The OpenID Connect client ID for the web application.
+* `OIDC_CLIENT_SECRET`: The OpenID Connect client secret for the web application.
+* `OIDC_CLIENT_ID_DESKTOP`: The OpenID Connect client ID for the desktop application.
 
 
 ## GitHub Actions Environment Variables
@@ -270,8 +271,8 @@ The current Github Actions workflows expect these secrets:
 * `JWT_ALGORITHM`
 * `LATEST_CHANGES`
 * `SMOKESHOW_AUTH_KEY`
-* `GOOGLE_CLIENT_ID`
-* `GOOGLE_CLIENT_SECRET`
+* `OIDC_CLIENT_ID`
+* `OIDC_CLIENT_SECRET`
 
 ## GitHub Action Deployment Workflows
 
