@@ -69,7 +69,8 @@ async def login(request: Request, return_url: str) -> RedirectResponse:
     )
     response = RedirectResponse(f"{authorization_endpoint}?{query}")
     auth_return_url = check_return_url(return_url)
-    callback_path = "/api/v1/auth/callback"
+    oidc_redirect_uri_parsed = urlparse(settings.OIDC_REDIRECT_URI)
+    callback_path = oidc_redirect_uri_parsed.path
     if auth_return_url:
         response.set_cookie(
             "auth_return_url",
