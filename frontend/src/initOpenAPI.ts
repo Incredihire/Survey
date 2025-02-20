@@ -14,7 +14,7 @@ export default function initOpenAPI() {
       Cookies.remove(ACCESS_TOKEN_COOKIE)
       OpenAPI.TOKEN = ""
       const { hostname, port, pathname, search, hash } = window.location
-      window.location.href = `//${escape(OpenAPI.BASE)}/api/v1/auth/login?return_url=${escape(`//${hostname}${port === "5173" ? ":5173" : ""}${pathname}${search}${hash}`)}`
+      window.location.href = `//${escape(OpenAPI.BASE)}/api/v1/auth/login?return_url=//${escape(hostname + (port === "5173" ? ":5173" : "") + pathname + search + hash)}`
     }
     return response
   })
