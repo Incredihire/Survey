@@ -13,8 +13,14 @@ export default function initOpenAPI() {
     if ([401, 403, 404].includes(response.status)) {
       Cookies.remove(ACCESS_TOKEN_COOKIE)
       OpenAPI.TOKEN = ""
-      const { hostname, port, pathname, search, hash } = window.location
-      window.location.href = `//${escape(OpenAPI.BASE)}/api/v1/auth/login?return_url=//${escape(hostname + (port === "5173" ? ":5173" : "") + pathname + search + hash)}`
+      const { protocol, hostname, port, pathname, search, hash } =
+        window.location
+      const returnUrl = new URL(
+        `${protocol}//${hostname}${port === "5173" ? ":5173" : ""}${pathname}${search}${hash}`,
+      )
+      const loginUrl = new URL(`${protocol}//${OpenAPI.BASE}/api/v1/auth/login`)
+      loginUrl.searchParams.set("return_url", returnUrl.toString())
+      window.location.href = loginUrl.toString()
     }
     return response
   })
