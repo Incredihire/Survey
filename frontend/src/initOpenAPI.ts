@@ -20,7 +20,7 @@ export default function initOpenAPI() {
       )
       const loginUrl = new URL(`${protocol}//${OpenAPI.BASE}/api/v1/auth/login`)
       loginUrl.searchParams.set("return_url", returnUrl.toString())
-      window.location.href = loginUrl.toString()
+      window.location.assign(loginUrl)
     }
     return response
   })
