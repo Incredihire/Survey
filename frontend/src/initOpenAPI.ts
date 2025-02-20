@@ -22,6 +22,11 @@ export default function initOpenAPI() {
     return response
   })
   if (window.location.search === "?auth_callback=true") {
+    console.log(
+      "Found auth_callback=true in URL, redirecting to previous page. Cookie value:",
+      Cookies.get(AUTH_REFERER_COOKIE) ||
+        "No cookie found. Resetting to home page.",
+    )
     const auth_referer = Cookies.get(AUTH_REFERER_COOKIE)
     if (auth_referer) {
       Cookies.remove(AUTH_REFERER_COOKIE)
