@@ -18,9 +18,6 @@ load_dotenv()
 router = APIRouter()
 
 LOCAL_DEV_AUTH = settings.DOMAIN == "localhost" and settings.ENVIRONMENT == "local"
-if LOCAL_DEV_AUTH:
-    os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
-
 COOKIE_SECURE = not LOCAL_DEV_AUTH
 
 
