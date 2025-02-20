@@ -48,7 +48,13 @@ def check_return_url(url: str | None) -> str | None:
 
 
 def _scrub_state_part(part: str) -> str:
-    return part.replace("~", "%7E").replace(".", "%2E")
+    return (
+        urllib.parse.quote(part, safe="")
+        .replace("-", "%2D")
+        .replace(".", "%2E")
+        .replace("_", "%5F")
+        .replace("~", "%7E")
+    )
 
 
 @router.get("/login")
