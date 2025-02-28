@@ -26,3 +26,7 @@ output "backend_target_group_arn" {
   value       = aws_lb_target_group.backend.arn
   description = "ARN for the backend target group created by this module"
 }
+
+output "http_listener_arn" {
+  value = aws_alb_listener.http.arn
+}
