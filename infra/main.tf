@@ -31,8 +31,7 @@ module "alb-survey" {
   vpc_id                   = module.vpc.vpc_id
   project_name             = var.project_name
   app_name                 = "survey"
-  frontend_healthcheck_path = "/"
-  backend_healthcheck_path  = "/docs"  # Adjust this path as needed
+  healthcheck_path         = "/docs"
 }
 
 # Create ecs cluster, service and task definition for backend
