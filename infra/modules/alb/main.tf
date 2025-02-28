@@ -49,16 +49,15 @@ resource "aws_alb_listener" "http" {
   load_balancer_arn = aws_lb.alb.arn
   port              = "80"
   protocol          = "HTTP"
-default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.this.arn
+
+  default_action {
+    type = "forward"
+    target_group_arn = aws_lb_target_group.frontend.arn
   }
-
-
 }
 
-resource "aws_lb_target_group" "this" {
-  name        = "${var.project_name}-${var.app_name}-tg"
+resource "aws_lb_target_group" "frontend" {
+  name        = "${var.project_name}-frontend-tg"
   port        = 80
   protocol    = "HTTP"
   target_type = "ip"
@@ -72,29 +71,68 @@ resource "aws_lb_target_group" "this" {
     protocol            = "HTTP"
     matcher             = "200"
     timeout             = "5"
-    path = var.healthcheck_path
-
+    path                = var.frontend_healthcheck_path
   }
 
-  depends_on = [
-    aws_lb.alb
-  ]
+  depends_on = [aws_lb.alb]
 
   tags = {
-    Name = "${var.project_name}-${var.app_name}-tg"
+    Name = "${var.project_name}-frontend-tg"
   }
 }
 
-resource "aws_lb_listener_rule" "this" {
-  action {
-    target_group_arn = aws_lb_target_group.this.arn
-    type             = "forward"
+resource "aws_lb_target_group" "backend" {
+  name        = "${var.project_name}-backend-tg"
+  port        = 80
+  protocol    = "HTTP"
+  target_type = "ip"
+  vpc_id      = var.vpc_id
+
+  health_check {
+    healthy_threshold   = "3"
+    unhealthy_threshold = "3"
+    port                = "traffic-port"
+    interval            = "10"
+    protocol            = "HTTP"
+    matcher             = "200"
+    timeout             = "5"
+    path                = var.backend_healthcheck_path
   }
+
+  depends_on = [aws_lb.alb]
+
+  tags = {
+    Name = "${var.project_name}-backend-tg"
+  }
+}
+
+resource "aws_lb_listener_rule" "backend" {
+  listener_arn = aws_alb_listener.http.arn
+  priority     = 100
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.backend.arn
+  }
+
+  condition {
+    path_pattern {
+      values = ["/api/*"]
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "frontend" {
+  listener_arn = aws_alb_listener.http.arn
+  priority     = 200
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.frontend.arn
+  }
+
   condition {
     path_pattern {
       values = ["/*"]
     }
   }
-  listener_arn = aws_alb_listener.http.arn
-  priority     = "100"
 }
