@@ -15,7 +15,7 @@
         "environment": [
                 {
                     "name": "VITE_API_URL",
-                    "value": "//survey-api.incredihire.com/"
+                    "value": "//survey.incredihire.com/"
                 },
                 {
                     "name": "PROJECT_NAME",
