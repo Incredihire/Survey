@@ -71,7 +71,7 @@ resource "aws_lb_target_group" "frontend" {
     protocol            = "HTTP"
     matcher             = "200"
     timeout             = "5"
-    path                = var.frontend_healthcheck_path
+    path                = var.healthcheck_path
   }
 
   depends_on = [aws_lb.alb]
@@ -96,7 +96,7 @@ resource "aws_lb_target_group" "backend" {
     protocol            = "HTTP"
     matcher             = "200"
     timeout             = "5"
-    path                = var.backend_healthcheck_path
+    path                = var.healthcheck_path
   }
 
   depends_on = [aws_lb.alb]
