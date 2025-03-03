@@ -7,8 +7,9 @@ from urllib.parse import urlparse, urlunparse
 import httpx
 import tldextract
 from dotenv import load_dotenv
-from fastapi import APIRouter, HTTPException, Request, status
-from fastapi.responses import RedirectResponse
+from fastapi import APIRouter, Form, HTTPException, Request, status
+from fastapi.responses import JSONResponse, RedirectResponse
+from typing_extensions import Annotated
 
 from app.core.config import settings
 from app.core.security import authorization_endpoint, token_endpoint
@@ -126,4 +127,41 @@ async def callback(request: Request, code: str, state: str) -> RedirectResponse:
         secure=COOKIE_SECURE,
         domain=COOKIE_DOMAIN,
     )
+    return response
+
+
+@router.post("/token/desktop")
+async def token(
+    code: Annotated[str, Form()] = None,
+    refresh_token: Annotated[str, Form()] = None,
+    grant_type: Annotated[str, Form()] = None,
+    scope: Annotated[str, Form()] = None,
+    code_verifier: Annotated[str, Form()] = None,
+) -> JSONResponse:
+    data = {
+        "redirect_uri": settings.OIDC_REDIRECT_URI_DESKTOP,
+        "client_id": settings.OIDC_CLIENT_ID_DESKTOP,
+        "client_secret": settings.OIDC_CLIENT_SECRET_DESKTOP,
+    }
+    if code:
+        data["code"] = code
+    if refresh_token:
+        data["refresh_token"] = code
+    if grant_type:
+        data["grant_type"] = grant_type
+    if scope:
+        data["scope"] = scope
+    if code_verifier:
+        data["code_verifier"] = code_verifier
+    async with httpx.AsyncClient() as client:
+        token_response = await client.post(
+            token_endpoint,
+            data=data,
+        )
+        response_data = token_response.json()
+    if token_response.status_code != 200:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid token request"
+        )
+    response = JSONResponse(response_data)
     return response
