@@ -73,6 +73,10 @@ def get_inquries(
 @router.get("/current", response_model=InquiryPublic)
 def current_inquiry(session: SessionDep) -> Inquiry:
     schedule = schedule_service.get_schedule(session)
+    if not schedule:
+        raise HTTPException(
+            status_code=400, detail="Schedule does not exist to get current inquiry"
+        )
     try:
         inquiry_id = schedule.scheduled_inquiries_and_dates.inquiries[0]
     except IndexError as e:

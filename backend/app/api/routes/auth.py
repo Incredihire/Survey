@@ -131,12 +131,12 @@ async def callback(request: Request, code: str, state: str) -> RedirectResponse:
 
 
 @router.post("/token/desktop")
-async def token(
-    code: Annotated[str, Form()] = None,
-    refresh_token: Annotated[str, Form()] = None,
-    grant_type: Annotated[str, Form()] = None,
-    scope: Annotated[str, Form()] = None,
-    code_verifier: Annotated[str, Form()] = None,
+async def token_desktop(
+    code: Annotated[str | None, Form()] = None,
+    refresh_token: Annotated[str | None, Form()] = None,
+    grant_type: Annotated[str | None, Form()] = None,
+    scope: Annotated[str | None, Form()] = None,
+    code_verifier: Annotated[str | None, Form()] = None,
 ) -> JSONResponse:
     data = {
         "redirect_uri": settings.OIDC_REDIRECT_URI_DESKTOP,
@@ -146,7 +146,7 @@ async def token(
     if code:
         data["code"] = code
     if refresh_token:
-        data["refresh_token"] = code
+        data["refresh_token"] = refresh_token
     if grant_type:
         data["grant_type"] = grant_type
     if scope:
