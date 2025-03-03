@@ -144,11 +144,12 @@ You can set several variables, like:
 * `SENTRY_DSN`: The DSN for Sentry, if you are using it.
 * `OPENID_CONNECT_URL`: The OpenID Connect URL i.e. `https://accounts.google.com/.well-known/openid-configuration`
 * `OIDC_ISSUER`: The OpenID Connect issuer i.e. `https://accounts.google.com`
-* `OIDC_REDIRECT_URI`: The OpenID Connect redirect URI for the web application i.e. `https://survey.incredihire.com/api/v1/auth/callback`
-* `OIDC_CLIENT_ID`: The OpenID Connect client ID for the web application.
-* `OIDC_CLIENT_SECRET`: The OpenID Connect client secret for the web application.
-* `OIDC_CLIENT_ID_DESKTOP`: The OpenID Connect client ID for the desktop application.
-
+* `OIDC_CLIENT_SECRET_DESKTOP`: The OpenID Connect client secret for the desktop application i.e. `ABCDEF-GHIj0kLMN1p23QRSTuv4wxYzaBcD`
+* `OIDC_CLIENT_SECRET`: The OpenID Connect client secret for the web application i.e. `ABCDEF-GHIj0kLMN1p23QRSTuv4wxYzaBcD`
+* `OIDC_CLIENT_ID`: The OpenID Connect client ID for the web application i.e. `0123456789012-abcdef3456g7hi89jk0lm12nop34qr5s.apps.googleusercontent.com`
+* `OIDC_REDIRECT_URI`: The OpenID Connect redirect URI for the web application i.e. `https://survey-api.incredihire.com/api/v1/auth/callback`
+* `OIDC_CLIENT_ID_DESKTOP`: The OpenID Connect client ID for the desktop application i.e. `0123456789012-abcdef3456g7hi89jk0lm12nop34qr5s.apps.googleusercontent.com`
+* `OIDC_REDIRECT_URI_DESKTOP`: The OpenID Connect redirect URI for the desktop application i.e. `com.googleusercontent.apps.0123456789012-abcdef3456g7hi89jk0lm12nop34qr5s:/auth/callback`
 
 ## GitHub Actions Environment Variables
 

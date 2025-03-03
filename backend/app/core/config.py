@@ -56,6 +56,8 @@ class Settings(BaseSettings):
     OIDC_ISSUER: str = ""
     OIDC_REDIRECT_URI: str = ""
     OIDC_CLIENT_ID_DESKTOP: str = ""
+    OIDC_CLIENT_SECRET_DESKTOP: str = ""
+    OIDC_REDIRECT_URI_DESKTOP: str = ""
 
     @computed_field  # type: ignore[prop-decorator]
     @property
