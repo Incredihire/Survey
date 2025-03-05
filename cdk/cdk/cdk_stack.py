@@ -11,8 +11,20 @@ from aws_cdk import (
 from constructs import Construct
 
 class FastApiFargateStack(Stack):
-    def __init__(self, scope: Construct, id: str, **kwargs) -> None:
+    def __init__(self, scope: Construct, id: str, 
+             backend_ecr_repo_uri=None, 
+             frontend_ecr_repo_uri=None,
+             commit_sha="latest",
+             certificate_arn=None,
+             **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
+
+        # Print debug information
+        print(f"Stack initialization with:")
+        print(f"  Backend ECR Repo URI: {backend_ecr_repo_uri}")
+        print(f"  Frontend ECR Repo URI: {frontend_ecr_repo_uri}")
+        print(f"  Commit SHA: {commit_sha}")
+        print(f"  Certificate ARN: {certificate_arn}")
 
         # Create VPC
         vpc = ec2.Vpc(self, "SurveyVPC", max_azs=2)
@@ -105,7 +117,7 @@ class FastApiFargateStack(Stack):
             protocol=elb.ApplicationProtocol.HTTP,
             target_type=elb.TargetType.IP,
             health_check=elb.HealthCheck(
-                path="/docs",
+                path="/health",
                 healthy_http_codes="200"
             )
         )
@@ -127,7 +139,7 @@ class FastApiFargateStack(Stack):
             "HttpsListener", 
             port=443, 
             open=True, 
-            certificates=[elb.ListenerCertificate.from_arn(self.node.try_get_context("certificate_arn"))]
+            certificates=[elb.ListenerCertificate.from_arn(certificate_arn)]
         )
 
        # After creating the HTTPS listener, add an HTTP listener that redirects to HTTPS
@@ -150,7 +162,7 @@ class FastApiFargateStack(Stack):
             "BackendRule",
             priority=10,
             conditions=[
-                elb.ListenerCondition.path_patterns(["/api/*", "/docs", "/redoc"])
+                elb.ListenerCondition.path_patterns(["/api/*", "/docs", "/redoc", "/health"])
             ],
             action=elb.ListenerAction.forward([backend_target_group])
         )
@@ -171,9 +183,12 @@ class FastApiFargateStack(Stack):
 
         # Rest of the code remains the same...
 
+        backend_arn = f"{backend_ecr_repo_uri}:{commit_sha}"
+        print(f"Backend ARN: {backend_arn}")
+
         backend_container = backend_task_definition.add_container(
             "SurveyBackendContainer",
-            image=ecs.ContainerImage.from_registry(f"{self.node.try_get_context('backend_ecr_repo_uri')}:{self.node.try_get_context('commit_sha')}"),
+            image=ecs.ContainerImage.from_registry(backend_arn),
             logging=ecs.LogDrivers.aws_logs(stream_prefix="backend"),
             environment={
                 "FIRST_SUPERUSER": "admin@example.com",
@@ -223,9 +238,12 @@ class FastApiFargateStack(Stack):
             execution_role=execution_role
         )
 
+        frontend_arn = f"{frontend_ecr_repo_uri}:{commit_sha}"
+        print(f"Frontend ARN: {frontend_arn}")
+                                        
         frontend_container = frontend_task_definition.add_container(
             "SurveyFrontendContainer",
-            image=ecs.ContainerImage.from_registry(f"{self.node.try_get_context('frontend_ecr_repo_uri')}:{self.node.try_get_context('commit_sha')}"),
+            image=ecs.ContainerImage.from_registry(frontend_arn),
             logging=ecs.LogDrivers.aws_logs(stream_prefix="frontend"),
             environment={
                 "VITE_API_URL": "//survey.incredihire.com",
