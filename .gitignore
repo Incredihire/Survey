@@ -30,3 +30,5 @@ frontend/playwright-report/*
 frontend/playwright/.cache/*
 frontend/playwright/.auth/*
 .env
+cdk/cdk.context.json
+cdk/use/*

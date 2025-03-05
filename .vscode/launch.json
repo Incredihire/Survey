@@ -18,6 +18,26 @@
       "url": "http://localhost:5173",
       "webRoot": "${workspaceFolder}/frontend",
       "port": 10001
+    },
+    {
+      "name": "CDK App",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/cdk/app.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "envFile": "${workspaceFolder}/.env",
+    },
+    {
+      "name": "CDK Tests",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+          "${workspaceFolder}/cdk/tests"
+      ],
+      "justMyCode": true,
+      "envFile": "${workspaceFolder}/.env"
     }
   ],
   "compounds": [

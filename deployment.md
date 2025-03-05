@@ -144,7 +144,7 @@ You can set several variables, like:
 * `SENTRY_DSN`: The DSN for Sentry, if you are using it.
 * `OPENID_CONNECT_URL`: The OpenID Connect URL i.e. `https://accounts.google.com/.well-known/openid-configuration`
 * `OIDC_ISSUER`: The OpenID Connect issuer i.e. `https://accounts.google.com`
-* `OIDC_REDIRECT_URI`: The OpenID Connect redirect URI for the web application i.e. `https://survey-api.incredihire.com/api/v1/auth/callback`
+* `OIDC_REDIRECT_URI`: The OpenID Connect redirect URI for the web application i.e. `https://survey.incredihire.com/api/v1/auth/callback`
 * `OIDC_CLIENT_ID`: The OpenID Connect client ID for the web application.
 * `OIDC_CLIENT_SECRET`: The OpenID Connect client secret for the web application.
 * `OIDC_CLIENT_ID_DESKTOP`: The OpenID Connect client ID for the desktop application.
