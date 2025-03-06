@@ -117,7 +117,7 @@ class FastApiFargateStack(Stack):
             protocol=elb.ApplicationProtocol.HTTP,
             target_type=elb.TargetType.IP,
             health_check=elb.HealthCheck(
-                path="/health",
+                path="/api/v1/health/health",
                 healthy_http_codes="200"
             )
         )
@@ -162,7 +162,7 @@ class FastApiFargateStack(Stack):
             "BackendRule",
             priority=10,
             conditions=[
-                elb.ListenerCondition.path_patterns(["/api/*", "/docs", "/redoc", "/health"])
+                elb.ListenerCondition.path_patterns(["/api/*", "/docs", "/redoc"])
             ],
             action=elb.ListenerAction.forward([backend_target_group])
         )
