@@ -90,6 +90,7 @@ jobs:
           cd cdk
           pip install poetry
           poetry install
+          npm install -g aws-cdk  # Install CDK CLI globally
 
       - name: CDK Bootstrap (if needed)
         env:
