@@ -57,6 +57,7 @@ jobs:
           GITHUB_REPO: ${{ github.repository }}
           MANUAL_IMAGE_TAG: ${{ github.event.inputs.image_tag }}
           GITHUB_SHA_SHORT: ${{ github.sha }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           if [ "$EVENT_NAME" == "workflow_dispatch" ] && [ -n "$MANUAL_IMAGE_TAG" ]; then
             echo "IMAGE_TAG=$MANUAL_IMAGE_TAG" >> $GITHUB_ENV
@@ -104,6 +105,8 @@ jobs:
           AWS_REGION: ${{ env.AWS_REGION }}
           COMMIT_SHA: ${{ env.IMAGE_TAG }}
           CERTIFICATE_ARN: ${{ secrets.CERTIFICATE_ARN }}
+          HOSTED_ZONE_ID: ${{ secrets.HOSTED_ZONE_ID }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           cd cdk
           echo "Deploying with image tag: $COMMIT_SHA"
@@ -115,12 +118,13 @@ jobs:
             --context backendEcrRepoUri=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/survey_backend \
             --context frontendEcrRepoUri=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/survey_frontend \
             --context certificateArn=$CERTIFICATE_ARN
+            --context hostedZoneId=$HOSTED_ZONE_ID
 
       - name: Run deployment diagnostics
         if: success() || failure()
         run: |
           cd cdk
-          python diagnosedeploy.py
+          poetry run python diagnosedeploy.py
 
       # - name: Notify on success
       #   if: success()
