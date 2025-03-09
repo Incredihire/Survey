@@ -24,6 +24,7 @@ on:
 
 env:
   AWS_REGION: us-west-2
+
 jobs:
   deploy:
     # Only run if the build workflow succeeded or this is a manual dispatch
@@ -33,16 +34,16 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
           python-version: '3.12'
           cache: 'pip'
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -50,23 +51,29 @@ jobs:
 
       - name: Get image tag
         id: get-image-tag
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          WORKFLOW_RUN_ID: ${{ github.event.workflow_run.id }}
+          GITHUB_REPO: ${{ github.repository }}
+          MANUAL_IMAGE_TAG: ${{ github.event.inputs.image_tag }}
+          GITHUB_SHA_SHORT: ${{ github.sha }}
         run: |
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ -n "${{ github.event.inputs.image_tag }}" ]; then
-            echo "IMAGE_TAG=${{ github.event.inputs.image_tag }}" >> $GITHUB_ENV
-          elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+          if [ "$EVENT_NAME" == "workflow_dispatch" ] && [ -n "$MANUAL_IMAGE_TAG" ]; then
+            echo "IMAGE_TAG=$MANUAL_IMAGE_TAG" >> $GITHUB_ENV
+          elif [ "$EVENT_NAME" == "workflow_dispatch" ]; then
+            echo "IMAGE_TAG=${GITHUB_SHA_SHORT::7}" >> $GITHUB_ENV
           else
             # Download artifact from previous workflow to get the image tag
             gh api \
               -H "Accept: application/vnd.github+json" \
-              /repos/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}/artifacts > artifacts.json
+              /repos/$GITHUB_REPO/actions/runs/$WORKFLOW_RUN_ID/artifacts > artifacts.json
 
             ARTIFACT_ID=$(jq -r '.artifacts[] | select(.name=="commit-sha") | .id' artifacts.json)
             if [ -n "$ARTIFACT_ID" ]; then
               mkdir -p /tmp/artifacts
               gh api \
                 -H "Accept: application/vnd.github+json" \
-                /repos/${{ github.repository }}/actions/artifacts/$ARTIFACT_ID/zip -o /tmp/artifacts/commit-sha.zip
+                /repos/$GITHUB_REPO/actions/artifacts/$ARTIFACT_ID/zip -o /tmp/artifacts/commit-sha.zip
               unzip -o /tmp/artifacts/commit-sha.zip -d /tmp/artifacts
               IMAGE_TAG=$(cat /tmp/artifacts/commit-sha.txt)
               echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
@@ -75,8 +82,7 @@ jobs:
               echo "Warning: Could not find commit-sha artifact, using 'latest' as fallback"
             fi
           fi
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Install dependencies
         run: |
           cd cdk
@@ -85,22 +91,30 @@ jobs:
           poetry install
 
       - name: CDK Bootstrap (if needed)
+        env:
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
           cd cdk
-          poetry run cdk bootstrap aws://${{ secrets.AWS_ACCOUNT_ID }}/${{ secrets.AWS_REGION }}
+          poetry run cdk bootstrap aws://$AWS_ACCOUNT_ID/$AWS_REGION
 
       - name: Deploy CDK Stack
+        env:
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          AWS_REGION: ${{ env.AWS_REGION }}
+          COMMIT_SHA: ${{ env.IMAGE_TAG }}
+          CERTIFICATE_ARN: ${{ secrets.CERTIFICATE_ARN }}
         run: |
           cd cdk
-          echo "Deploying with image tag: ${{ env.IMAGE_TAG }}"
+          echo "Deploying with image tag: $COMMIT_SHA"
           poetry run cdk deploy SurveyStack \
             --require-approval never \
-            --context awsAccountId=${{ secrets.AWS_ACCOUNT_ID }} \
-            --context awsRegion=${{ env.AWS_REGION }} \
-            --context commitSha=${{ env.IMAGE_TAG }} \
-            --context backendEcrRepoUri=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/survey_backend \
-            --context frontendEcrRepoUri=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/survey_frontend \
-            --context certificateArn=${{ secrets.CERTIFICATE_ARN }}
+            --context awsAccountId=$AWS_ACCOUNT_ID \
+            --context awsRegion=$AWS_REGION \
+            --context commitSha=$COMMIT_SHA \
+            --context backendEcrRepoUri=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/survey_backend \
+            --context frontendEcrRepoUri=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/survey_frontend \
+            --context certificateArn=$CERTIFICATE_ARN
 
       - name: Run deployment diagnostics
         if: success() || failure()
@@ -108,26 +122,33 @@ jobs:
           cd cdk
           python diagnosedeploy.py
 
-      - name: Notify on success
-        if: success()
-        uses: slackapi/slack-github-action@v1.25.0
-        with:
-          payload: |
-            {
-              "text": "✅ CDK Deployment Successful!\nEnvironment: ${{ github.event.inputs.environment || 'production' }}\nImage Tag: ${{ env.IMAGE_TAG }}"
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+      # - name: Notify on success
+      #   if: success()
+      #   uses: slackapi/slack-github-action@6c661b8c803efccc4d3affc9c0787bfa9437b3b5 # v1.25.0
+      #   env:
+      #     ENVIRONMENT: ${{ github.event.inputs.environment || 'production' }}
+      #     IMAGE_TAG_VAL: ${{ env.IMAGE_TAG }}
+      #   with:
+      #     payload: |
+      #       {
+      #         "text": "✅ CDK Deployment Successful!\nEnvironment: $ENVIRONMENT\nImage Tag: $IMAGE_TAG_VAL"
+      #       }
+      #   env:
+      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      #     SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 
-      - name: Notify on failure
-        if: failure()
-        uses: slackapi/slack-github-action@v1.25.0
-        with:
-          payload: |
-            {
-              "text": "❌ CDK Deployment Failed!\nEnvironment: ${{ github.event.inputs.environment || 'production' }}\nImage Tag: ${{ env.IMAGE_TAG }}\nCheck the logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+      # - name: Notify on failure
+      #   if: failure()
+      #   uses: slackapi/slack-github-action@6c661b8c803efccc4d3affc9c0787bfa9437b3b5 # v1.25.0
+      #   env:
+      #     ENVIRONMENT: ${{ github.event.inputs.environment || 'production' }}
+      #     IMAGE_TAG_VAL: ${{ env.IMAGE_TAG }}
+      #     RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      #   with:
+      #     payload: |
+      #       {
+      #         "text": "❌ CDK Deployment Failed!\nEnvironment: $ENVIRONMENT\nImage Tag: $IMAGE_TAG_VAL\nSee logs: $RUN_URL"
+      #       }
+      #   env:
+      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      #     SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
