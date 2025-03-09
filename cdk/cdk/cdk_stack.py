@@ -7,13 +7,9 @@ from aws_cdk import (
     aws_iam as iam,
     aws_elasticloadbalancingv2 as elb,
     aws_secretsmanager as secretsmanager,
-    aws_logs as logs,
     Duration,
     aws_route53 as route53,
     aws_route53_targets as targets,
-    Fn,
-    aws_s3 as s3,
-    RemovalPolicy
 )
 from constructs import Construct
 
