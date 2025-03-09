@@ -89,7 +89,6 @@ jobs:
         run: |
           cd cdk
           pip install poetry
-          poetry config virtualenvs.create false
           poetry install
 
       - name: CDK Bootstrap (if needed)
