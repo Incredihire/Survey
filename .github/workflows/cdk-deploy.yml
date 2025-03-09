@@ -7,6 +7,7 @@ on:
       - completed
     branches:
       - main
+      - gh_fixes
   workflow_dispatch:
     inputs:
       environment:
@@ -74,7 +75,7 @@ jobs:
               mkdir -p /tmp/artifacts
               gh api \
                 -H "Accept: application/vnd.github+json" \
-                /repos/$GITHUB_REPO/actions/artifacts/$ARTIFACT_ID/zip -o /tmp/artifacts/commit-sha.zip
+                /repos/$GITHUB_REPO/actions/artifacts/$ARTIFACT_ID/zip > /tmp/artifacts/commit-sha.zip
               unzip -o /tmp/artifacts/commit-sha.zip -d /tmp/artifacts
               IMAGE_TAG=$(cat /tmp/artifacts/commit-sha.txt)
               echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
@@ -98,7 +99,6 @@ jobs:
         run: |
           cd cdk
           poetry run cdk bootstrap aws://$AWS_ACCOUNT_ID/$AWS_REGION
-
       - name: Deploy CDK Stack
         env:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
@@ -117,7 +117,7 @@ jobs:
             --context commitSha=$COMMIT_SHA \
             --context backendEcrRepoUri=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/survey_backend \
             --context frontendEcrRepoUri=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/survey_frontend \
-            --context certificateArn=$CERTIFICATE_ARN
+            --context certificateArn=$CERTIFICATE_ARN \
             --context hostedZoneId=$HOSTED_ZONE_ID
 
       - name: Run deployment diagnostics
