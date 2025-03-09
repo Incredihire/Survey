@@ -1,7 +1,6 @@
 import os
 import aws_cdk as cdk
 import aws_cdk.assertions as assertions
-from aws_cdk import aws_ec2 as ec2, aws_ecs as ecs, aws_elasticloadbalancingv2 as elb
 
 from cdk.cdk_stack import FastApiFargateStack
 

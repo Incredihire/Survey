@@ -14,14 +14,14 @@ from aws_cdk import (
 from constructs import Construct
 
 class FastApiFargateStack(Stack):
-    def __init__(self, scope: Construct, id: str, 
+    def __init__(self, scope: Construct, app_id: str, 
              backend_ecr_repo_uri=None, 
              frontend_ecr_repo_uri=None,
              commit_sha="latest",
              certificate_arn=None,
              hosted_zone_id=None,
              **kwargs) -> None:
-        super().__init__(scope, id, **kwargs)
+        super().__init__(scope, app_id, **kwargs)
 
         # Print debug information
         print(f"Stack initialization with:")
@@ -232,7 +232,7 @@ class FastApiFargateStack(Stack):
             load_balancer_name="survey-incredihire-alb"
         )
 
-        """Configure DNS for the application"""
+        # Configure DNS for the application
         domain_name = os.environ.get("DOMAIN_NAME", "aws.incredihire.com")
         hosted_zone = route53.HostedZone.from_hosted_zone_attributes(
             self, id="SurveyStack", 
@@ -265,7 +265,7 @@ class FastApiFargateStack(Stack):
         backend_arn = f"{backend_ecr_repo_uri}:{commit_sha}"
         print(f"Backend ARN: {backend_arn}")
 
-        backend_container = backend_task_definition.add_container(
+        backend_task_definition.add_container(
             "SurveyBackendContainer",
             image=ecs.ContainerImage.from_registry(backend_arn),
             logging=ecs.LogDrivers.aws_logs(stream_prefix="backend"),
@@ -322,7 +322,7 @@ class FastApiFargateStack(Stack):
         frontend_arn = f"{frontend_ecr_repo_uri}:{commit_sha}"
         print(f"Frontend ARN: {frontend_arn}")
                                         
-        frontend_container = frontend_task_definition.add_container(
+        frontend_task_definition.add_container(
             "SurveyFrontendContainer",
             image=ecs.ContainerImage.from_registry(frontend_arn),
             logging=ecs.LogDrivers.aws_logs(stream_prefix="frontend"),

@@ -1,6 +1,4 @@
 import boto3
-import time
-import sys
 
 def diagnose_deployment():
     # Initialize CloudFormation client
