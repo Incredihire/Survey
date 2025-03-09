@@ -95,10 +95,11 @@ jobs:
       - name: CDK Bootstrap (if needed)
         env:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_REGION: ${{ env.AWS_REGION }}
         run: |
           cd cdk
           poetry run cdk bootstrap aws://$AWS_ACCOUNT_ID/$AWS_REGION
+          
       - name: Deploy CDK Stack
         env:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
