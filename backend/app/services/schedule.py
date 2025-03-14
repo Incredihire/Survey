@@ -22,6 +22,9 @@ def _skip_days(schedule: ScheduleInfo, current_date: datetime) -> datetime:
 def _get_scheduled_inquiries_and_dates(
     schedule: ScheduleInfo, scheduled_inquiries: list[int]
 ) -> ScheduleInquiriesAndDates:
+    scheduled_inquiries_count = len(scheduled_inquiries)
+    if scheduled_inquiries_count == 0:
+        return ScheduleInquiriesAndDates(inquiries=[], dates=[])
     today = datetime.strptime(
         f"{datetime.now().strftime('%Y-%m-%d')} {schedule.timesOfDay[0]}",
         "%Y-%m-%d %H:%M",
@@ -42,7 +45,6 @@ def _get_scheduled_inquiries_and_dates(
         current_date = _skip_days(schedule, current_date)
         current_date += timedelta(days=schedule.daysBetween)
         past_scheduled_count += 1
-    scheduled_inquiries_count = len(scheduled_inquiries)
     scheduled_dates: list[str] = []
     for _index in scheduled_inquiries:
         current_date = _skip_days(schedule, current_date)
@@ -50,7 +52,7 @@ def _get_scheduled_inquiries_and_dates(
             scheduled_dates.append(current_date.isoformat())
         current_date += timedelta(days=schedule.daysBetween)
     active_index = 0
-    if past_scheduled_count > 0 and scheduled_inquiries_count > 0:
+    if past_scheduled_count > 0:
         active_index = past_scheduled_count % scheduled_inquiries_count
     return ScheduleInquiriesAndDates(
         inquiries=scheduled_inquiries[active_index:]
