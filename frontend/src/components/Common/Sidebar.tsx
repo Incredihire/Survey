@@ -15,7 +15,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query"
 import { FiMenu } from "react-icons/fi"
 
-import Logo from "/assets/images/fastapi-logo.svg"
+import Logo from "/assets/images/survey-logo.svg"
 import type { UserPublic } from "../../client"
 import SidebarItems from "./SidebarItems"
 
@@ -72,7 +72,7 @@ const Sidebar = () => {
           borderRadius={12}
         >
           <Box>
-            <Image src={Logo} alt="Logo" w="180px" maxW="2xs" p={6} />
+            <Image src={Logo} alt="Logo" w="200px" maxW="2xs" p={6} />
             <SidebarItems />
           </Box>
           {currentUser?.email && (
