@@ -100,7 +100,6 @@ const FormModal = <T extends FieldValues>({
       }
       return acc
     },
-    // eslint-disable-next-line @typescript-eslint/prefer-reduce-type-parameter
     {} as DefaultValues<T>,
   )
 
@@ -152,7 +151,6 @@ const FormModal = <T extends FieldValues>({
           {fields.map((field) => {
             const isError = !!errors[field.name]
             if (field.type === "textarea") {
-              // For Textarea
               return (
                 <FormControl
                   isInvalid={isError}
@@ -165,7 +163,10 @@ const FormModal = <T extends FieldValues>({
                   <Textarea
                     id={String(field.name)}
                     placeholder={field.placeholder}
-                    {...register(field.name, field.validation)}
+                    {...register(
+                      field.name,
+                      field.validation as RegisterOptions<T, Path<T>>,
+                    )}
                     {...field.inputProps}
                   />
                   {isError && (
@@ -178,7 +179,6 @@ const FormModal = <T extends FieldValues>({
               )
             }
             if (field.type === "select") {
-              // For Select
               return (
                 <FormControl
                   isInvalid={isError}
@@ -191,7 +191,10 @@ const FormModal = <T extends FieldValues>({
                   <Select
                     id={String(field.name)}
                     placeholder={field.placeholder}
-                    {...register(field.name, field.validation)}
+                    {...register(
+                      field.name,
+                      field.validation as RegisterOptions<T, Path<T>>,
+                    )}
                     {...field.inputProps}
                   >
                     {(field.options ?? []).map((v) => (
@@ -209,7 +212,6 @@ const FormModal = <T extends FieldValues>({
                 </FormControl>
               )
             }
-            // For Input
             return (
               <FormControl isInvalid={isError} mb={4} key={String(field.name)}>
                 <FormLabel htmlFor={String(field.name)}>
@@ -218,7 +220,10 @@ const FormModal = <T extends FieldValues>({
                 <Input
                   id={String(field.name)}
                   placeholder={field.placeholder}
-                  {...register(field.name, field.validation)}
+                  {...register(
+                    field.name,
+                    field.validation as RegisterOptions<T, Path<T>>,
+                  )}
                   {...field.inputProps}
                 />
                 {isError && (
