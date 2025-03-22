@@ -9,7 +9,9 @@ jest.mock("../../src/hooks/useCustomToast", () => ({
 }))
 
 jest.mock("@tanstack/react-query", () => {
-  const originalModule = jest.requireActual("@tanstack/react-query")
+  const originalModule = jest.requireActual<
+    typeof import("@tanstack/react-query")
+  >("@tanstack/react-query")
   return {
     ...originalModule,
     useMutation: jest.fn(),
@@ -33,7 +35,10 @@ interface TestFormData {
 describe("FormModal", () => {
   const mockOnClose = jest.fn()
 
-  const mockMutationFn: jest.Mock<Promise<void>, [TestFormData]> = jest.fn()
+  const mockMutationFn: jest.Mock<Promise<void>, [TestFormData]> = jest.fn<
+    Promise<void>,
+    [TestFormData]
+  >()
 
   const mockShowToast = jest.fn()
 
