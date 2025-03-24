@@ -1,6 +1,10 @@
+from datetime import datetime
+
+import pytz
 from fastapi import APIRouter, HTTPException
 
 import app.services.inquiries as inquiries_service
+import app.services.schedule as schedule_service
 from app.api.deps import SessionDep
 from app.models import Inquiry, InquiryCreate, InquiryPublic, InquriesPublic, Message
 from app.models.inquiry import InquiryUpdate
@@ -67,6 +71,37 @@ def get_inquries(
     count = inquiries_service.count_inquiries(session=session)
     inquiries = inquiries_service.get_inquiries(session=session, skip=skip, limit=limit)
     return InquriesPublic(data=inquiries, count=count)
+
+
+@router.get("/current", response_model=InquiryPublic)
+def current_inquiry(session: SessionDep, tz: str) -> Inquiry:
+    schedule = schedule_service.get_schedule(session)
+    if not schedule:
+        raise HTTPException(
+            status_code=400, detail="Schedule does not exist to get current inquiry"
+        )
+    try:
+        timezone = pytz.timezone(tz)
+        today = timezone.localize(
+            datetime.strptime(
+                f"{datetime.now(timezone).strftime('%Y-%m-%d')} {schedule.schedule.timesOfDay[0]}",
+                "%Y-%m-%d %H:%M",
+            )
+        )
+        now = datetime.now(timezone)
+        inquiry_id = (
+            schedule.scheduled_inquiries_and_dates.inquiries.pop(0)
+            if now >= today
+            else schedule.scheduled_inquiries_and_dates.inquiries.pop()
+        )
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    inquiry = inquiries_service.get_inquiry_by_id(
+        session=session, inquiry_id=inquiry_id
+    )
+    if not inquiry:
+        raise HTTPException(status_code=404, detail="Current inquiry not found")
+    return inquiry
 
 
 @router.get("/{inquiry_id}", response_model=InquiryPublic)
