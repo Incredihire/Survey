@@ -33,7 +33,7 @@ pyjwt = "^2.10.1"
 cryptography = "^44.0.0"
 tldextract = "^5.1.3"
 types-requests = "^2.32.0.20241016"
-pytz = "^2025.1"
+pytz = "^2025.2"
 types-pytz = "^2025.1.0.20250204"
 
 [tool.poetry.group.dev.dependencies]
